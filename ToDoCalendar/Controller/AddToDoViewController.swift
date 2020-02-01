@@ -7,24 +7,92 @@
 //
 
 import UIKit
+import RealmSwift
 
-class AddToDoViewController: UIViewController {
+class AddToDoViewController: UIViewController, UITextFieldDelegate {
 
+    
+    @IBOutlet weak var selectedDateLabel: UILabel!
+    @IBOutlet weak var titleTextField: UITextField!
+    @IBOutlet weak var contentTextField: UITextView!
+    
+    @IBOutlet weak var star: UIButton!
+    @IBOutlet weak var star2: UIButton!
+    @IBOutlet weak var star3: UIButton!
+    
+    var selectedDateString = String()
+    
+    var priority = Int()
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        titleTextField.delegate = self
+        contentTextField.layer.borderWidth = 1.0
+        contentTextField.layer.borderColor = UIColor.gray.cgColor
+        contentTextField.layer.cornerRadius = 1.0
+        
+        print("selectedDateString変換前: \(selectedDateString)")
+        let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+        print("selectedDate変換後: \(selectedDate)")
+        selectedDateLabel.text = selectedDateString
+    }
+
+    
+    @IBAction func starButton(_ sender: Any) {
+        star.setTitleColor(UIColor.black, for: .normal)
+        star2.setTitleColor(UIColor.gray, for: .normal)
+        star3.setTitleColor(UIColor.gray, for: .normal)
+        priority = 1
+    }
+    @IBAction func star2Button(_ sender: Any) {
+        star.setTitleColor(UIColor.black, for: .normal)
+        star2.setTitleColor(UIColor.black, for: .normal)
+        star3.setTitleColor(UIColor.gray, for: .normal)
+        priority = 2
+    }
+    @IBAction func star3Button(_ sender: Any) {
+        star.setTitleColor(UIColor.black, for: .normal)
+        star2.setTitleColor(UIColor.black, for: .normal)
+        star3.setTitleColor(UIColor.black, for: .normal)
+        priority = 3
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    // キーボードを閉じる
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
-    */
-
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    
+    @IBAction func saveAction(_ sender: Any) {
+        
+        if titleTextField.text! != "" && contentTextField.text! != "" && priority != 0 {
+            let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+            let todo = ToDo()
+            todo.title = titleTextField.text!
+            todo.content = contentTextField.text
+            todo.scheduledAt = selectedDate as Date
+            todo.priority = priority
+            todo.isDone = false
+             
+            let realm = try! Realm()
+            try! realm.write{
+                realm.add(todo)
+                print(todo)
+            }
+            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+            self.navigationController?.popViewController(animated: true)
+        } else{
+            print("項目を全て記入してください")
+            
+        }
+        
+    }
+    
+    
+    
 }
+
