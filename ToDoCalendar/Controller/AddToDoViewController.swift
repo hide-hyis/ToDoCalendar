@@ -19,10 +19,10 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
-    
     var selectedDateString = String()
     
     var priority = Int()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -31,11 +31,13 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         contentTextField.layer.borderColor = UIColor.gray.cgColor
         contentTextField.layer.cornerRadius = 1.0
         
-        print("selectedDateString変換前: \(selectedDateString)")
+//        print("selectedDateString変換前: \(selectedDateString)")
         let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
-        print("selectedDate変換後: \(selectedDate)")
+//        print("selectedDate変換後: \(selectedDate)")
         selectedDateLabel.text = selectedDateString
     }
+    
+    
 
     
     @IBAction func starButton(_ sender: Any) {
@@ -56,6 +58,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         star3.setTitleColor(UIColor.black, for: .normal)
         priority = 3
     }
+    
     
     // キーボードを閉じる
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -83,7 +86,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
                 realm.add(todo)
                 print(todo)
             }
-            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+//            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
             self.navigationController?.popViewController(animated: true)
         } else{
             print("項目を全て記入してください")

@@ -21,15 +21,20 @@ extension FSCalendar {
     }
 }
 
-class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,FSCalendarDelegateAppearance {
+class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,FSCalendarDelegateAppearance, UITableViewDelegate, UITableViewDataSource {
+    
+    
 
     @IBOutlet weak var myCalendar: FSCalendar!
     @IBOutlet weak var selectedDateLabel: UILabel!
     @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var tableView: UITableView!
     
+    let fruits = ["apple", "orange", "melon", "banana", "pineapple"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         self.myCalendar.dataSource = self
         self.myCalendar.delegate = self
@@ -40,22 +45,16 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
-        
-//        let realm = try! Realm()
-//        var todos: Results<ToDo>!
-//
-//        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(20200131).begining as CVarArg, getBeginingAndEndOfDay(20200131).end as CVarArg)
-//        let tmpCalendar = Calendar(identifier: .gregorian)
-//        todos = realm.objects(ToDo.self).filter(predicate)
-//        var maxPriority = 0
-//        for i in 0...todos.count{
-//            if maxPriority < todos[i].priority {
-//                maxPriority = todos[i].priority
-//            }
-//        }
-//        print("maxPriority:\(maxPriority)")
+        let realm = try! Realm()
+        let todos = realm.objects(ToDo.self)
+        print(todos)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        
+        myCalendar.reloadData()
+    }
+    
     override func didReceiveMemoryWarning() {
            super.didReceiveMemoryWarning()
         
@@ -132,55 +131,39 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
 
         return nil
     }
-
     
-    //日付に星をつける関数
-    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int{
-
-        let realm = try! Realm()
-        var todos: Results<ToDo>!
-        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(date).begining as CVarArg, getBeginingAndEndOfDay(date).end as CVarArg)
-        let tmpCalendar = Calendar(identifier: .gregorian)
-        todos = realm.objects(ToDo.self).filter(predicate)
-        var maxPriority = 0
-        
-        for i in todos{
-            if i.priority > maxPriority{
-               maxPriority = i.priority
-            }
-        }
-        print("maxPriority: \(maxPriority)")
-        return todos.count
-        // 予定日に反映->OK
-        //予定日の最大優先度をfilterなし算出->OK
-        //予定日の最大優先度を日付filterベタ打ち算出->途中
-        //予定日の最大優先度を算出->途中
-//        print("maxPriority:\(maxPriority)")
-//        return todos!.count
-//        日にちの年、月、日を取得
-//        let day = tmpCalendar.component(.day, from: date)
-//
-//        if day == 5 {
-//            return "★"
-//        }else{
-//            return ""
-//        }
-    }
     // 日の始まりと終わりを取得
     private func getBeginingAndEndOfDay(_ date:Date) -> (begining: Date , end: Date) {
         let begining = Calendar(identifier: .gregorian).startOfDay(for: date)
         let end = begining + 24*60*60
         return (begining, end)
     }
-
-    //最大priprityを返す関数　引数は選択日date
-//    func maxPriority(date: Date) {
-//        let realm = try! Realm()
-//        let todos = realm.objects(ToDo.self)
-//        let selectedToDo = realm.objects(ToDo.self).filter("scheduledAt = date")
-//        print(selectedToDo)
-//        return 1
-//    }
+    
+    
+    func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
+        
+        var maxPriority = 0
+                let realm = try! Realm()
+                var todos: Results<ToDo>!
+                let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(date).begining as CVarArg, getBeginingAndEndOfDay(date).end as CVarArg)
+                todos = realm.objects(ToDo.self).filter(predicate)
+                if todos!.isEmpty{
+                    return ""
+                } else {
+                    for i in todos{
+                        if i.priority > maxPriority{
+                           maxPriority = i.priority
+                        }
+                    }
+                }
+        if maxPriority == 1{
+            return "⭐️"
+        } else if maxPriority == 2 {
+            return "⭐️⭐️"
+        } else {
+            return "⭐️⭐️⭐️"
+        }
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -188,6 +171,24 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             let nextVC = segue.destination as! AddToDoViewController
             nextVC.selectedDateString = selectedDateLabel.text!
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return fruits.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let realm = try! Realm()
+//        let todos = realm.objects(ToDo.self)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel!.text = fruits[indexPath.row]
+        cell.detailTextLabel!.text = "detail"
+        return cell
     }
 }
 
