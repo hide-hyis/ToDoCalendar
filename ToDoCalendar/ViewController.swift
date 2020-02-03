@@ -30,12 +30,14 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     
-    let fruits = ["apple", "orange", "melon", "banana", "pineapple"]
+    let fruits = ["apple", "orange", "melon", "banana", "pineapple","tomatos","water melon","beets","spinatch","mangoo"]
+    let detailFruits = ["リンゴ", "オレンジ", "メロン", "バナナ", "パイナップル","トマト","スイカ","ビーツ","ほうれん草","マンゴー"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        tableView.delegate = self
+        tableView.dataSource = self
         self.myCalendar.dataSource = self
         self.myCalendar.delegate = self
         myCalendar.scrollDirection = .vertical
@@ -45,14 +47,16 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
-        let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
-        print(todos)
+//        let realm = try! Realm()
+//        let todos = realm.objects(ToDo.self)
+//        print("カウント\(todos.count)")
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         
         myCalendar.reloadData()
+        tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -174,20 +178,36 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return fruits.count
+        let realm = try! Realm()
+        let todos = realm.objects(ToDo.self)
+        return todos.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 50
+//    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let realm = try! Realm()
-//        let todos = realm.objects(ToDo.self)
+        let realm = try! Realm()
+        let todos = realm.objects(ToDo.self)
+        let todo = todos[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel!.text = fruits[indexPath.row]
-        cell.detailTextLabel!.text = "detail"
+        cell.textLabel!.text = todo.title
+//        cell.detailTextLabel?.text = "優先度表示"
+        switch todo.priority {
+        case 1:
+            cell.detailTextLabel?.text = "★"
+        case 2:
+            cell.detailTextLabel?.text = "★★"
+        case 3:
+            cell.detailTextLabel?.text = "★★★"
+        default:
+            cell.detailTextLabel?.text = ""
+        }
         return cell
     }
 }

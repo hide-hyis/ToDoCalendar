@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--カレンダー-->
         <scene sceneID="iW1-gD-iGF">
             <objects>
                 <viewController id="6Cq-zf-Ist" customClass="ViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
@@ -15,8 +15,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" horizontalHuggingPriority="239" horizontalCompressionResistancePriority="742" translatesAutoresizingMaskIntoConstraints="NO" id="eVB-ov-fpa" customClass="FSCalendar">
-                                <rect key="frame" x="15" y="108" width="380" height="372"/>
+                            <view contentMode="scaleToFill" horizontalHuggingPriority="239" horizontalCompressionResistancePriority="742" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eVB-ov-fpa" customClass="FSCalendar">
+                                <rect key="frame" x="12" y="124" width="383" height="417"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
@@ -26,32 +27,31 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="firstWeekday">
                                         <integer key="value" value="1"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="headerDateFormat" value="YYYY年MM月"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sdq-Eh-HNe">
-                                <rect key="frame" x="13" y="541" width="391" height="228"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sdq-Eh-HNe">
+                                <rect key="frame" x="12" y="652" width="391" height="222"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" priority="979" constant="259" id="Nu2-nC-3uJ"/>
-                                </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="sjI-BU-6VQ">
-                                        <rect key="frame" x="0.0" y="28" width="391" height="43.5"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="Ku1-6c-Txv" detailTextLabel="E4a-9z-Afy" style="IBUITableViewCellStyleValue1" id="sjI-BU-6VQ">
+                                        <rect key="frame" x="0.0" y="28" width="391" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sjI-BU-6VQ" id="vy1-vV-nwJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="391" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="391" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="priority" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9jf-pf-Cd5">
-                                                    <rect key="frame" x="305" y="11" width="66" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ku1-6c-Txv">
+                                                    <rect key="frame" x="20" y="12" width="33.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="62t-DG-Ofk">
-                                                    <rect key="frame" x="20" y="11" width="29" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="E4a-9z-Afy">
+                                                    <rect key="frame" x="327" y="12" width="44" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -61,8 +61,15 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="yyyy年mm月dd日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bb2-4j-jBN">
+                                <rect key="frame" x="12" y="572" width="171" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nxb-3V-lH0">
-                                <rect key="frame" x="324" y="488" width="80" height="44"/>
+                                <rect key="frame" x="323" y="560" width="80" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                 <state key="normal" image="addButton">
@@ -72,27 +79,11 @@
                                     <action selector="addAction:" destination="6Cq-zf-Ist" eventType="touchUpInside" id="Aps-Tx-Gg0"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="yyyy年mm月dd日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bb2-4j-jBN">
-                                <rect key="frame" x="20" y="500" width="171" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="eVB-ov-fpa" firstAttribute="top" secondItem="Xlz-ke-H6F" secondAttribute="top" constant="20" id="2XT-Hm-EdT"/>
-                            <constraint firstItem="Sdq-Eh-HNe" firstAttribute="top" secondItem="e00-8Z-YZZ" secondAttribute="top" constant="510" id="2r8-Ug-6bS"/>
-                            <constraint firstItem="Sdq-Eh-HNe" firstAttribute="top" secondItem="eVB-ov-fpa" secondAttribute="bottom" constant="30" id="InJ-4D-7Zq"/>
-                            <constraint firstItem="Sdq-Eh-HNe" firstAttribute="leading" secondItem="Xlz-ke-H6F" secondAttribute="leading" constant="13" id="W5e-2j-sxR"/>
-                            <constraint firstItem="eVB-ov-fpa" firstAttribute="leading" secondItem="Xlz-ke-H6F" secondAttribute="leading" constant="15" id="hba-v7-upd"/>
-                            <constraint firstItem="Xlz-ke-H6F" firstAttribute="trailing" secondItem="Sdq-Eh-HNe" secondAttribute="trailing" constant="10" id="pfe-ZA-MVu"/>
-                            <constraint firstItem="Xlz-ke-H6F" firstAttribute="trailing" secondItem="eVB-ov-fpa" secondAttribute="trailing" constant="19" id="zQM-8a-fwL"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="Xlz-ke-H6F"/>
                     </view>
-                    <navigationItem key="navigationItem" id="nEX-As-TNv"/>
+                    <navigationItem key="navigationItem" title="カレンダー" id="nEX-As-TNv"/>
                     <connections>
                         <outlet property="addButton" destination="Nxb-3V-lH0" id="IDD-oe-Xyu"/>
                         <outlet property="myCalendar" destination="eVB-ov-fpa" id="nW3-ea-get"/>
@@ -105,7 +96,7 @@
             </objects>
             <point key="canvasLocation" x="857.97101449275374" y="111.83035714285714"/>
         </scene>
-        <!--Add To Do View Controller-->
+        <!--ToDo作成-->
         <scene sceneID="n9n-s9-tNT">
             <objects>
                 <viewController id="kRO-JX-qP9" customClass="AddToDoViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
@@ -153,7 +144,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="★">
-                                    <color key="titleColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
                                     <action selector="starButton:" destination="kRO-JX-qP9" eventType="touchUpInside" id="Hx6-8T-QAx"/>
@@ -181,8 +172,8 @@
                                     <action selector="star3Button:" destination="kRO-JX-qP9" eventType="touchUpInside" id="BAZ-ya-cpb"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="予定日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ugV-SU-dEP">
-                                <rect key="frame" x="72" y="186" width="162" height="40"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="yyyy年mm月dd日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ugV-SU-dEP">
+                                <rect key="frame" x="72" y="186" width="167" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
@@ -192,8 +183,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="2SC-2o-MaU"/>
                     </view>
-                    <navigationItem key="navigationItem" id="KDN-b8-d0y">
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="ijW-Pa-e9T">
+                    <navigationItem key="navigationItem" title="ToDo作成" id="KDN-b8-d0y">
+                        <barButtonItem key="rightBarButtonItem" image="checkmark" catalog="system" id="ijW-Pa-e9T">
                             <connections>
                                 <action selector="saveAction:" destination="kRO-JX-qP9" id="xmC-cm-GNc"/>
                             </connections>
@@ -233,5 +224,6 @@
     </scenes>
     <resources>
         <image name="addButton" width="640" height="333"/>
+        <image name="checkmark" catalog="system" width="64" height="56"/>
     </resources>
 </document>

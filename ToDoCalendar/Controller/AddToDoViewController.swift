@@ -21,7 +21,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star3: UIButton!
     var selectedDateString = String()
     
-    var priority = Int()
+    var priority = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()

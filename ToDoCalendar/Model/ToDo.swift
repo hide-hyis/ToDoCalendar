@@ -16,4 +16,6 @@ class ToDo: Object {
     @objc dynamic var scheduledAt = Date()
     @objc dynamic var dateAt: Date = NSDate() as Date
     @objc dynamic var isDone: Bool = false
+    
+    
 }
