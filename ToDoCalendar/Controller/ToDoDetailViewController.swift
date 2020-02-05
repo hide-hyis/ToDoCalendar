@@ -124,16 +124,30 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     @IBAction func deleteAction(_ sender: Any) {
         
-        let dateString = dateField.text
-        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
-//        print("dateField: \(date)")
         let realm = try! Realm()
         let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
-            try! realm.write{
-                realm.delete(todo!)
-            }
-        self.dismiss(animated: true, completion: nil)
+        
+        let alert: UIAlertController = UIAlertController(title: "アラート表示", message: "削除してもいいですか？", preferredStyle:  UIAlertController.Style.alert)
+
+        let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
+               (action: UIAlertAction!) -> Void in
+               try! realm.write{
+                   realm.delete(todo!)
+               }
+               print("削除")
+            self.dismiss(animated: true, completion: nil)
+           })
+        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
+               (action: UIAlertAction!) -> Void in
+               print("Cancel")
+           })
+
+           alert.addAction(cancelAction)
+           alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
     }
+    
     
     @IBAction func backAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
