@@ -30,4 +30,12 @@ class DateUtils {
         formatter.locale = Locale(identifier: "ja_JP")
         return formatter.string(from: date)
     }
+    
+    class func pickerConfig( _ datePicker: UIDatePicker, _ dateField: UITextField){
+        // ピッカー設定
+        datePicker.datePickerMode = UIDatePicker.Mode.date
+        datePicker.timeZone = NSTimeZone.local
+        datePicker.locale = Locale.current
+        dateField.inputView = datePicker
+    }
 }

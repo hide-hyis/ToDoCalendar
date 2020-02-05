@@ -41,22 +41,17 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
 
     
     @IBAction func starButton(_ sender: Any) {
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.gray, for: .normal)
-        star3.setTitleColor(UIColor.gray, for: .normal)
+        ToDo.star1Button(star, star2, star3)
         priority = 1
     }
     @IBAction func star2Button(_ sender: Any) {
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.black, for: .normal)
-        star3.setTitleColor(UIColor.gray, for: .normal)
+        ToDo.star2Button(star, star2, star3)
         priority = 2
     }
     @IBAction func star3Button(_ sender: Any) {
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.black, for: .normal)
-        star3.setTitleColor(UIColor.black, for: .normal)
+        ToDo.star3Button(star, star2, star3)
         priority = 3
+        
     }
     
     
@@ -84,7 +79,6 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
             let realm = try! Realm()
             try! realm.write{
                 realm.add(todo)
-                print(todo)
             }
 //            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
             self.navigationController?.popViewController(animated: true)
