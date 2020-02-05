@@ -29,9 +29,10 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @IBOutlet weak var selectedDateLabel: UILabel!
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var isDoneCount: UILabel!
     
-    let fruits = ["apple", "orange", "melon", "banana", "pineapple","tomatos","water melon","beets","spinatch","mangoo"]
-    let detailFruits = ["リンゴ", "オレンジ", "メロン", "バナナ", "パイナップル","トマト","スイカ","ビーツ","ほうれん草","マンゴー"]
+    var selectedIndexPath: NSIndexPath = NSIndexPath()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,16 +48,43 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
-//        let realm = try! Realm()
-//        let todos = realm.objects(ToDo.self)
-//        print("カウント\(todos.count)")
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        doToDoCount()
+//        print("RealmFile: \(Realm.Configuration.defaultConfiguration.fileURL!)")
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        
+        super.viewWillAppear(true)
         myCalendar.reloadData()
         tableView.reloadData()
+        doToDoCount()
+        if let presented = self.presentedViewController {
+            if type(of: presented) == ToDoDetailViewController.self {
+                //PopupViewControllerから戻ってきたときはrefresh()
+                myCalendar.reloadData()
+                tableView.reloadData()
+            }
+        }
+    }
+    
+    //完了済件数の表示
+    func doToDoCount(){
+        var done:Int = 0
+        var total:Int = 0
+        let realm = try! Realm()
+        let dateString = self.selectedDateLabel!.text
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+        let todos = realm.objects(ToDo.self).filter(predicate)
+        for todo in todos{
+            if todo.isDone { done += 1 }
+        }
+        total = todos.count
+        if total > 0 {
+            isDoneCount.text = "完了済　\(done)/ \(total)"
+        } else {
+            isDoneCount.text = ""
+        }
+        return
     }
     
     override func didReceiveMemoryWarning() {
@@ -78,6 +106,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let month = tmpDate.component(.month, from: date)
         let day = tmpDate.component(.day, from: date)
         selectedDateLabel.text = "\(year)年\(month)月\(day)日"
+        tableView.reloadData()
+        doToDoCount()
     }
     
     fileprivate let gregorian: Calendar = Calendar(identifier: .gregorian)
@@ -174,12 +204,29 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         if segue.identifier == "goAddPage" {
             let nextVC = segue.destination as! AddToDoViewController
             nextVC.selectedDateString = selectedDateLabel.text!
+        } else if segue.identifier == "goDetailPage" {
+            let nextVC = segue.destination as! ToDoDetailViewController
+            nextVC.titleString = selectedDateLabel.text!
+            let indexPath = self.selectedIndexPath
+            let realm = try! Realm()
+            let dateString = selectedDateLabel!.text
+            let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+            let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+            let todos = realm.objects(ToDo.self).filter(predicate)
+            nextVC.selectedDateString = dateString!
+            nextVC.titleString = todos[indexPath.row].title
+            nextVC.contentString = todos[indexPath.row].content
+            nextVC.priority = todos[indexPath.row].priority
+            nextVC.isDone = todos[indexPath.row].isDone
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
+        let dateString = selectedDateLabel!.text
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+        let todos = realm.objects(ToDo.self).filter(predicate)
         return todos.count
     }
     
@@ -187,28 +234,83 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return 1
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 50
-//    }
-    
+    //セルクリックで詳細画面へ遷移
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // セルの選択を解除
+        self.selectedIndexPath = indexPath as NSIndexPath
+        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "goDetailPage", sender: nil)
+    }
+    //Cellの生成
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
-        let todo = todos[indexPath.row]
+        let dateString = selectedDateLabel!.text
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+        let todos = realm.objects(ToDo.self).filter(predicate)
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel!.text = todo.title
-//        cell.detailTextLabel?.text = "優先度表示"
-        switch todo.priority {
-        case 1:
-            cell.detailTextLabel?.text = "★"
-        case 2:
-            cell.detailTextLabel?.text = "★★"
-        case 3:
-            cell.detailTextLabel?.text = "★★★"
-        default:
-            cell.detailTextLabel?.text = ""
+        if todos.count > indexPath.row {
+            let todo = todos[indexPath.row]
+            if todo.title.count >= 11 {
+                let longTitle = todo.title.prefix(10)
+                cell.textLabel!.text = longTitle + "..."
+            } else {
+                cell.textLabel!.text = todo.title
+            }
+            switch todo.priority {
+            case 1:
+                cell.detailTextLabel?.text = "★"
+            case 2:
+                cell.detailTextLabel?.text = "★★"
+            case 3:
+                cell.detailTextLabel?.text = "★★★"
+            default:
+                cell.detailTextLabel?.text = ""
+            }
+            if todo.isDone == true{
+                cell.textLabel?.textColor = UIColor.gray
+                cell.detailTextLabel?.textColor = UIColor.gray
+            } else {
+                cell.textLabel?.textColor = UIColor.black
+                cell.detailTextLabel?.textColor = UIColor.black
+            }
+            return cell
+        }else {
+            return cell
         }
-        return cell
     }
+    
+    //セルの編集許可
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool{
+        return true
+    }
+    
+    // 完了/未完了処理
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let realm = try! Realm()
+        let dateString = self.selectedDateLabel!.text
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+        let todos = realm.objects(ToDo.self).filter(predicate)
+        let action = UITableViewRowAction(style: .normal, title: todos[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
+            
+            if todos[indexPath.row].isDone {
+                try! realm.write {
+                  todos[indexPath.row].isDone = false
+                }
+                self.doToDoCount()
+                tableView.reloadData()
+            } else {
+                try! realm.write {
+                  todos[indexPath.row].isDone = true
+                }
+                self.doToDoCount()
+                tableView.reloadData()
+            }
+        }
+        return [action]
+    }
+    
+        
 }
 
