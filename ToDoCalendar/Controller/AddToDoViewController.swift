@@ -68,26 +68,32 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
     @IBAction func saveAction(_ sender: Any) {
         
         if titleTextField.text! != "" && contentTextField.text! != "" && priority != 0 {
-            let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
-            let todo = ToDo()
-            todo.title = titleTextField.text!
-            todo.content = contentTextField.text
-            todo.scheduledAt = selectedDate as Date
-            todo.priority = priority
-            todo.isDone = false
-             
-            let realm = try! Realm()
-            try! realm.write{
-                realm.add(todo)
-            }
-//            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
-            self.navigationController?.popViewController(animated: true)
-        } else{
-            print("項目を全て記入してください")
-            
-        }
-        
+                    let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+                    let todo = ToDo()
+                    todo.title = titleTextField.text!
+                    todo.content = contentTextField.text
+                    todo.scheduledAt = selectedDate as Date
+                    todo.priority = priority
+                    todo.isDone = false
+                     
+                    let realm = try! Realm()
+                    try! realm.write{
+                        realm.add(todo)
+                    }
+        //            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+                    self.navigationController?.popViewController(animated: true)
+                } else{
+                    print("項目を全て記入してください")
+                    
+                }
     }
+    
+    
+    
+    @IBAction func backAction(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     
     
     

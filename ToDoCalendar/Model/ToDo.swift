@@ -33,5 +33,12 @@ class ToDo: Object {
         star3.setTitleColor(UIColor.black, for: .normal)
     }
     
+    class func isDoneDisplay( _ isDone:Bool, _ isDoneSegment:UISegmentedControl){
+        if isDone {
+            isDoneSegment.selectedSegmentIndex = 1
+        } else {
+            isDoneSegment.selectedSegmentIndex = 0
+        }
+    }
     
 }

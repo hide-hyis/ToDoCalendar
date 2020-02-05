@@ -199,6 +199,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
+    //値の受け渡し
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "goAddPage" {

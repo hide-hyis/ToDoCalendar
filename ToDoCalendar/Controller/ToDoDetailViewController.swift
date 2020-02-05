@@ -19,12 +19,14 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var datePicker: UIDatePicker = UIDatePicker()
         
     @IBOutlet weak var dateField: UITextField!
+    @IBOutlet weak var isDoneSegment: UISegmentedControl!
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var contentTextView: UITextView!
     @IBOutlet weak var star1: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
+    @IBOutlet weak var editButton: UIButton!
     
     
     override func viewDidLoad() {
@@ -54,17 +56,21 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         // 決定バーの生成
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
         let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
+        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
         toolbar.setItems([spacelItem, doneItem], animated: true)
 
         // インプットビュー設定(紐づいているUITextfieldへ代入)
         dateField.inputView = datePicker
         dateField.inputAccessoryView = toolbar
         
+        ToDo.isDoneDisplay(isDone, isDoneSegment)
+        
     }
     
+    
+    
     // UIDatePickerのDoneを押したら発火
-    @objc func done() {
+    @objc func dateDone() {
         dateField.endEditing(true)
         // 日付のフォーマット
         let formatter = DateFormatter()
@@ -88,21 +94,34 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.view.endEditing(true)
     }
     
+    //完了切替
+    @IBAction func segmentAction(_ sender: Any) {
+        
+        switch (sender as AnyObject).selectedSegmentIndex {
+        case 0:
+            isDone = false
+        case 1:
+            isDone = true
+        default:
+            print("エラ-")
+        }
+    }
+    
+    
     @IBAction func star1Action(_ sender: Any) {
         ToDo.star1Button(star1, star2, star3)
         priority = 1
     }
-    
     @IBAction func star2Action(_ sender: Any) {
         ToDo.star2Button(star1, star2, star3)
         priority = 2
     }
-    
     @IBAction func star3Action(_ sender: Any) {
         ToDo.star3Button(star1, star2, star3)
         priority = 3
     }
     
+    //編集機能
     @IBAction func editAction(_ sender: Any) {
         print("dateField: \(dateField.text!)")
         let dateString = dateField.text
@@ -112,16 +131,21 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
 //        let editTitle:String = titleTextField.text!
 //        print("編集タイトル: \(editTitle)")
-        try! realm.write{
-//            todo!.title = editTitle
-            todo!.content = contentTextView.text
-            todo!.priority = priority
-            todo!.scheduledAt = selectedDate
+        if titleTextField.text != "" {
+                try! realm.write{
+        //            todo!.title = editTitle
+                    todo!.content = contentTextView.text
+                    todo!.priority = priority
+                    todo!.scheduledAt = selectedDate
+                    todo!.isDone = isDone
+                }
+                self.dismiss(animated: true, completion: nil)
         }
-        self.dismiss(animated: true, completion: nil)
         
     }
     
+    
+    //削除機能
     @IBAction func deleteAction(_ sender: Any) {
         
         let realm = try! Realm()
@@ -134,12 +158,10 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
                try! realm.write{
                    realm.delete(todo!)
                }
-               print("削除")
             self.dismiss(animated: true, completion: nil)
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in
-               print("Cancel")
            })
 
            alert.addAction(cancelAction)

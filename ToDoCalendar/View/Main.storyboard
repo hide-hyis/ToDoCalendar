@@ -219,6 +219,17 @@
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="usy-ya-BQe">
+                                <rect key="frame" x="251" y="196" width="123" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="未完"/>
+                                    <segment title="完了"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentAction:" destination="Ofu-yq-Jb2" eventType="valueChanged" id="OFe-7m-e4S"/>
+                                </connections>
+                            </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="タイトル" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KcQ-Af-b5P">
                                 <rect key="frame" x="69" y="187" width="142" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -234,6 +245,8 @@
                         <outlet property="contentLabel" destination="LSa-Cj-GTX" id="F6Y-zB-Wwq"/>
                         <outlet property="contentTextView" destination="aLs-Gu-zjf" id="yba-9z-dZp"/>
                         <outlet property="dateField" destination="L6B-qw-Q5D" id="FWt-CX-ePo"/>
+                        <outlet property="editButton" destination="Lu8-TT-Rg8" id="UWD-PL-7Kp"/>
+                        <outlet property="isDoneSegment" destination="usy-ya-BQe" id="2hF-ZZ-Nzq"/>
                         <outlet property="star1" destination="NZj-Tq-5Cv" id="yiC-Nd-Kpm"/>
                         <outlet property="star2" destination="peP-Ne-hQ6" id="Lct-6a-2Xf"/>
                         <outlet property="star3" destination="dKj-1j-SJw" id="Bew-wV-7Qt"/>
@@ -327,14 +340,26 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lqg-nT-8p8">
+                                <rect key="frame" x="177" y="769" width="65" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <state key="normal" title="決定">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="editAction:" destination="Ofu-yq-Jb2" eventType="touchUpInside" id="al4-zZ-mNx"/>
+                                    <action selector="saveAction:" destination="kRO-JX-qP9" eventType="touchUpInside" id="D8j-fP-SPJ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="2SC-2o-MaU"/>
                     </view>
                     <navigationItem key="navigationItem" title="ToDo作成" id="KDN-b8-d0y">
-                        <barButtonItem key="rightBarButtonItem" image="checkmark" catalog="system" id="ijW-Pa-e9T">
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="calendar" catalog="system" id="e5n-Xp-d4d">
                             <connections>
-                                <action selector="saveAction:" destination="kRO-JX-qP9" id="xmC-cm-GNc"/>
+                                <action selector="backAction:" destination="kRO-JX-qP9" id="BJh-Xe-4J7"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -373,6 +398,5 @@
     <resources>
         <image name="addButton" width="640" height="333"/>
         <image name="calendar" catalog="system" width="64" height="52"/>
-        <image name="checkmark" catalog="system" width="64" height="56"/>
     </resources>
 </document>
