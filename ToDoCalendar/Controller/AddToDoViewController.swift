@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class AddToDoViewController: UIViewController, UITextFieldDelegate {
+class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     
     @IBOutlet weak var selectedDateLabel: UILabel!
@@ -27,6 +27,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         titleTextField.delegate = self
+        contentTextField.delegate = self
         contentTextField.layer.borderWidth = 1.0
         contentTextField.layer.borderColor = UIColor.gray.cgColor
         contentTextField.layer.cornerRadius = 1.0
@@ -48,24 +49,45 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        if titleTextField.text!.count > 0 {
-//            let str = titleTextField.text!
-//            let beggingLetter = str.prefix(3)
-//            let overLetter = str[str.index(str.startIndex, offsetBy: 3)..<str.endIndex]
-//            let word = String(overLetter)
+    //入力値制限アラート
+    func textFieldDidEndEditing(_ textField: UITextField) {
+            let str = titleTextField.text!
+            let text1 = String(str.prefix(15))
+            let overLetter = str[str.index(str.startIndex, offsetBy: 16)..<str.endIndex]
+            let text2 = String(overLetter)
+            let attributes1: [NSAttributedString.Key : Any] = [ .foregroundColor : UIColor.black ]
+
+            let attributedText1 =  NSAttributedString(string: text1, attributes: attributes1)
+            let mutableAttributedText1 = NSMutableAttributedString(attributedString: attributedText1)
+            
+            let attributes2: [NSAttributedString.Key : Any] = [
+                .backgroundColor : UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5),
+                .foregroundColor : UIColor.gray
+            ]
+            let mutableAttributedText2 = NSMutableAttributedString(string: text2, attributes: attributes2)
+            mutableAttributedText1.append(mutableAttributedText2)
+            titleTextField.attributedText = mutableAttributedText1
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+//        let str = contentTextField.text!
+//        let text1 = String(str.prefix(15))
+//        print("text1: \(text1)")
+//        let overLetter = str[str.index(str.startIndex, offsetBy: 16)..<str.endIndex]
+//        let text2 = String(overLetter)
+//        let attributes1: [NSAttributedString.Key : Any] = [ .foregroundColor : UIColor.black ]
 //
-////            titleTextField.text.backgroundColor = UIColor(red: 0.7, green: 0.2, blue: 0.3, alpha: 0.7)
-////            print("over: \(overLetter)")
+//        let attributedText1 =  NSAttributedString(string: text1, attributes: attributes1)
+//        let mutableAttributedText1 = NSMutableAttributedString(attributedString: attributedText1)
 //
-//            let text = NSMutableAttributedString(string: word)
-//            let endNum = str.count
-//            print("endNum: \(endNum)")
-//            text.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: NSMakeRange(0, 4))
-//            titleTextField.attributedText = text
-////            titleTextField.text = "\(str.prefix(15)) + \(overLetter)"
-//        }
-//    }
+//        let attributes2: [NSAttributedString.Key : Any] = [
+//            .backgroundColor : UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5),
+//            .foregroundColor : UIColor.gray
+//        ]
+//        let mutableAttributedText2 = NSMutableAttributedString(string: text2, attributes: attributes2)
+//        mutableAttributedText1.append(mutableAttributedText2)
+//        titleTextField.attributedText = mutableAttributedText1
+    }
     // キーボードを閉じる
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

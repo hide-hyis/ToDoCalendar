@@ -147,36 +147,39 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="タイトル" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cgO-ND-MRu">
-                                        <rect key="frame" x="38" y="25" width="70" height="21"/>
+                                        <rect key="frame" x="38" y="35" width="70" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="★" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QG2-DE-V3p">
-                                        <rect key="frame" x="380" y="24" width="18" height="21"/>
+                                        <rect key="frame" x="323" y="35" width="67" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="a3s-1l-cyH">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" text="内容" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="a3s-1l-cyH">
                                         <rect key="frame" x="38" y="80" width="299" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                         <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="予定日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8PH-2q-VbW">
-                                        <rect key="frame" x="253" y="25" width="52" height="21"/>
+                                        <rect key="frame" x="253" y="35" width="52" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="jR4-sU-eBU" appends="YES" id="osV-1I-UWG"/>
+                                </connections>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="rTa-Om-cEV">
                                 <rect key="frame" x="0.0" y="326" width="414" height="320"/>
@@ -221,11 +224,22 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="contentLabel" destination="a3s-1l-cyH" id="xtT-Fz-FF0"/>
+                        <outlet property="dateLabel" destination="8PH-2q-VbW" id="O0K-8Q-Y21"/>
                         <outlet property="detailTextView" destination="p99-Bi-sRQ" id="I9E-ug-ouk"/>
+                        <outlet property="priorityLabel" destination="QG2-DE-V3p" id="7gd-RT-Lqp"/>
+                        <outlet property="sortSegment" destination="sRx-ip-YaY" id="itV-ot-dNw"/>
                         <outlet property="tableView" destination="rTa-Om-cEV" id="ifv-dJ-TEq"/>
+                        <outlet property="titleLabel" destination="cgO-ND-MRu" id="0GU-no-YDX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SRj-e2-O3i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="up" id="jR4-sU-eBU">
+                    <connections>
+                        <action selector="swipeUpAction:" destination="bdS-bl-A0X" id="RVq-WI-Gm9"/>
+                        <segue destination="Ofu-yq-Jb2" kind="presentation" identifier="goDetailPage" id="7oy-A7-aGs"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1713.0434782608697" y="111.83035714285714"/>
         </scene>
@@ -379,7 +393,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nEI-EL-oBI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1797" y="-583"/>
+            <point key="canvasLocation" x="1249" y="-587"/>
         </scene>
         <!--ToDo作成-->
         <scene sceneID="n9n-s9-tNT">
@@ -525,4 +539,7 @@
         <image name="list.dash" catalog="system" width="64" height="42"/>
         <image name="並べ替え矢印" width="100" height="100"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="7oy-A7-aGs"/>
+    </inferredMetricsTieBreakers>
 </document>

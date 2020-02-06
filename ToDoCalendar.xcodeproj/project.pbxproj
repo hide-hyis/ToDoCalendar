@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A6DA314097A959E3229A18C4 /* Pods_ToDoCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */; };
+		D251894323E9492E00DD8125 /* ToDoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */; };
 		D261404923D690C10036161E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404823D690C10036161E /* AppDelegate.swift */; };
 		D261404B23D690C10036161E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404A23D690C10036161E /* SceneDelegate.swift */; };
 		D261404D23D690C10036161E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404C23D690C10036161E /* ViewController.swift */; };
@@ -17,12 +18,14 @@
 		D29ABF0323E00A43008A522A /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0223E00A43008A522A /* ToDo.swift */; };
 		D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0623E13028008A522A /* AddToDoViewController.swift */; };
 		D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0823E18B5E008A522A /* DateUtils.swift */; };
+		D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F9BF6DAD5F12BD90A3B62B8 /* Pods-ToDoCalendar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoCalendar.debug.xcconfig"; path = "Target Support Files/Pods-ToDoCalendar/Pods-ToDoCalendar.debug.xcconfig"; sourceTree = "<group>"; };
 		B727D7F7F356CB8787612408 /* Pods-ToDoCalendar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoCalendar.release.xcconfig"; path = "Target Support Files/Pods-ToDoCalendar/Pods-ToDoCalendar.release.xcconfig"; sourceTree = "<group>"; };
+		D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoDetailViewController.swift; sourceTree = "<group>"; };
 		D261404523D690C10036161E /* ToDoCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D261404823D690C10036161E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D261404A23D690C10036161E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -34,6 +37,7 @@
 		D29ABF0223E00A43008A522A /* ToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		D29ABF0623E13028008A522A /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
 		D29ABF0823E18B5E008A522A /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,8 @@
 				D261404823D690C10036161E /* AppDelegate.swift */,
 				D261404C23D690C10036161E /* ViewController.swift */,
 				D29ABF0623E13028008A522A /* AddToDoViewController.swift */,
+				D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */,
+				D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -239,10 +245,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */,
 				D261404D23D690C10036161E /* ViewController.swift in Sources */,
 				D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */,
 				D261404923D690C10036161E /* AppDelegate.swift in Sources */,
 				D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */,
+				D251894323E9492E00DD8125 /* ToDoDetailViewController.swift in Sources */,
 				D261404B23D690C10036161E /* SceneDelegate.swift in Sources */,
 				D29ABF0323E00A43008A522A /* ToDo.swift in Sources */,
 			);
