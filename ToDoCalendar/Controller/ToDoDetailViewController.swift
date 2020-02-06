@@ -67,6 +67,11 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        presentingViewController?.beginAppearanceTransition(true, animated: animated)
+        presentingViewController?.endAppearanceTransition()
+    }
     
     
     // UIDatePickerのDoneを押したら発火
@@ -123,7 +128,6 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     //編集機能
     @IBAction func editAction(_ sender: Any) {
-        print("dateField: \(dateField.text!)")
         let dateString = dateField.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
 //        print("dateField: \(date)")
@@ -139,7 +143,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
                     todo!.scheduledAt = selectedDate
                     todo!.isDone = isDone
                 }
-                self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         
     }

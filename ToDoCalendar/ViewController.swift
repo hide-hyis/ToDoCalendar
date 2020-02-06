@@ -53,7 +53,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+        
+        super.viewWillAppear(animated)
         myCalendar.reloadData()
         tableView.reloadData()
         doToDoCount()
