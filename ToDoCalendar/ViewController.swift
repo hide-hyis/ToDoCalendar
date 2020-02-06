@@ -60,7 +60,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         doToDoCount()
         if let presented = self.presentedViewController {
             if type(of: presented) == ToDoDetailViewController.self {
-                //PopupViewControllerから戻ってきたときはrefresh()
+                //詳細画面から戻ってきたときreload
                 myCalendar.reloadData()
                 tableView.reloadData()
             }
