@@ -97,6 +97,9 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         performSegue(withIdentifier: "goAddPage", sender: nil)
     }
     
+    @IBAction func goListAction(_ sender: Any) {
+        performSegue(withIdentifier: "goListPage", sender: nil)
+    }
     
     
     //選択した日付を取得

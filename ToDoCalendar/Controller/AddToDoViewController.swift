@@ -31,14 +31,8 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         contentTextField.layer.borderColor = UIColor.gray.cgColor
         contentTextField.layer.cornerRadius = 1.0
         
-//        print("selectedDateString変換前: \(selectedDateString)")
-        let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
-//        print("selectedDate変換後: \(selectedDate)")
         selectedDateLabel.text = selectedDateString
     }
-    
-    
-
     
     @IBAction func starButton(_ sender: Any) {
         ToDo.star1Button(star, star2, star3)
@@ -54,7 +48,24 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        if titleTextField.text!.count > 0 {
+//            let str = titleTextField.text!
+//            let beggingLetter = str.prefix(3)
+//            let overLetter = str[str.index(str.startIndex, offsetBy: 3)..<str.endIndex]
+//            let word = String(overLetter)
+//
+////            titleTextField.text.backgroundColor = UIColor(red: 0.7, green: 0.2, blue: 0.3, alpha: 0.7)
+////            print("over: \(overLetter)")
+//
+//            let text = NSMutableAttributedString(string: word)
+//            let endNum = str.count
+//            print("endNum: \(endNum)")
+//            text.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: NSMakeRange(0, 4))
+//            titleTextField.attributedText = text
+////            titleTextField.text = "\(str.prefix(15)) + \(overLetter)"
+//        }
+//    }
     // キーボードを閉じる
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -67,7 +78,8 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func saveAction(_ sender: Any) {
         
-        if titleTextField.text! != "" && contentTextField.text! != "" && priority != 0 {
+        if titleTextField.text! != "" && titleTextField.text!.count < 16
+            && contentTextField.text!.count < 201 && priority != 0 {
                     let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
                     let todo = ToDo()
                     todo.title = titleTextField.text!

@@ -99,6 +99,18 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.view.endEditing(true)
     }
     
+    //決定ボタンの無効/有効化
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if titleTextField.text == "" {
+            titleTextField.placeholder = "タイトルを入力してください"
+            editButton.setTitleColor(.gray, for: .disabled)
+            editButton.isEnabled = false
+        }else {
+            editButton.setTitleColor(.black, for: .normal)
+            editButton.isEnabled = true
+        }
+    }
+    
     //完了切替
     @IBAction func segmentAction(_ sender: Any) {
         
