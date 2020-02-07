@@ -20,6 +20,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var contentLabel: UITextView!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var priorityLabel: UILabel!
+    @IBOutlet var swipeGesture: UISwipeGestureRecognizer!
     
     
     override func viewDidLoad() {
@@ -30,6 +31,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         detailTextView.layer.borderWidth = 1.0
         detailTextView.layer.cornerRadius = 20.0
         detailTextView.layer.borderColor = UIColor.black.cgColor
+        swipeGesture.isEnabled = false
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        
     }
     
 
@@ -48,10 +52,56 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return todos.count
     }
     
+    //ソートの切替---->searh.sortを追加していくのではなくて更新してくように変更
+    @IBAction func segmentAction(_ sender: Any) {
+        let realm = try! Realm()
+        let search = Search()
+        switch (sender as AnyObject).selectedSegmentIndex {
+        case 0:
+            search.sort = "dateAt"
+            try! realm.write {
+              realm.add(search)
+            }
+            tableView.reloadData()
+        case 1:
+            search.sort = "scheduledAt"
+            try! realm.write {
+              realm.add(search)
+            }
+            tableView.reloadData()
+        case 2:
+            search.sort = "priority"
+            try! realm.write {
+              realm.add(search)
+            }
+            tableView.reloadData()
+        default:
+            return
+        }
+    }
+    
+    @IBAction func sortRev(_ sender: Any) {
+        let realm = try! Realm()
+//        let search = Search()
+        let search = realm.objects(Search.self).last
+        if search!.asc {
+            try! realm.write {
+            search!.asc = false
+            }
+        } else {
+            try! realm.write {
+                search!.asc = true
+            }
+        }
+        tableView.reloadData()
+    }
+    
     //セルの生成
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
+        let sortInstance = realm.objects(Search.self).last
+        let sort = sortInstance?.sort
+        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)")
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let todo = todos[indexPath.row]
         let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
@@ -107,6 +157,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             titleLabel.textColor = UIColor.black; contentLabel.textColor = UIColor.black
             dateLabel.textColor = UIColor.black;  priorityLabel.textColor = UIColor.black
         }
+        swipeGesture.isEnabled = true
     }
     
     //セルの編集許可
@@ -133,10 +184,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return [action]
     }
     
+    
     @IBAction func swipeUpAction(_ sender: Any) {
-        performSegue(withIdentifier: "goDetailPage", sender: nil)
+            performSegue(withIdentifier: "goDetailPage", sender: nil)
     }
     
+    //値の受渡し
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goDetailPage"{
             let nextVC = segue.destination as! ToDoDetailViewController

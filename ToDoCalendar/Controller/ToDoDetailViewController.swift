@@ -51,6 +51,10 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
             return
         }
         
+        contentTextView.layer.borderWidth = 1.0
+        contentTextView.layer.borderColor = UIColor.gray.cgColor
+        contentTextView.layer.cornerRadius = 1.0
+        
         DateUtils.pickerConfig(datePicker, dateField)
 
         // 決定バーの生成
@@ -65,6 +69,19 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         ToDo.isDoneDisplay(isDone, isDoneSegment)
         
+        // ナビゲーションバーの左に設置する.
+//        let count = (self.navigationController?.viewControllers.count)! - 2
+//        let buttonIcon1 = UIImage(named: "list.dash")
+//        let buttonIcon2 = UIImage(named: "calendar")
+//        if let previousViewController = self.navigationController?.viewControllers[count] as? ToDoListViewController {
+//            let barItemList = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.done, target: self, action: "backToList")
+//            barItemList.image = buttonIcon1
+//            self.navigationItem.leftBarButtonItem = barItemList
+//        } else {
+//            let barItemCalender = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.done, target: self, action: "backToCalendar:")
+//             barItemCalender.image = buttonIcon2
+//            self.navigationItem.leftBarButtonItem = barItemCalender
+//        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -189,6 +206,14 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.dismiss(animated: true, completion: nil)
     }
     
-    
+//    func backToList(_ sender:UIBarButtonItem!)
+//    {
+//        self.dismiss(animated: true, completion: nil)
+//    }
+//
+//    func backToCalendar(_ sender:UIBarButtonItem!)
+//    {
+//        self.dismiss(animated: true, completion: nil)
+//    }
 
 }

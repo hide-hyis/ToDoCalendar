@@ -128,6 +128,9 @@
                                     <segment title="予定日順"/>
                                     <segment title="優先度順"/>
                                 </segments>
+                                <connections>
+                                    <action selector="segmentAction:" destination="bdS-bl-A0X" eventType="valueChanged" id="oqc-Lq-pax"/>
+                                </connections>
                             </segmentedControl>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qIP-ah-HvB">
                                 <rect key="frame" x="269" y="203" width="125" height="32"/>
@@ -141,13 +144,16 @@
                                 <rect key="frame" x="205" y="153" width="41" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button" image="並べ替え矢印"/>
+                                <connections>
+                                    <action selector="sortRev:" destination="bdS-bl-A0X" eventType="touchUpInside" id="naj-5K-vrT"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p99-Bi-sRQ">
                                 <rect key="frame" x="0.0" y="699" width="414" height="197"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="タイトル" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cgO-ND-MRu">
-                                        <rect key="frame" x="38" y="35" width="70" height="21"/>
+                                        <rect key="frame" x="38" y="35" width="131" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -229,6 +235,7 @@
                         <outlet property="detailTextView" destination="p99-Bi-sRQ" id="I9E-ug-ouk"/>
                         <outlet property="priorityLabel" destination="QG2-DE-V3p" id="7gd-RT-Lqp"/>
                         <outlet property="sortSegment" destination="sRx-ip-YaY" id="itV-ot-dNw"/>
+                        <outlet property="swipeGesture" destination="jR4-sU-eBU" id="gpc-dJ-pTk"/>
                         <outlet property="tableView" destination="rTa-Om-cEV" id="ifv-dJ-TEq"/>
                         <outlet property="titleLabel" destination="cgO-ND-MRu" id="0GU-no-YDX"/>
                     </connections>

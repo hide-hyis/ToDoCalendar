@@ -49,7 +49,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
         doToDoCount()
-//        print("RealmFile: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
 
     override func viewWillAppear(_ animated: Bool) {
