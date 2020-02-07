@@ -41,4 +41,26 @@ class ToDo: Object {
         }
     }
     
+    class func invalidButton( _ button:UIButton){
+        button.isEnabled = false
+        button.setTitleColor(.gray, for: .disabled)
+    }
+    
+    class func validButton( _ button:UIButton){
+        button.isEnabled = true
+        button.setTitleColor(.black, for: .normal)
+    }
+    
+//    class func stringPriority( _ todo:Object) -> Void{
+//        switch todo.priority {
+//        case 1:
+//             "★"
+//        case 2:
+//             "★★"
+//        case 3:
+//             "★★★"
+//        default:
+//            ""
+//        }
+//    }
 }

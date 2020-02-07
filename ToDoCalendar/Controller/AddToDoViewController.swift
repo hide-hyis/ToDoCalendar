@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class AddToDoViewController: UIViewController, UITextFieldDelegate {
+class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     
     @IBOutlet weak var selectedDateLabel: UILabel!
@@ -19,6 +19,8 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
+    @IBOutlet weak var addButton: UIButton!
+    
     var selectedDateString = String()
     
     var priority = 1
@@ -27,11 +29,13 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         titleTextField.delegate = self
+        contentTextField.delegate = self
         contentTextField.layer.borderWidth = 1.0
         contentTextField.layer.borderColor = UIColor.gray.cgColor
         contentTextField.layer.cornerRadius = 1.0
         
         selectedDateLabel.text = selectedDateString
+        
     }
     
     @IBAction func starButton(_ sender: Any) {
@@ -48,24 +52,45 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        if titleTextField.text!.count > 0 {
-//            let str = titleTextField.text!
-//            let beggingLetter = str.prefix(3)
-//            let overLetter = str[str.index(str.startIndex, offsetBy: 3)..<str.endIndex]
-//            let word = String(overLetter)
-//
-////            titleTextField.text.backgroundColor = UIColor(red: 0.7, green: 0.2, blue: 0.3, alpha: 0.7)
-////            print("over: \(overLetter)")
-//
-//            let text = NSMutableAttributedString(string: word)
-//            let endNum = str.count
-//            print("endNum: \(endNum)")
-//            text.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: NSMakeRange(0, 4))
-//            titleTextField.attributedText = text
-////            titleTextField.text = "\(str.prefix(15)) + \(overLetter)"
-//        }
-//    }
+//入力値制限アラート
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let limitedNum = 15
+        if titleTextField.text! == "" {
+            ToDo.invalidButton(addButton)
+        }else {
+            if titleTextField.text!.count > 15 {
+                let str = titleTextField.text!
+                let attrText = NSMutableAttributedString(string: str)
+                attrText.addAttributes([
+                    .foregroundColor: UIColor.gray,
+                    .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
+                ], range: NSMakeRange(limitedNum, str.count - limitedNum)
+                )
+                titleTextField.attributedText = attrText
+                ToDo.invalidButton(addButton)
+            }else {
+                ToDo.validButton(addButton)
+            }
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let limitedNum = 200
+        if contentTextField.text!.count > limitedNum {
+            let str = contentTextField.text!
+            let attrText = NSMutableAttributedString(string: str)
+            attrText.addAttributes([
+                .foregroundColor: UIColor.gray,
+                .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
+            ], range: NSMakeRange(limitedNum, str.count - limitedNum)
+            )
+            contentTextField.attributedText = attrText
+            ToDo.invalidButton(addButton)
+        } else{
+            ToDo.validButton(addButton)
+        }
+    }
+    
     // キーボードを閉じる
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

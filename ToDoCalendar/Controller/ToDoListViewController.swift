@@ -15,12 +15,16 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var sortSegment: UISegmentedControl!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var contentLabel: UITextView!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var priorityLabel: UILabel!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
-        
         tableView.delegate = self
         tableView.dataSource = self
         detailTextView.layer.borderWidth = 1.0
@@ -80,6 +84,29 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     //セルクリックで詳細表示
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         
+        let realm = try! Realm()
+        let todos = realm.objects(ToDo.self)
+        let todo = todos[indexPath.row]
+        titleLabel.text = todo.title
+        contentLabel.text = todo.content
+        dateLabel.text = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
+        switch todo.priority {
+        case 1:
+            priorityLabel.text = "★"
+        case 2:
+            priorityLabel.text = "★★"
+        case 3:
+            priorityLabel.text = "★★★"
+        default:
+            priorityLabel.text = ""
+        }
+        if todo.isDone == true {
+            titleLabel.textColor = UIColor.gray; contentLabel.textColor = UIColor.gray
+            dateLabel.textColor = UIColor.gray; priorityLabel.textColor = UIColor.gray
+        } else {
+            titleLabel.textColor = UIColor.black; contentLabel.textColor = UIColor.black
+            dateLabel.textColor = UIColor.black;  priorityLabel.textColor = UIColor.black
+        }
     }
     
     //セルの編集許可
@@ -104,5 +131,24 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             tableView.reloadData()
         }
         return [action]
+    }
+    
+    @IBAction func swipeUpAction(_ sender: Any) {
+        performSegue(withIdentifier: "goDetailPage", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goDetailPage"{
+            let nextVC = segue.destination as! ToDoDetailViewController
+            nextVC.titleString = titleLabel.text!
+            let realm = try! Realm()
+            let todo = realm.objects(ToDo.self).filter(" title == %@", titleLabel.text!).first
+            let dateString = DateUtils.stringFromDate(date: todo!.scheduledAt, format: "yyyy年MM月d日")
+            nextVC.selectedDateString = dateString
+            nextVC.titleString = todo!.title
+            nextVC.contentString = todo!.content
+            nextVC.priority = todo!.priority
+            nextVC.isDone = todo!.isDone
+        }
     }
 }

@@ -103,11 +103,9 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     func textFieldDidEndEditing(_ textField: UITextField) {
         if titleTextField.text == "" {
             titleTextField.placeholder = "タイトルを入力してください"
-            editButton.setTitleColor(.gray, for: .disabled)
-            editButton.isEnabled = false
+            ToDo.invalidButton(editButton)
         }else {
-            editButton.setTitleColor(.black, for: .normal)
-            editButton.isEnabled = true
+            ToDo.validButton(editButton)
         }
     }
     
