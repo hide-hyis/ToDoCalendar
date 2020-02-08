@@ -40,6 +40,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
+        
     }
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -173,7 +174,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         let sortInstance = realm.objects(Search.self).last
         let sort = sortInstance?.sort
         let asc = sortInstance?.asc
-        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!)
+        let isDone = sortInstance?.isDone
+        let isDoneString : String = String(isDone!)
+        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
         let todo = todos[indexPath.row]
         titleLabel.text = todo.title
         contentLabel.text = todo.content

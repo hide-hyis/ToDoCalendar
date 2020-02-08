@@ -35,7 +35,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         contentTextField.layer.cornerRadius = 1.0
         
         selectedDateLabel.text = selectedDateString
-        
+
     }
     
     @IBAction func starButton(_ sender: Any) {
@@ -54,41 +54,11 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
     
 //入力値制限アラート
     func textFieldDidEndEditing(_ textField: UITextField) {
-        let limitedNum = 15
-        if titleTextField.text! == "" {
-            ToDo.invalidButton(addButton)
-        }else {
-            if titleTextField.text!.count > 15 {
-                let str = titleTextField.text!
-                let attrText = NSMutableAttributedString(string: str)
-                attrText.addAttributes([
-                    .foregroundColor: UIColor.gray,
-                    .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
-                ], range: NSMakeRange(limitedNum, str.count - limitedNum)
-                )
-                titleTextField.attributedText = attrText
-                ToDo.invalidButton(addButton)
-            }else {
-                ToDo.validButton(addButton)
-            }
-        }
+        ToDo.textFieldAlert(titleTextField, addButton, 15)
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        let limitedNum = 200
-        if contentTextField.text!.count > limitedNum {
-            let str = contentTextField.text!
-            let attrText = NSMutableAttributedString(string: str)
-            attrText.addAttributes([
-                .foregroundColor: UIColor.gray,
-                .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
-            ], range: NSMakeRange(limitedNum, str.count - limitedNum)
-            )
-            contentTextField.attributedText = attrText
-            ToDo.invalidButton(addButton)
-        } else{
-            ToDo.validButton(addButton)
-        }
+        ToDo.textViewdAlert(contentTextField, addButton, 200)
     }
     
     // キーボードを閉じる

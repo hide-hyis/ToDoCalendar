@@ -118,12 +118,19 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     //決定ボタンの無効/有効化
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        ToDo.textFieldAlert(titleTextField, editButton, 15)
         if titleTextField.text == "" {
             titleTextField.placeholder = "タイトルを入力してください"
             ToDo.invalidButton(editButton)
         }else {
             ToDo.validButton(editButton)
         }
+    }
+    
+    
+    func textViewDidChange(_ textView: UITextView) {
+        ToDo.textViewdAlert(contentTextView, editButton, 200)
     }
     
     //完了切替
@@ -159,17 +166,22 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
 //        print("dateField: \(date)")
         let realm = try! Realm()
-        let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
-//        let editTitle:String = titleTextField.text!
-//        print("編集タイトル: \(editTitle)")
+        let todo = realm.objects(ToDo.self).filter(" title == %@", titleString).first
+        let editTitle:String = titleTextField.text!
         if titleTextField.text != "" {
                 try! realm.write{
-        //            todo!.title = editTitle
+                    todo!.title = editTitle
                     todo!.content = contentTextView.text
                     todo!.priority = priority
                     todo!.scheduledAt = selectedDate
                     todo!.isDone = isDone
                 }
+            //self.presentingViewControllerはNavigationControllerが格納
+//            let nvc = self.presentingViewController as! UINavigationController
+            //遷移元のViewControllerを取り出す
+//            print("遷移元の画面: \(nvc)")
+//            let vc = nvc.viewControllers[0] as! ViewController
+//            print("遷移元の画面: \(vc)")
             self.dismiss(animated: true, completion: nil)
         }
         
