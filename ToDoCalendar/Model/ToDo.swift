@@ -17,21 +17,6 @@ class ToDo: Object {
     @objc dynamic var dateAt: Date = NSDate() as Date
     @objc dynamic var isDone: Bool = false
     
-    class func star1Button(_ star:UIButton, _ star2:UIButton, _ star3:UIButton){
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.gray, for: .normal)
-        star3.setTitleColor(UIColor.gray, for: .normal)
-    }
-    class func star2Button(_ star:UIButton, _ star2:UIButton, _ star3:UIButton){
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.black, for: .normal)
-        star3.setTitleColor(UIColor.gray, for: .normal)
-    }
-    class func star3Button(_ star:UIButton, _ star2:UIButton, _ star3:UIButton){
-        star.setTitleColor(UIColor.black, for: .normal)
-        star2.setTitleColor(UIColor.black, for: .normal)
-        star3.setTitleColor(UIColor.black, for: .normal)
-    }
     
     class func isDoneDisplay( _ isDone:Bool, _ isDoneSegment:UISegmentedControl){
         if isDone {

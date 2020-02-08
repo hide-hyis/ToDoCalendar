@@ -30,24 +30,22 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
 
         titleTextField.delegate = self
         contentTextField.delegate = self
-        contentTextField.layer.borderWidth = 1.0
-        contentTextField.layer.borderColor = UIColor.gray.cgColor
-        contentTextField.layer.cornerRadius = 1.0
+        Layout.textViewOutLine(contentTextField)
         
         selectedDateLabel.text = selectedDateString
 
     }
     
     @IBAction func starButton(_ sender: Any) {
-        ToDo.star1Button(star, star2, star3)
+        Layout.star1Button(star, star2, star3)
         priority = 1
     }
     @IBAction func star2Button(_ sender: Any) {
-        ToDo.star2Button(star, star2, star3)
+        Layout.star2Button(star, star2, star3)
         priority = 2
     }
     @IBAction func star3Button(_ sender: Any) {
-        ToDo.star3Button(star, star2, star3)
+        Layout.star3Button(star, star2, star3)
         priority = 3
         
     }

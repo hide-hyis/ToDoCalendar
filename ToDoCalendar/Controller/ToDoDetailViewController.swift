@@ -39,13 +39,13 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         titleTextField.text = titleString
         switch priority {
         case 1:
-            ToDo.star1Button(star1, star2, star3)
+            Layout.star1Button(star1, star2, star3)
             priority = 1
         case 2:
-            ToDo.star2Button(star1, star2, star3)
+            Layout.star2Button(star1, star2, star3)
             priority = 2
         case 3:
-            ToDo.star3Button(star1, star2, star3)
+            Layout.star3Button(star1, star2, star3)
             priority = 3
         default:
             return
@@ -148,15 +148,15 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     
     @IBAction func star1Action(_ sender: Any) {
-        ToDo.star1Button(star1, star2, star3)
+        Layout.star1Button(star1, star2, star3)
         priority = 1
     }
     @IBAction func star2Action(_ sender: Any) {
-        ToDo.star2Button(star1, star2, star3)
+        Layout.star2Button(star1, star2, star3)
         priority = 2
     }
     @IBAction func star3Action(_ sender: Any) {
-        ToDo.star3Button(star1, star2, star3)
+        Layout.star3Button(star1, star2, star3)
         priority = 3
     }
     

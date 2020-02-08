@@ -11,8 +11,6 @@ import RealmSwift
 
 class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
     
-    
-    
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortSegment: UISegmentedControl!
