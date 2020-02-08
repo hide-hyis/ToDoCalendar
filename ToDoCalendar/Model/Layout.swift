@@ -32,4 +32,6 @@ class Layout: Object {
         star2.setTitleColor(UIColor.black, for: .normal)
         star3.setTitleColor(UIColor.black, for: .normal)
     }
+    
+    
 }

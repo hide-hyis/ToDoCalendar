@@ -12,18 +12,60 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextView: UITextView!
+    @IBOutlet weak var dateFromTextField: UITextField!
+    @IBOutlet weak var dateToTextField: UITextField!
     @IBOutlet weak var star1: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
     
-    var priority = 1
+    var priority = Int()
+    var datePicker: UIDatePicker = UIDatePicker()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         titleTextField.delegate = self
         Layout.textViewOutLine(contentTextView)
-        // Do any additional setup after loading the view.
+        
+        DateUtils.pickerConfig(datePicker, dateFromTextField)
+        DateUtils.pickerConfig(datePicker, dateToTextField)
+        
+        // 決定バーの生成
+        let toolbar1 = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
+        let toolbar2 = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        
+        let doneItem1 = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone1))
+        toolbar1.setItems([spacelItem, doneItem1], animated: true)
+        let doneItem2 = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone2))
+        toolbar2.setItems([spacelItem, doneItem2], animated: true)
+        
+        dateFromTextField.inputView = datePicker
+        dateFromTextField.inputAccessoryView = toolbar1
+        dateToTextField.inputView = datePicker
+        dateToTextField.inputAccessoryView = toolbar2
+        
+    }
+    
+    // UIDatePickerのDoneを押したら発火
+    @objc func dateDone1() {
+        dateFromTextField.endEditing(true)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年MM月dd日"
+        dateFromTextField.text = "\(formatter.string(from: datePicker.date))"
+        print("dateDone1")
+    }
+    @objc func dateDone2() {
+        dateToTextField.endEditing(true)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年MM月dd日"
+        dateToTextField.text = "\(formatter.string(from: datePicker.date))"
+        print("dateDone2")
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     // キーボードを閉じる
@@ -53,5 +95,21 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         self.dismiss(animated: true, completion: nil)
     }
     
-
+    @IBAction func searchAction(_ sender: Any) {
+        let titleString = titleTextField.text!
+        let contentString = contentTextView.text!
+        let priorityString = String(priority)
+        let dateFromString = dateFromTextField.text!
+        let dateToString = dateToTextField.text!
+        let searchKeys:[String: String] = ["title": titleString
+            , "content": contentString,"dateFrom": dateFromString,
+              "dateTo": dateToString, "priority": priorityString]
+        print("辞書の中身確認: \(searchKeys)")
+        for (key, value) in searchKeys {
+            if value != "" && value != "0"{
+                print("項目: \(key), 中身: \(value)")
+            }
+        }
+    }
+    
 }

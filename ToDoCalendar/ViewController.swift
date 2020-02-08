@@ -49,8 +49,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
         doToDoCount()
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
+//        let realm = try! Realm()
+//        let name = ""
+//        let todos = realm.objects(ToDo.self).filter("title == \(name)")
+//        print("検索結果: \(todos)")
+//        if nameKeyWord = "" && content = ""
     }
 
     override func viewWillAppear(_ animated: Bool) {
