@@ -139,6 +139,9 @@
                                     <segment title="未完"/>
                                     <segment title="完了"/>
                                 </segments>
+                                <connections>
+                                    <action selector="switchIsDone:" destination="bdS-bl-A0X" eventType="valueChanged" id="3Wu-IU-nxu"/>
+                                </connections>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j1J-eF-5ed">
                                 <rect key="frame" x="205" y="153" width="41" height="42"/>
@@ -218,6 +221,13 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="otp-wi-GoP">
+                                <rect key="frame" x="289" y="153" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="検索">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="VQi-ZH-Uk5"/>

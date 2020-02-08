@@ -45,34 +45,25 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         self.navigationController?.popViewController(animated: true)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
-        return todos.count
-    }
     
-    //ソートの切替---->searh.sortを追加していくのではなくて更新してくように変更
+    //ソートの切替
     @IBAction func segmentAction(_ sender: Any) {
         let realm = try! Realm()
-        let search = Search()
+        let search = realm.objects(Search.self).first
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
-            search.sort = "dateAt"
             try! realm.write {
-              realm.add(search)
+                search!.sort = "dateAt"
             }
             tableView.reloadData()
         case 1:
-            search.sort = "scheduledAt"
             try! realm.write {
-              realm.add(search)
+                search!.sort = "scheduledAt"
             }
             tableView.reloadData()
         case 2:
-            search.sort = "priority"
             try! realm.write {
-              realm.add(search)
+                search!.sort = "priority"
             }
             tableView.reloadData()
         default:
@@ -80,9 +71,30 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
+//    未完/完了ボタン切替処理
+    @IBAction func switchIsDone(_ sender: Any) {
+        let realm = try! Realm()
+        let search = realm.objects(Search.self).last
+        switch (sender as AnyObject).selectedSegmentIndex {
+        case 0:
+            try! realm.write {
+                search!.isDone = false
+            }
+            tableView.reloadData()
+        case 1:
+            try! realm.write {
+                search!.isDone = true
+            }
+            tableView.reloadData()
+        default:
+            return
+        }
+    }
+    
+    
+    //逆順切替
     @IBAction func sortRev(_ sender: Any) {
         let realm = try! Realm()
-//        let search = Search()
         let search = realm.objects(Search.self).last
         if search!.asc {
             try! realm.write {
@@ -96,12 +108,34 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
     }
     
-    //セルの生成
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    //セルの数
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         let realm = try! Realm()
         let sortInstance = realm.objects(Search.self).last
         let sort = sortInstance?.sort
-        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)")
+        let asc = sortInstance?.asc
+        let isDone = sortInstance?.isDone
+        let isDoneString : String = String(isDone!)
+        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        return todos.count
+    }
+    
+    //セルの生成
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let realm = try! Realm()
+        if realm.objects(Search.self).count == 0 {
+            let search1 = Search()
+            try! realm.write {
+              realm.add(search1)
+            }
+        }
+        let sortInstance = realm.objects(Search.self).last
+        let sort = sortInstance?.sort
+        let asc = sortInstance?.asc
+        let isDone = sortInstance?.isDone
+        let isDoneString : String = String(isDone!)
+        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let todo = todos[indexPath.row]
         let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
@@ -131,11 +165,15 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return cell
     }
     
-    //セルクリックで詳細表示
+    
+    //セルクリックで下部詳細表示
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         
         let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
+        let sortInstance = realm.objects(Search.self).last
+        let sort = sortInstance?.sort
+        let asc = sortInstance?.asc
+        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!)
         let todo = todos[indexPath.row]
         titleLabel.text = todo.title
         contentLabel.text = todo.content
