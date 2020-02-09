@@ -9,7 +9,9 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
+class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol {
+    
+    
     
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
@@ -20,6 +22,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var priorityLabel: UILabel!
     @IBOutlet var swipeGesture: UISwipeGestureRecognizer!
     
+    var titleKey = String()
+    var contentKey = String()
+    var dateFromKey = Date()
+    var dateToKey = Date()
+    var priority = Int()
+    var keysForSort = [String:String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +48,17 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
         
     }
+    
+    func catchData(key: [String : String]) {
+        keysForSort = key
+        print("引継いだ内容\(keysForSort)")
+        titleKey = key["title"]!
+        contentKey = key["content"]!
+        dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日")
+        dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日")
+        priority = Int(key["priority"]!)!
+    }
+    
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -89,7 +108,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             return
         }
     }
-    
     
     //逆順切替
     @IBAction func sortRev(_ sender: Any) {
@@ -242,5 +260,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             nextVC.priority = todo!.priority
             nextVC.isDone = todo!.isDone
         }
+        let nextVC = segue.destination as! SearchViewController
+        nextVC.delegate = self
+        
     }
 }

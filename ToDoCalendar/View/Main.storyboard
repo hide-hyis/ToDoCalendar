@@ -228,7 +228,7 @@
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
-                                    <segue destination="ci9-LV-eZ7" kind="presentation" id="ujg-q5-dY8"/>
+                                    <segue destination="ci9-LV-eZ7" kind="presentation" identifier="goSearchPage" id="ujg-q5-dY8"/>
                                 </connections>
                             </button>
                         </subviews>
