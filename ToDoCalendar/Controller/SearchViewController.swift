@@ -116,7 +116,6 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
                 searchKeys.updateValue(value, forKey: key)
             }
         }
-//        print(("searchKeys: \(searchKeys)"))
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
     }
