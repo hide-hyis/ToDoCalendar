@@ -9,7 +9,9 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
+class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol {
+    
+    
     
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
@@ -20,6 +22,15 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var priorityLabel: UILabel!
     @IBOutlet var swipeGesture: UISwipeGestureRecognizer!
     
+    var titleKey: String?
+    var contentKey: String?
+    var dateFromKey: Date?
+    var dateToKey: Date?
+    var priority: Int?
+    var keysForSort = [String:String]()
+    var keyNumber = Int()
+    var predicates: [NSPredicate] = []
+    var compoundedPredicate: NSCompoundPredicate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +51,24 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
         
     }
+    
+    //検索内容の受取
+    func catchData(key: [String : String]) {
+        predicates = [] //検索内容の初期化
+        keysForSort = key
+        keyNumber = keysForSort.count//　いらないかも
+        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS %@", key["title"]!)) }
+        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS %@", key["content"]!)) }
+        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日") }
+        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日") }
+        if dateFromKey != nil && dateToKey != nil { predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg)) }
+        if key["priority"] != nil { priority = Int(key["priority"]!)! }
+        if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
+        compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        print("predicates: \(predicates)")
+        tableView.reloadData()
+    }
+    
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -90,7 +119,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
-    
     //逆順切替
     @IBAction func sortRev(_ sender: Any) {
         let realm = try! Realm()
@@ -111,12 +139,21 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let realm = try! Realm()
+        if realm.objects(Search.self).count == 0 {
+            let search1 = Search()
+            try! realm.write {
+              realm.add(search1)
+            }
+        }
         let sortInstance = realm.objects(Search.self).last
         let sort = sortInstance?.sort
         let asc = sortInstance?.asc
         let isDone = sortInstance?.isDone
         let isDoneString : String = String(isDone!)
-        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        if compoundedPredicate != nil {
+            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+        }
         return todos.count
     }
     
@@ -134,7 +171,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         let asc = sortInstance?.asc
         let isDone = sortInstance?.isDone
         let isDoneString : String = String(isDone!)
-        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        if compoundedPredicate != nil {
+            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let todo = todos[indexPath.row]
         let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
@@ -174,7 +214,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         let asc = sortInstance?.asc
         let isDone = sortInstance?.isDone
         let isDoneString : String = String(isDone!)
-        let todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        if compoundedPredicate != nil {
+            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+        }
         let todo = todos[indexPath.row]
         titleLabel.text = todo.title
         contentLabel.text = todo.content
@@ -242,5 +285,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             nextVC.priority = todo!.priority
             nextVC.isDone = todo!.isDone
         }
+        let nextVC = segue.destination as! SearchViewController
+        nextVC.delegate = self
     }
+    
+    
 }

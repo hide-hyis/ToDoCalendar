@@ -22,6 +22,7 @@
 		D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0623E13028008A522A /* AddToDoViewController.swift */; };
 		D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0823E18B5E008A522A /* DateUtils.swift */; };
 		D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */; };
+		D2D7596323F12EA900DA8437 /* NSpredicaete.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7596223F12EA900DA8437 /* NSpredicaete.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		D29ABF0623E13028008A522A /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
 		D29ABF0823E18B5E008A522A /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
+		D2D7596223F12EA900DA8437 /* NSpredicaete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSpredicaete.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 				D29ABF0823E18B5E008A522A /* DateUtils.swift */,
 				89C49AB523ED835C00BABB0D /* Search.swift */,
 				89C49AB923EEC15500BABB0D /* Layout.swift */,
+				D2D7596223F12EA900DA8437 /* NSpredicaete.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 				89C49AB623ED835C00BABB0D /* Search.swift in Sources */,
 				D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */,
 				D261404D23D690C10036161E /* ViewController.swift in Sources */,
+				D2D7596323F12EA900DA8437 /* NSpredicaete.swift in Sources */,
 				D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */,
 				D261404923D690C10036161E /* AppDelegate.swift in Sources */,
 				D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */,

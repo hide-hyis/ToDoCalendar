@@ -215,14 +215,5 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.dismiss(animated: true, completion: nil)
     }
     
-//    func backToList(_ sender:UIBarButtonItem!)
-//    {
-//        self.dismiss(animated: true, completion: nil)
-//    }
-//
-//    func backToCalendar(_ sender:UIBarButtonItem!)
-//    {
-//        self.dismiss(animated: true, completion: nil)
-//    }
 
 }

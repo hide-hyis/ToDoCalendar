@@ -49,12 +49,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
         
         doToDoCount()
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
-//        let realm = try! Realm()
-//        let name = ""
-//        let todos = realm.objects(ToDo.self).filter("title == \(name)")
-//        print("検索結果: \(todos)")
-//        if nameKeyWord = "" && content = ""
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        
+//        makeData(number: 20)
+//        for _ in 0 ... 20 {
+//            print(arc4random(lower: 1, upper: 4))
+//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -162,7 +162,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         if self.judgeHoliday(date){
             return UIColor.red
         }
-
         //土日の判定を行う（土曜日は青色、日曜日は赤色で表示する）
         let weekday = self.getWeekIdx(date)
         if weekday == 1 {   //日曜日
@@ -171,7 +170,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         else if weekday == 7 {  //土曜日
             return UIColor.red
         }
-
         return nil
     }
     
@@ -321,6 +319,33 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return [action]
     }
     
-        
+    
+    func makeData(number:Int){
+        let realm = try! Realm()
+        let todosCount = realm.objects(ToDo.self).count
+        if todosCount < number {
+            for i in 1...number{
+                var randMon = String(randomNum(lower: 1, upper: 13))
+                var randDay = String(randomNum(lower: 1, upper: 30))
+                let todoi = ToDo()
+                todoi.title = "titleNo.\(i)"
+                todoi.content = "contentNo.\(i)"
+                todoi.priority = Int(randomNum(lower: 1, upper: 4))
+                todoi.scheduledAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
+                todoi.dateAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
+                try! realm.write{
+                    realm.add(todoi)
+                }
+            }
+        }
+
+    }
+    //ランダムな整数を返す
+    func randomNum(lower: UInt32, upper: UInt32) -> UInt32 {
+        guard upper >= lower else {
+            return 0
+        }
+        return arc4random_uniform(upper - lower) + lower
+    }
 }
 

@@ -80,16 +80,7 @@ class ToDo: Object {
         }
     }
     
-//    class func stringPriority( _ todo:Object) -> Void{
-//        switch todo.priority {
-//        case 1:
-//             "★"
-//        case 2:
-//             "★★"
-//        case 3:
-//             "★★★"
-//        default:
-//            ""
-//        }
-//    }
+    
 }
+
+

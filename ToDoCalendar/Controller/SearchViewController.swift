@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol CatchProtocol {
+    func catchData(key:[String: String])
+}
+
 class SearchViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var titleTextField: UITextField!
@@ -17,9 +21,10 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star1: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
-    
+    var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
     var datePicker: UIDatePicker = UIDatePicker()
+    var delegate:CatchProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,20 +101,24 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func searchAction(_ sender: Any) {
+        
         let titleString = titleTextField.text!
         let contentString = contentTextView.text!
         let priorityString = String(priority)
         let dateFromString = dateFromTextField.text!
         let dateToString = dateToTextField.text!
-        let searchKeys:[String: String] = ["title": titleString
-            , "content": contentString,"dateFrom": dateFromString,
+        let inputDictionary:[String: String] = ["title": titleString,
+              "content": contentString,"dateFrom": dateFromString,
               "dateTo": dateToString, "priority": priorityString]
-        print("辞書の中身確認: \(searchKeys)")
-        for (key, value) in searchKeys {
-            if value != "" && value != "0"{
-                print("項目: \(key), 中身: \(value)")
+        var searchKeys = [String: String]()
+        for (key, value) in inputDictionary {
+            if value != "" && value != "0" && value != "選択" {
+                searchKeys.updateValue(value, forKey: key)
             }
         }
+//        print(("searchKeys: \(searchKeys)"))
+        delegate?.catchData(key: searchKeys)
+        self.dismiss(animated: true)
     }
     
 }
