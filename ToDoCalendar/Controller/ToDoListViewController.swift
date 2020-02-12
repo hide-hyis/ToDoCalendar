@@ -63,8 +63,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         predicates = [] //検索内容の初期化
         keysForSort = key
         keyNumber = keysForSort.count//　いらないかも
-        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS %@", key["title"]!)) }
-        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS %@", key["content"]!)) }
+        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
+        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
         if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日") }
         if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日") }
         if dateFromKey != nil && dateToKey != nil { predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg)) }
