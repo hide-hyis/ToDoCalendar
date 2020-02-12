@@ -257,7 +257,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         let realm = try! Realm()
         let todos = realm.objects(ToDo.self)
         let action = UITableViewRowAction(style: .normal, title: todos[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
-            
             if todos[indexPath.row].isDone {
                 try! realm.write {
                   todos[indexPath.row].isDone = false
@@ -296,6 +295,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     @IBAction func clearAction(_ sender: Any) {
+        if compoundedPredicate != nil {
+            predicates = []
+            compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            tableView.reloadData()
+        }
     }
     
 
