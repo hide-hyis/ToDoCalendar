@@ -222,13 +222,25 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="otp-wi-GoP">
-                                <rect key="frame" x="289" y="153" width="31" height="30"/>
+                                <rect key="frame" x="278" y="148" width="49" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="検索">
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
                                     <segue destination="ci9-LV-eZ7" kind="presentation" identifier="goSearchPage" id="ujg-q5-dY8"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GGv-TB-4ql">
+                                <rect key="frame" x="335" y="148" width="49" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="クリア">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearAction:" destination="bdS-bl-A0X" eventType="touchUpInside" id="ase-rx-Rgp"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -243,10 +255,12 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="clearButton" destination="GGv-TB-4ql" id="uJz-Oe-sKv"/>
                         <outlet property="contentLabel" destination="a3s-1l-cyH" id="xtT-Fz-FF0"/>
                         <outlet property="dateLabel" destination="8PH-2q-VbW" id="O0K-8Q-Y21"/>
                         <outlet property="detailTextView" destination="p99-Bi-sRQ" id="I9E-ug-ouk"/>
                         <outlet property="priorityLabel" destination="QG2-DE-V3p" id="7gd-RT-Lqp"/>
+                        <outlet property="searchButton" destination="otp-wi-GoP" id="fe6-KD-UL8"/>
                         <outlet property="sortSegment" destination="sRx-ip-YaY" id="itV-ot-dNw"/>
                         <outlet property="swipeGesture" destination="jR4-sU-eBU" id="gpc-dJ-pTk"/>
                         <outlet property="tableView" destination="rTa-Om-cEV" id="ifv-dJ-TEq"/>

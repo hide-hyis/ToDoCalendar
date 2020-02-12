@@ -51,7 +51,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         doToDoCount()
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         
-//        makeData(number: 20)
+        makeData(number: 20)
 //        for _ in 0 ... 20 {
 //            print(arc4random(lower: 1, upper: 4))
 //        }

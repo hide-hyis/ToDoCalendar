@@ -21,6 +21,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var priorityLabel: UILabel!
     @IBOutlet var swipeGesture: UISwipeGestureRecognizer!
+    @IBOutlet weak var searchButton: UIButton!
+    @IBOutlet weak var clearButton: UIButton!
     
     var titleKey: String?
     var contentKey: String?
@@ -42,6 +44,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         detailTextView.layer.borderColor = UIColor.black.cgColor
         swipeGesture.isEnabled = false
 //        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        searchButton.layer.borderWidth = 1.0
+        searchButton.layer.cornerRadius = 10.0
+        clearButton.layer.borderWidth = 1.0
+        clearButton.layer.cornerRadius = 10.0
         
     }
     
@@ -289,6 +295,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         nextVC.delegate = self
     }
     
+    @IBAction func clearAction(_ sender: Any) {
+    }
     
 
     
