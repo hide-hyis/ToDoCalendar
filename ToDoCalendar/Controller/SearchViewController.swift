@@ -50,7 +50,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         dateFromTextField.inputAccessoryView = toolbar1
         dateToTextField.inputView = datePicker
         dateToTextField.inputAccessoryView = toolbar2
-        
+        datePicker.locale = NSLocale(localeIdentifier: "ja_JP") as Locale
     }
     
     // UIDatePickerのDoneを押したら発火

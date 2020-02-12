@@ -37,6 +37,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //        print(Realm.Configuration.defaultConfiguration.fileURL!)
         self.navigationItem.hidesBackButton = true
         tableView.delegate = self
         tableView.dataSource = self
@@ -44,7 +45,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         detailTextView.layer.cornerRadius = 20.0
         detailTextView.layer.borderColor = UIColor.black.cgColor
         swipeGesture.isEnabled = false
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
         searchButton.layer.borderWidth = 1.0
         searchButton.layer.cornerRadius = 10.0
         clearButton.layer.borderWidth = 1.0
