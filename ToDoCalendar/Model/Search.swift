@@ -13,6 +13,6 @@ class Search: Object {
     @objc dynamic var asc: Bool  = true//昇順・降順の切替フラグ
     @objc dynamic var isDone: Bool  = false//完了/未完の切替フラグ
     
-
+    
     
 }

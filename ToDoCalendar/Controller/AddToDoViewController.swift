@@ -85,7 +85,6 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
                     try! realm.write{
                         realm.add(todo)
                     }
-        //            print("RealmファイルURL: \(Realm.Configuration.defaultConfiguration.fileURL!)")
                     self.navigationController?.popViewController(animated: true)
                 } else{
                     print("項目を全て記入してください")

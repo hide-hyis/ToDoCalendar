@@ -50,7 +50,6 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         dateFromTextField.inputAccessoryView = toolbar1
         dateToTextField.inputView = datePicker
         dateToTextField.inputAccessoryView = toolbar2
-        datePicker.locale = NSLocale(localeIdentifier: "ja_JP") as Locale
     }
     
     // UIDatePickerのDoneを押したら発火
@@ -59,19 +58,16 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日"
         dateFromTextField.text = "\(formatter.string(from: datePicker.date))"
-        print("dateDone1")
     }
     @objc func dateDone2() {
         dateToTextField.endEditing(true)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日"
         dateToTextField.text = "\(formatter.string(from: datePicker.date))"
-        print("dateDone2")
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     // キーボードを閉じる

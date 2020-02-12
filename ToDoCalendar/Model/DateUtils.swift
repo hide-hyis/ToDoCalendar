@@ -35,8 +35,9 @@ class DateUtils {
         // ピッカー設定
         datePicker.datePickerMode = UIDatePicker.Mode.date
         datePicker.timeZone = NSTimeZone.local
-        datePicker.locale = Locale.current
+        datePicker.locale = NSLocale(localeIdentifier: "ja_JP") as Locale
         dateField.inputView = datePicker
     }
+    
     
 }

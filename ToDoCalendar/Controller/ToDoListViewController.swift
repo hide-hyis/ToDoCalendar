@@ -9,9 +9,7 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol {
-    
-    
+class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol, DetailProtocol {
     
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
@@ -37,7 +35,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //        print(Realm.Configuration.defaultConfiguration.fileURL!)
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
         self.navigationItem.hidesBackButton = true
         tableView.delegate = self
         tableView.dataSource = self
@@ -45,10 +43,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         detailTextView.layer.cornerRadius = 20.0
         detailTextView.layer.borderColor = UIColor.black.cgColor
         swipeGesture.isEnabled = false
-        searchButton.layer.borderWidth = 1.0
-        searchButton.layer.cornerRadius = 10.0
-        clearButton.layer.borderWidth = 1.0
-        clearButton.layer.cornerRadius = 10.0
+        Layout.buttonBorderRadius(buttono: clearButton, width: 1.0, radius: 10.0)
+        Layout.buttonBorderRadius(buttono: searchButton, width: 1.0, radius: 10.0)
         
         let realm = try! Realm()
         let search = realm.objects(Search.self).first
@@ -71,6 +67,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         super.viewWillAppear(animated)
         tableView.reloadData()
         
+    }
+    
+    func catchtable() {
+        tableView.reloadData()
     }
     
     //検索内容の受取
@@ -225,7 +225,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
     //セルクリックで下部詳細表示
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         
@@ -304,9 +306,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             nextVC.contentString = todo!.content
             nextVC.priority = todo!.priority
             nextVC.isDone = todo!.isDone
+        }else if segue.identifier == "goSearchPage" {
+            let nextVC = segue.destination as! SearchViewController
+            nextVC.delegate = self
         }
-        let nextVC = segue.destination as! SearchViewController
-        nextVC.delegate = self
     }
     
     @IBAction func clearAction(_ sender: Any) {

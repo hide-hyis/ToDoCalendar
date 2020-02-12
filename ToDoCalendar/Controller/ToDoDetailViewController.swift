@@ -9,6 +9,11 @@
 import UIKit
 import RealmSwift
 
+
+protocol DetailProtocol {
+    func catchtable()
+}
+
 class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     var titleString = String()
@@ -17,6 +22,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var selectedDateString = String()
     var isDone = Bool()
     var datePicker: UIDatePicker = UIDatePicker()
+    var delegate:DetailProtocol?
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -117,7 +123,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         ToDo.textFieldAlert(titleTextField, editButton, 15)
-        if titleTextField.text == "" {
+        if titleTextField.text == "" || titleTextField.text!.count > 15{
             titleTextField.placeholder = "タイトルを入力してください"
             ToDo.invalidButton(editButton)
         }else {
@@ -161,11 +167,11 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBAction func editAction(_ sender: Any) {
         let dateString = dateField.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
-//        print("dateField: \(date)")
         let realm = try! Realm()
         let todo = realm.objects(ToDo.self).filter(" title == %@", titleString).first
         let editTitle:String = titleTextField.text!
-        if titleTextField.text != "" {
+        if titleTextField.text != "" && titleTextField.text!.count < 16
+        && contentTextView.text!.count < 201 && priority != 0 {
                 try! realm.write{
                     todo!.title = editTitle
                     todo!.content = contentTextView.text
@@ -212,6 +218,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
 
     @IBAction func backAction(_ sender: Any) {
+        delegate?.catchtable()
         self.dismiss(animated: true, completion: nil)
     }
     

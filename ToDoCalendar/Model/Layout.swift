@@ -40,5 +40,10 @@ class Layout: Object {
         star3.setTitleColor(UIColor.gray, for: .normal)
     }
     
+    class func buttonBorderRadius(buttono:UIButton, width: CGFloat, radius:CGFloat){
+        buttono.layer.borderWidth = width
+        buttono.layer.cornerRadius = radius
+    }
+    
     
 }
