@@ -21,6 +21,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star1: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
+    @IBOutlet weak var searchButton: UIBarButtonItem!
     var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
     var datePicker: UIDatePicker = UIDatePicker()
@@ -82,17 +83,45 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
+   //入力値制限アラート
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if titleTextField.text!.count > 15 {
+            let attrText = NSMutableAttributedString(string: titleTextField.text!)
+            attrText.addAttributes([
+                .foregroundColor: UIColor.gray,
+                .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
+                ], range: NSMakeRange(15, titleTextField.text!.count - 15)
+            )
+            titleTextField.attributedText = attrText
+        }
+    }
+    
     @IBAction func star1Action(_ sender: Any) {
-        Layout.star1Button(star1, star2, star3)
-        priority = 1
+        if priority != 1 {
+            Layout.star1Button(star1, star2, star3)
+            priority = 1
+        } else {
+            Layout.starZero(star1, star2, star3)
+            priority = 0
+        }
     }
     @IBAction func star2Action(_ sender: Any) {
-        Layout.star2Button(star1, star2, star3)
-        priority = 2
+        if priority != 2 {
+            Layout.star2Button(star1, star2, star3)
+            priority = 2
+        } else {
+            Layout.starZero(star1, star2, star3)
+            priority = 0
+        }
     }
     @IBAction func star3Action(_ sender: Any) {
-        Layout.star3Button(star1, star2, star3)
-        priority = 3
+        if priority != 3 {
+            Layout.star3Button(star1, star2, star3)
+            priority = 3
+        } else {
+            Layout.starZero(star1, star2, star3)
+            priority = 0
+        }
     }
     
     

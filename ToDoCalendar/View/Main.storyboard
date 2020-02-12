@@ -407,6 +407,7 @@
                         <outlet property="contentTextView" destination="DA1-je-bew" id="94e-Y9-pwb"/>
                         <outlet property="dateFromTextField" destination="qan-Gn-dC4" id="Bk7-LR-4aa"/>
                         <outlet property="dateToTextField" destination="j35-cT-bGc" id="5FB-9B-mPy"/>
+                        <outlet property="searchButton" destination="Udf-di-pRn" id="v0X-zO-cwx"/>
                         <outlet property="star1" destination="bk8-zq-M38" id="Nyk-5s-Hkt"/>
                         <outlet property="star2" destination="sc0-HC-3iR" id="PWY-ce-RE0"/>
                         <outlet property="star3" destination="yqN-eS-mlr" id="UZy-4g-qWt"/>

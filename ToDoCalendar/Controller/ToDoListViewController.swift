@@ -33,6 +33,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var keyNumber = Int()
     var predicates: [NSPredicate] = []
     var compoundedPredicate: NSCompoundPredicate?
+    var segmentIndex:Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +49,20 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         searchButton.layer.cornerRadius = 10.0
         clearButton.layer.borderWidth = 1.0
         clearButton.layer.cornerRadius = 10.0
+        
+        let realm = try! Realm()
+        let search = realm.objects(Search.self).first
+        switch  search?.sort{
+        case "dateAt":
+            segmentIndex = 0
+        case "scheduledAt":
+            segmentIndex = 1
+        case "priority":
+            segmentIndex = 2
+        default:
+            segmentIndex = 0
+        }
+        sortSegment.selectedSegmentIndex = segmentIndex
         
     }
     

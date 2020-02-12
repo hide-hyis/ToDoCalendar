@@ -34,4 +34,11 @@ class Layout: Object {
     }
     
     
+    class func starZero(_ star:UIButton, _ star2:UIButton, _ star3:UIButton){
+        star.setTitleColor(UIColor.gray, for: .normal)
+        star2.setTitleColor(UIColor.gray, for: .normal)
+        star3.setTitleColor(UIColor.gray, for: .normal)
+    }
+    
+    
 }
