@@ -32,7 +32,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @IBOutlet weak var isDoneCount: UILabel!
     
     var selectedIndexPath: NSIndexPath = NSIndexPath()
-    
+    let screenHeight = Int(UIScreen.main.bounds.size.height)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,12 +46,9 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let today = Date()
         let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月d日")
         selectedDateLabel.text = todayString
-        myCalendar.addBorderBottom(height: 1.0, color: UIColor.black)
-        
         doToDoCount()
 //        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        
-        makeData(number: 20)
+        makeData(number: 400)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -127,15 +124,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     func judgeHoliday(_ date : Date) -> Bool {
         //祝日判定用のカレンダークラスのインスタンス
         let tmpCalendar = Calendar(identifier: .gregorian)
-
         // 祝日判定を行う日にちの年、月、日を取得
         let year = tmpCalendar.component(.year, from: date)
         let month = tmpCalendar.component(.month, from: date)
         let day = tmpCalendar.component(.day, from: date)
-
         // CalculateCalendarLogic()：祝日判定のインスタンスの生成
         let holiday = CalculateCalendarLogic()
-
         return holiday.judgeJapaneseHoliday(year: year, month: month, day: day)
     }
     // date型 -> 年月日をIntで取得
@@ -184,13 +178,13 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 let realm = try! Realm()
                 var todos: Results<ToDo>!
                 let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(date).begining as CVarArg, getBeginingAndEndOfDay(date).end as CVarArg)
-                todos = realm.objects(ToDo.self).filter(predicate)
+        todos = realm.objects(ToDo.self).filter(predicate).filter("isDone = false")
                 if todos!.isEmpty{
                     return ""
                 } else {
-                    for i in todos{
-                        if i.priority > maxPriority{
-                           maxPriority = i.priority
+                    for todo in todos{
+                        if todo.priority > maxPriority{
+                           maxPriority = todo.priority
                         }
                     }
                 }
@@ -237,6 +231,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
+            return tableView.layer.bounds.height/6
+        
     }
     
     //セルクリックで詳細画面へ遷移
@@ -304,12 +304,14 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                   todos[indexPath.row].isDone = false
                 }
                 self.doToDoCount()
+                self.myCalendar.reloadData()
                 tableView.reloadData()
             } else {
                 try! realm.write {
                   todos[indexPath.row].isDone = true
                 }
                 self.doToDoCount()
+                self.myCalendar.reloadData()
                 tableView.reloadData()
             }
         }
@@ -321,7 +323,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let realm = try! Realm()
         let todosCount = realm.objects(ToDo.self).count
         if todosCount < number {
-            for i in 1...number{
+            for i in 21...number{
                 var randMon = String(randomNum(lower: 1, upper: 13))
                 var randDay = String(randomNum(lower: 1, upper: 30))
                 let todoi = ToDo()

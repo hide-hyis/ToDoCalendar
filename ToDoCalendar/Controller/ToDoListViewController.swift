@@ -28,7 +28,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var dateToKey: Date?
     var priority: Int?
     var keysForSort = [String:String]()
-    var keyNumber = Int()
     var predicates: [NSPredicate] = []
     var compoundedPredicate: NSCompoundPredicate?
     var segmentIndex:Int = 0
@@ -77,7 +76,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func catchData(key: [String : String]) {
         predicates = [] //検索内容の初期化
         keysForSort = key
-        keyNumber = keysForSort.count//　いらないかも
         if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
         if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
         if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日") }
@@ -156,6 +154,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+                return tableView.layer.bounds.height/6
+            
+        }
+    
     //セルの数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -225,9 +228,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
     //セルクリックで下部詳細表示
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         

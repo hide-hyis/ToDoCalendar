@@ -10,7 +10,6 @@
 		89C49AB623ED835C00BABB0D /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB523ED835C00BABB0D /* Search.swift */; };
 		89C49AB823EEBC8700BABB0D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB723EEBC8700BABB0D /* SearchViewController.swift */; };
 		89C49ABA23EEC15500BABB0D /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB923EEC15500BABB0D /* Layout.swift */; };
-		A6DA314097A959E3229A18C4 /* Pods_ToDoCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */; };
 		D251894323E9492E00DD8125 /* ToDoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */; };
 		D261404923D690C10036161E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404823D690C10036161E /* AppDelegate.swift */; };
 		D261404B23D690C10036161E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404A23D690C10036161E /* SceneDelegate.swift */; };
@@ -23,7 +22,32 @@
 		D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0823E18B5E008A522A /* DateUtils.swift */; };
 		D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */; };
 		D2D7596323F12EA900DA8437 /* NSpredicaete.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7596223F12EA900DA8437 /* NSpredicaete.swift */; };
+		D2D7597A23F5232D00DA8437 /* Pods_ToDoCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */; };
+		D2D7597B23F5232D00DA8437 /* Pods_ToDoCalendar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D2D7597523F5232600DA8437 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D2D7597B23F5232D00DA8437 /* Pods_ToDoCalendar.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2D7597C23F52C9A00DA8437 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,6 +70,9 @@
 		D29ABF0823E18B5E008A522A /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
 		D2D7596223F12EA900DA8437 /* NSpredicaete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSpredicaete.swift; sourceTree = "<group>"; };
+		D2D7596423F4FD3C00DA8437 /* CalculateCalendarLogic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CalculateCalendarLogic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2D7596823F4FDA500DA8437 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2D7596C23F4FDAA00DA8437 /* FSCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FSCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6DA314097A959E3229A18C4 /* Pods_ToDoCalendar.framework in Frameworks */,
+				D2D7597A23F5232D00DA8437 /* Pods_ToDoCalendar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +164,9 @@
 		FF1D8C23CCE0EA6BAB06E7A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2D7596C23F4FDAA00DA8437 /* FSCalendar.framework */,
+				D2D7596823F4FDA500DA8437 /* RealmSwift.framework */,
+				D2D7596423F4FD3C00DA8437 /* CalculateCalendarLogic.framework */,
 				432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */,
 			);
 			name = Frameworks;
@@ -154,6 +184,8 @@
 				D261404223D690C10036161E /* Frameworks */,
 				D261404323D690C10036161E /* Resources */,
 				8020C536E602E7F24D2DA3A9 /* [CP] Embed Pods Frameworks */,
+				D2D7597523F5232600DA8437 /* Embed Frameworks */,
+				D2D7597C23F52C9A00DA8437 /* CopyFiles */,
 			);
 			buildRules = (
 			);
