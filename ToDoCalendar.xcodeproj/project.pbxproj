@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		899CE4EA23F57C62008C4D99 /* iPhone8.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 899CE4E923F57C62008C4D99 /* iPhone8.storyboard */; };
 		89C49AB623ED835C00BABB0D /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB523ED835C00BABB0D /* Search.swift */; };
 		89C49AB823EEBC8700BABB0D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB723EEBC8700BABB0D /* SearchViewController.swift */; };
 		89C49ABA23EEC15500BABB0D /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB923EEC15500BABB0D /* Layout.swift */; };
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		432A670172B134835DE29B54 /* Pods_ToDoCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F9BF6DAD5F12BD90A3B62B8 /* Pods-ToDoCalendar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoCalendar.debug.xcconfig"; path = "Target Support Files/Pods-ToDoCalendar/Pods-ToDoCalendar.debug.xcconfig"; sourceTree = "<group>"; };
+		899CE4E923F57C62008C4D99 /* iPhone8.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = iPhone8.storyboard; sourceTree = "<group>"; };
 		89C49AB523ED835C00BABB0D /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		89C49AB723EEBC8700BABB0D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		89C49AB923EEC15500BABB0D /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			children = (
 				D261405123D690C70036161E /* Assets.xcassets */,
 				D29ABF0023DFF23A008A522A /* Main.storyboard */,
+				899CE4E923F57C62008C4D99 /* iPhone8.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				899CE4EA23F57C62008C4D99 /* iPhone8.storyboard in Resources */,
 				D29ABF0123DFF23A008A522A /* Main.storyboard in Resources */,
 				D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */,
 				D261405223D690C70036161E /* Assets.xcassets in Resources */,
