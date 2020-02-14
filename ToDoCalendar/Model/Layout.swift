@@ -45,5 +45,25 @@ class Layout: Object {
         buttono.layer.cornerRadius = radius
     }
     
+    class func listTableCellFont(cell: UITableViewCell) {
+        if Int(UIScreen.main.bounds.size.height) <= 736 {
+            cell.textLabel!.font = UIFont(name: "Arial", size: 15)
+            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 15)
+        } else {
+            cell.textLabel!.font = UIFont(name: "Arial", size: 18)
+            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 18)
+        }
+        
+    }
     
+    class func calendarTableCellFont(cell: UITableViewCell) {
+        if Int(UIScreen.main.bounds.size.height) <= 736 {
+            cell.textLabel!.font = UIFont(name: "Arial", size: 17)
+            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 15)
+        } else {
+            cell.textLabel!.font = UIFont(name: "Arial", size: 18)
+            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 18)
+        }
+        
+    }
 }

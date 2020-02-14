@@ -80,7 +80,14 @@ class ToDo: Object {
         }
     }
     
-    
+    // 文字列変換yy年mm月dd日 -> yy/mm/dd
+    class func dateStringTodae(string: String) -> (String,String,String){
+        let moji = string
+        let yyyy = String(moji[moji.index(moji.startIndex, offsetBy: 0)..<moji.index(moji.startIndex, offsetBy: 4)])
+        let mm = String(moji[moji.index(moji.startIndex, offsetBy: 5)..<moji.index(moji.startIndex, offsetBy: 7)])
+        let dd = String(moji[moji.index(moji.startIndex, offsetBy: 8)..<moji.index(moji.startIndex, offsetBy: 10)])
+        return (yyyy, mm, dd)
+    }
 }
 
 

@@ -11,7 +11,7 @@ import RealmSwift
 
 
 protocol DetailProtocol {
-    func catchtable()
+    func catchtable(editKeys: [String: String])
 }
 
 class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
@@ -179,12 +179,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
                     todo!.scheduledAt = selectedDate
                     todo!.isDone = isDone
                 }
-            //self.presentingViewControllerはNavigationControllerが格納
-//            let nvc = self.presentingViewController as! UINavigationController
-            //遷移元のViewControllerを取り出す
-//            print("遷移元の画面: \(nvc)")
-//            let vc = nvc.viewControllers[0] as! ViewController
-//            print("遷移元の画面: \(vc)")
+            let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
+            delegate?.catchtable(editKeys: keys as! [String : String])
             self.dismiss(animated: true, completion: nil)
         }
         
@@ -218,7 +214,6 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
 
     @IBAction func backAction(_ sender: Any) {
-        delegate?.catchtable()
         self.dismiss(animated: true, completion: nil)
     }
     

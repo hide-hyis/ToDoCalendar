@@ -11,6 +11,8 @@ import RealmSwift
 
 class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol, DetailProtocol {
     
+    
+    
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortSegment: UISegmentedControl!
@@ -31,6 +33,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var predicates: [NSPredicate] = []
     var compoundedPredicate: NSCompoundPredicate?
     var segmentIndex:Int = 0
+    let screenHeight = Int(UIScreen.main.bounds.size.height)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +71,21 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         
     }
     
-    func catchtable() {
+    func catchtable(editKeys: [String: String]) {
+        titleLabel.text = editKeys["title"]
+        contentLabel.text = editKeys["content"]
+        switch editKeys["priority"] {
+        case "1":
+            priorityLabel.text = "★"
+        case "2":
+            priorityLabel.text = "★★"
+        case "3":
+            priorityLabel.text = "★★★"
+        default:
+            priorityLabel.text = ""
+        }
+        let scheduledAtString = ToDo.dateStringTodae(string: editKeys["scheduledAt"]!)
+        dateLabel.text = "\(scheduledAtString.0)/\(scheduledAtString.1)/\(scheduledAtString.2)"
         tableView.reloadData()
     }
     
@@ -156,8 +173,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
                 return tableView.layer.bounds.height/6
-            
-        }
+    }
     
     //セルの数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -201,7 +217,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let todo = todos[indexPath.row]
-        let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
+        let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
         if todo.title.count >= 11 {
             let longTitle = todo.title.prefix(10)
             cell.textLabel!.text = longTitle + "..."
@@ -225,6 +241,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             cell.textLabel?.textColor = UIColor.black
             cell.detailTextLabel?.textColor = UIColor.black
         }
+        Layout.calendarTableCellFont(cell: cell)
         return cell
     }
     
@@ -244,7 +261,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         let todo = todos[indexPath.row]
         titleLabel.text = todo.title
         contentLabel.text = todo.content
-        dateLabel.text = DateUtils.stringFromDate(date: todo.scheduledAt, format: "MM/dd")
+        dateLabel.text = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
         switch todo.priority {
         case 1:
             priorityLabel.text = "★"
@@ -306,6 +323,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             nextVC.contentString = todo!.content
             nextVC.priority = todo!.priority
             nextVC.isDone = todo!.isDone
+            nextVC.delegate = self
         }else if segue.identifier == "goSearchPage" {
             let nextVC = segue.destination as! SearchViewController
             nextVC.delegate = self

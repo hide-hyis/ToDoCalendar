@@ -279,6 +279,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 cell.textLabel?.textColor = UIColor.black
                 cell.detailTextLabel?.textColor = UIColor.black
             }
+            Layout.calendarTableCellFont(cell: cell)
             return cell
         }else {
             return cell
