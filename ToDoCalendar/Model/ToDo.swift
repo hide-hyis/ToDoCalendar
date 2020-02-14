@@ -88,6 +88,7 @@ class ToDo: Object {
         let dd = String(moji[moji.index(moji.startIndex, offsetBy: 8)..<moji.index(moji.startIndex, offsetBy: 10)])
         return (yyyy, mm, dd)
     }
+    
 }
 
 

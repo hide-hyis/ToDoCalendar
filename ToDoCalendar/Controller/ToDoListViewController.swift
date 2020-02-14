@@ -89,7 +89,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
     }
     
-    //検索内容の受取
+    //検索ワードの受取
     func catchData(key: [String : String]) {
         predicates = [] //検索内容の初期化
         keysForSort = key
@@ -179,44 +179,24 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let realm = try! Realm()
-        if realm.objects(Search.self).count == 0 {
-            let search1 = Search()
-            try! realm.write {
-              realm.add(search1)
-            }
-        }
-        let sortInstance = realm.objects(Search.self).last
-        let sort = sortInstance?.sort
-        let asc = sortInstance?.asc
-        let isDone = sortInstance?.isDone
-        let isDoneString : String = String(isDone!)
-        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        Search.createDefault(realm)
+        var search = Search.getSearchProperties(realm)
         if compoundedPredicate != nil {
-            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
         }
-        return todos.count
+        return search.3.count
     }
     
     //セルの生成
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let realm = try! Realm()
-        if realm.objects(Search.self).count == 0 {
-            let search1 = Search()
-            try! realm.write {
-              realm.add(search1)
-            }
-        }
-        let sortInstance = realm.objects(Search.self).last
-        let sort = sortInstance?.sort
-        let asc = sortInstance?.asc
-        let isDone = sortInstance?.isDone
-        let isDoneString : String = String(isDone!)
-        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        Search.createDefault(realm)
+        var search = Search.getSearchProperties(realm)
         if compoundedPredicate != nil {
-            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let todo = todos[indexPath.row]
+        let todo = search.3[indexPath.row]
         let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
         if todo.title.count >= 11 {
             let longTitle = todo.title.prefix(10)
@@ -249,16 +229,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         
         let realm = try! Realm()
-        let sortInstance = realm.objects(Search.self).last
-        let sort = sortInstance?.sort
-        let asc = sortInstance?.asc
-        let isDone = sortInstance?.isDone
-        let isDoneString : String = String(isDone!)
-        var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
+        var search = Search.getSearchProperties(realm)//Searchプロパティとtodosの取得
         if compoundedPredicate != nil {
-            todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter(compoundedPredicate!).filter("isDone == \(isDoneString)")
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
         }
-        let todo = todos[indexPath.row]
+        let todo = search.3[indexPath.row]
         titleLabel.text = todo.title
         contentLabel.text = todo.content
         dateLabel.text = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
