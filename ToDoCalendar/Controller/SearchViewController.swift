@@ -139,8 +139,11 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         for (key, value) in inputDictionary {
             if value != "" && value != "0" && value != "選択" {
                 searchKeys.updateValue(value, forKey: key)
+                
             }
         }
+        //日付は片側だけ選択NG
+        if (searchKeys["dateFrom"] != nil && searchKeys["dateTo"] == nil) || (searchKeys["dateFrom"] == nil && searchKeys["dateTo"] != nil) {return}
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
     }
