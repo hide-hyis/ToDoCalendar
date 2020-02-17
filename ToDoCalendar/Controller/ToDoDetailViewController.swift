@@ -62,7 +62,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         contentTextView.layer.cornerRadius = 1.0
         
         DateUtils.pickerConfig(datePicker, dateField)
-
+        let date = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+        datePicker.date = date
         // 決定バーの生成
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
         let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)

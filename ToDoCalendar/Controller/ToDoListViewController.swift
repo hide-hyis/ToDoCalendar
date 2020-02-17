@@ -101,8 +101,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         if key["priority"] != nil { priority = Int(key["priority"]!)! }
         if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
         compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-        print("predicates: \(predicates)")
         tableView.reloadData()
+        titleLabel.text = "タイトル"
+        contentLabel.text = "内容"
+        dateLabel.text = "予定日"
+        priorityLabel.text = "★"
     }
     
     @IBAction func back(_ sender: Any) {
