@@ -209,7 +209,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="0RZ-ai-a5r" detailTextLabel="04Z-Q5-ggC" style="IBUITableViewCellStyleValue1" id="CFw-tG-gp3">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" textLabel="0RZ-ai-a5r" detailTextLabel="04Z-Q5-ggC" style="IBUITableViewCellStyleValue1" id="CFw-tG-gp3">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CFw-tG-gp3" id="0YZ-Ok-ZDm">
@@ -259,6 +259,7 @@
                         <outlet property="contentLabel" destination="scJ-Lf-SxT" id="kap-A5-sbN"/>
                         <outlet property="dateLabel" destination="E9c-hA-CQj" id="ypL-4m-sX8"/>
                         <outlet property="detailTextView" destination="mdI-KS-s6U" id="fjp-Bq-AHi"/>
+                        <outlet property="isDoneSegment" destination="BHe-94-a1B" id="kwi-AK-o0c"/>
                         <outlet property="priorityLabel" destination="S6l-4v-hPd" id="yo5-WC-57q"/>
                         <outlet property="searchButton" destination="Qnf-Os-Ana" id="qsC-gI-aBp"/>
                         <outlet property="sortSegment" destination="Cp3-r5-j4d" id="RK4-SO-t79"/>
@@ -382,19 +383,19 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="選択" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dhZ-c6-9up">
-                                <rect key="frame" x="56" y="427" width="140" height="34"/>
+                                <rect key="frame" x="33" y="426" width="140" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="選択" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UpH-c0-WAd">
-                                <rect key="frame" x="256" y="427" width="119" height="34"/>
+                                <rect key="frame" x="205" y="426" width="146" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="〜" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="e3g-l4-WHB">
-                                <rect key="frame" x="204" y="427" width="29" height="34"/>
+                                <rect key="frame" x="168" y="426" width="29" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                 <textInputTraits key="textInputTraits"/>

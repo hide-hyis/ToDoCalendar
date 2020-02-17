@@ -16,6 +16,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var detailTextView: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortSegment: UISegmentedControl!
+    @IBOutlet weak var isDoneSegment: UISegmentedControl!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var contentLabel: UITextView!
     @IBOutlet weak var dateLabel: UILabel!
@@ -33,6 +34,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var predicates: [NSPredicate] = []
     var compoundedPredicate: NSCompoundPredicate?
     var segmentIndex:Int = 0
+    var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
     
     override func viewDidLoad() {
@@ -50,6 +52,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         
         let realm = try! Realm()
         let search = realm.objects(Search.self).first
+        //sortセグメントの初期表示
         switch  search?.sort{
         case "dateAt":
             segmentIndex = 0
@@ -61,6 +64,17 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             segmentIndex = 0
         }
         sortSegment.selectedSegmentIndex = segmentIndex
+        
+        //未完,完了セグメントの初期表示
+        switch search?.isDone {
+        case false:
+            isDoneSegmentIndex = 0
+        case true:
+            isDoneSegmentIndex = 1
+        default:
+            isDoneSegmentIndex = 0
+        }
+        isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
         
     }
     
@@ -138,7 +152,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
-//    未完/完了ボタン切替処理
+//    未完/完了セグメント切替処理
     @IBAction func switchIsDone(_ sender: Any) {
         let realm = try! Realm()
         let search = realm.objects(Search.self).last
@@ -267,16 +281,22 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     // 完了/未完了処理
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let realm = try! Realm()
-        let todos = realm.objects(ToDo.self)
-        let action = UITableViewRowAction(style: .normal, title: todos[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
-            if todos[indexPath.row].isDone {
+        Search.createDefault(realm)
+        var search = Search.getSearchProperties(realm)
+        if compoundedPredicate != nil {
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
+        }
+        let action = UITableViewRowAction(style: .normal, title: search.3[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
+            if search.3[indexPath.row].isDone {
                 try! realm.write {
-                  todos[indexPath.row].isDone = false
+                  search.3[indexPath.row].isDone = false
                 }
+//                tableView.reloadData()
             } else {
                 try! realm.write {
-                  todos[indexPath.row].isDone = true
+                  search.3[indexPath.row].isDone = true
                 }
+//                tableView.reloadData()
             }
             tableView.reloadData()
         }
