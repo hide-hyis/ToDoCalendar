@@ -38,6 +38,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
         titleTextField.delegate = self
         contentTextView.delegate = self
         dateField.text = selectedDateString
@@ -76,27 +77,61 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         ToDo.isDoneDisplay(isDone, isDoneSegment)
         
-        // ナビゲーションバーの左に設置する.
-//        let count = (self.navigationController?.viewControllers.count)! - 2
-//        let buttonIcon1 = UIImage(named: "list.dash")
-//        let buttonIcon2 = UIImage(named: "calendar")
-//        if let previousViewController = self.navigationController?.viewControllers[count] as? ToDoListViewController {
-//            let barItemList = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.done, target: self, action: "backToList")
-//            barItemList.image = buttonIcon1
-//            self.navigationItem.leftBarButtonItem = barItemList
-//        } else {
-//            let barItemCalender = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.done, target: self, action: "backToCalendar:")
-//             barItemCalender.image = buttonIcon2
-//            self.navigationItem.leftBarButtonItem = barItemCalender
-//        }
+        if #available(iOS 13.0, *) {
+        } else {
+            //擬似ナビバー
+            let blankView = UIView()
+            let screenSize: CGSize = UIScreen.main.bounds.size
+            blankView.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: 90)
+            blankView.backgroundColor = UIColor(red: 247/255, green: 246/255, blue: 246/255, alpha: 1)
+            self.view.addSubview(blankView)
+//            戻るボタン
+            let backButton  = UIButton()
+            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+            backButton.setImage(UIImage(named: "calendar-1"), for: .normal)
+            backButton.setTitleColor(UIColor.blue, for: .normal)
+            backButton.addTarget(self, action: #selector(backAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(backButton)
+            self.view.bringSubviewToFront(backButton)
+//            削除ボタン
+            let deleteButton  = UIButton()
+            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            deleteButton.setImage(UIImage(named: "delete"), for: .normal)
+            deleteButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: .normal)
+            deleteButton.addTarget(self, action: #selector(deleteAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(deleteButton)
+            self.view.bringSubviewToFront(deleteButton)
+//            ラベルボタン
+            let toDoLabel  = UILabel()
+            toDoLabel.frame = CGRect(x:50,y:30,width: 70,height:70)
+            toDoLabel.textAlignment = .center
+            toDoLabel.center.x = self.view.center.x
+            toDoLabel.textAlignment = NSTextAlignment.center
+            toDoLabel.text = "ToDo"
+            toDoLabel.font = UIFont.systemFont(ofSize: 16)
+            toDoLabel.textColor = UIColor.black
+            toDoLabel.font = UIFont.boldSystemFont(ofSize: 17)
+            self.view.addSubview(toDoLabel)
+            self.view.bringSubviewToFront(toDoLabel)
+        }
     }
+
+        
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         presentingViewController?.beginAppearanceTransition(true, animated: animated)
         presentingViewController?.endAppearanceTransition()
+        
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+//        if #available(iOS 13.0, *) {
+//        } else {
+//        self.navigationController?.setNavigationBarHidden(true, animated: true)
+//            self.navigationController?.isNavigationBarHidden = true
+//        }
+    }
     
     // UIDatePickerのDoneを押したら発火
     @objc func dateDone() {
@@ -212,7 +247,6 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
 
         present(alert, animated: true, completion: nil)
     }
-    
 
     @IBAction func backAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

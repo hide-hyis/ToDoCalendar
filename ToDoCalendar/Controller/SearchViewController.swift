@@ -50,6 +50,42 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         dateFromTextField.inputAccessoryView = toolbar1
         dateToTextField.inputView = datePicker
         dateToTextField.inputAccessoryView = toolbar2
+        
+//擬似ナビバー
+            let blankView = UIView()
+            let screenSize: CGSize = UIScreen.main.bounds.size
+            blankView.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: 90)
+            blankView.backgroundColor = UIColor(red: 247/255, green: 246/255, blue: 246/255, alpha: 1)
+            self.view.addSubview(blankView)
+//            戻るボタン
+            let backButton  = UIButton()
+            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+            backButton.setImage(UIImage(named: "list"), for: .normal)
+            backButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: UIControl.State.normal)
+            backButton.addTarget(self, action: #selector(backAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(backButton)
+            self.view.bringSubviewToFront(backButton)
+//            削除ボタン
+            let deleteButton  = UIButton()
+            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            deleteButton.setImage(UIImage(named: "search"), for: .normal)
+            deleteButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: UIControl.State.normal)
+            deleteButton.addTarget(self, action: #selector(searchAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(deleteButton)
+             self.view.bringSubviewToFront(deleteButton)
+//            ラベルボタン
+            let toDoLabel  = UILabel()
+            toDoLabel.frame = CGRect(x:50,y:30,width: 70,height:70)
+            toDoLabel.textAlignment = .center
+            toDoLabel.center.x = self.view.center.x
+            toDoLabel.textAlignment = NSTextAlignment.center
+            toDoLabel.text = "検索"
+            toDoLabel.font = UIFont.systemFont(ofSize: 16)
+            toDoLabel.textColor = UIColor.black
+            toDoLabel.font = UIFont.boldSystemFont(ofSize: 17)
+            self.view.addSubview(toDoLabel)
+            self.view.bringSubviewToFront(toDoLabel)
+        
     }
     
     // UIDatePickerのDoneを押したら発火

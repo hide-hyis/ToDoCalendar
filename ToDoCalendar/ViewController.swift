@@ -49,6 +49,15 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         doToDoCount()
 //        print(Realm.Configuration.defaultConfiguration.fileURL!)
         makeData(number: 400)
+        
+        //iOS13以前でも画像を表示
+        if #available(iOS 13.0, *) {
+        } else {
+            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "list")!, style: .plain, target: self, action:     #selector(goListAction))
+            searchBarButtonItem.tintColor = UIColor.black
+            navigationItem.rightBarButtonItem = searchBarButtonItem
+        }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -99,8 +108,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @IBAction func goListAction(_ sender: Any) {
         performSegue(withIdentifier: "goListPage", sender: nil)
     }
-    
-    
     //選択した日付を取得
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Void {
         
@@ -217,6 +224,10 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             nextVC.contentString = todos[indexPath.row].content
             nextVC.priority = todos[indexPath.row].priority
             nextVC.isDone = todos[indexPath.row].isDone
+            if #available(iOS 13, *) {
+            } else {
+                nextVC.modalPresentationStyle = .pageSheet
+            }
         }
     }
     
@@ -235,7 +246,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-            return tableView.layer.bounds.height/6
+            return tableView.layer.bounds.height/5
         
     }
     

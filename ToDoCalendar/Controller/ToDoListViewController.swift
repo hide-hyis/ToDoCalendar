@@ -76,6 +76,14 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
         isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
         
+        //iOS13以前でも画像を表示
+        if #available(iOS 13.0, *) {
+        } else {
+            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action: #selector(back))
+            searchBarButtonItem.tintColor = UIColor.black
+            navigationItem.leftBarButtonItem = searchBarButtonItem
+        }
+        
     }
     
 
@@ -125,7 +133,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
-    
     
     //ソートの切替
     @IBAction func segmentAction(_ sender: Any) {
@@ -189,7 +196,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-                return tableView.layer.bounds.height/6
+                return tableView.layer.bounds.height/5
     }
     
     //セルの数
@@ -315,7 +322,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             nextVC.titleString = titleLabel.text!
             let realm = try! Realm()
             let todo = realm.objects(ToDo.self).filter(" title == %@", titleLabel.text!).first
-            let dateString = DateUtils.stringFromDate(date: todo!.scheduledAt, format: "yyyy年MM月d日")
+            let dateString = DateUtils.stringFromDate(date: todo!.scheduledAt, format: "yyyy年MM月dd日")
             nextVC.selectedDateString = dateString
             nextVC.titleString = todo!.title
             nextVC.contentString = todo!.content
