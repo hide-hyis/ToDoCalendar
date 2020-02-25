@@ -116,8 +116,8 @@ class Layout: Object {
         segment.layer.cornerRadius = 8
         segment.tintColor = UIColor.white
         segment.backgroundColor = UIColor(red: 238/255, green: 239/255, blue: 238/255, alpha: 1)
-          segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .normal)
-          segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
+        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .normal)
+        segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
         segment.setTitleTextAttributes([
             NSAttributedString.Key.font : UIFont(name: "HiraKakuProN-W6", size: 12.0)!,
             NSAttributedString.Key.foregroundColor: UIColor.black

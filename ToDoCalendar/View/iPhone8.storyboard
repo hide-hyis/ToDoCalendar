@@ -548,7 +548,11 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <gestureRecognizers/>
                         <viewLayoutGuide key="safeArea" id="vTj-j1-eVl"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="X7N-5N-ikv" appends="YES" id="tsE-x0-RgX"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="contentLabel" destination="Jvj-db-cfx" id="eKT-7C-L7d"/>
@@ -563,6 +567,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Xo-e6-U8D" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="X7N-5N-ikv">
+                    <connections>
+                        <action selector="swipeDown:" destination="H9t-5V-eGe" id="ueC-3q-C6h"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1741" y="-558"/>
         </scene>
