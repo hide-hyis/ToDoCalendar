@@ -82,6 +82,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action: #selector(back))
             searchBarButtonItem.tintColor = UIColor.black
             navigationItem.leftBarButtonItem = searchBarButtonItem
+            
+            Layout.segmentLayout(sortSegment)
+            Layout.segmentLayout(isDoneSegment)
         }
         
     }

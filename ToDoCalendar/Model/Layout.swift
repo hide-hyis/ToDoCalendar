@@ -66,5 +66,61 @@ class Layout: Object {
         }
         
     }
+
+    //擬似ナビバー
+    class func blankView(_ uiViewController: UIViewController){
+        let blankView = UIView()
+        let screenSize: CGSize = UIScreen.main.bounds.size
+        blankView.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: 90)
+        blankView.backgroundColor = UIColor(red: 247/255, green: 246/255, blue: 246/255, alpha: 1)
+        uiViewController.view.addSubview(blankView)
+    }
     
+//    class func navBarBack(_ uiViewController: UIViewController) {
+//        let backButton  = UIButton()
+//        backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+//        backButton.setImage(UIImage(named: "calendar-1"), for: .normal)
+//        backButton.setTitleColor(UIColor.blue, for: .normal)
+//        backButton.addTarget(self, action: #selector(prePage()), for: UIControl.Event.touchUpInside)
+//        uiViewController.view.addSubview(backButton)
+//        uiViewController.view.bringSubviewToFront(backButton)
+//    }
+//    class func navBarDelete(_ uiViewController: UIViewController){
+//        let deleteButton  = UIButton()
+//        deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+//        deleteButton.setImage(UIImage(named: "delete"), for: .normal)
+//        deleteButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: .normal)
+//        deleteButton.addTarget(self, action: #selector(ToDoDetailViewController.deleteAction), for: UIControl.Event.touchUpInside)
+//        uiViewController.view.addSubview(deleteButton)
+//        uiViewController.view.bringSubviewToFront(deleteButton)
+//    }
+    //ナビバータイトル表示
+    class func navBarTitle(_ uiViewController: UIViewController, _ title:String){
+        let toDoLabel  = UILabel()
+        toDoLabel.frame = CGRect(x:50,y:30,width: 70,height:70)
+        toDoLabel.textAlignment = .center
+        toDoLabel.center.x = uiViewController.view.center.x
+        toDoLabel.textAlignment = NSTextAlignment.center
+        toDoLabel.text = title
+        toDoLabel.font = UIFont.systemFont(ofSize: 16)
+        toDoLabel.textColor = UIColor.black
+        toDoLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        uiViewController.view.addSubview(toDoLabel)
+        uiViewController.view.bringSubviewToFront(toDoLabel)
+    }
+    
+    class func segmentLayout( _ segment: UISegmentedControl){
+        segment.layer.borderWidth = 1
+        segment.layer.borderColor = UIColor.gray.cgColor
+        segment.clipsToBounds = true
+        segment.layer.cornerRadius = 8
+        segment.tintColor = UIColor.white
+        segment.backgroundColor = UIColor(red: 238/255, green: 239/255, blue: 238/255, alpha: 1)
+          segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .normal)
+          segment.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
+        segment.setTitleTextAttributes([
+            NSAttributedString.Key.font : UIFont(name: "HiraKakuProN-W6", size: 12.0)!,
+            NSAttributedString.Key.foregroundColor: UIColor.black
+        ], for: .selected)
+    }
 }

@@ -48,9 +48,9 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         doToDoCount()
 //        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        makeData(number: 400)
+        makeSampleData(number: 400)
         
-        //iOS13以前でも画像を表示
+        //iOS13以前でもnavBarItem画像を表示
         if #available(iOS 13.0, *) {
         } else {
             let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "list")!, style: .plain, target: self, action:     #selector(goListAction))
@@ -247,7 +247,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
             return tableView.layer.bounds.height/5
-        
     }
     
     //セルクリックで詳細画面へ遷移
@@ -330,8 +329,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return [action]
     }
     
-    
-    func makeData(number:Int){
+    //サンプルとなるデータを引数の数だけ作る
+    func makeSampleData(number:Int){
         let realm = try! Realm()
         let todosCount = realm.objects(ToDo.self).count
         if todosCount < number {

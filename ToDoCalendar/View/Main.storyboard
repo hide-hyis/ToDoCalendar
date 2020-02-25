@@ -62,7 +62,7 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nxb-3V-lH0">
-                                <rect key="frame" x="321" y="502" width="66" height="37"/>
+                                <rect key="frame" x="308" y="515" width="66" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                 <state key="normal" image="addButton">
@@ -73,14 +73,14 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="yyyy年mm月dd日" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bb2-4j-jBN">
-                                <rect key="frame" x="16" y="498" width="171" height="44"/>
+                                <rect key="frame" x="16" y="507" width="171" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="完了済件数" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n03-9i-FmW">
-                                <rect key="frame" x="182" y="499" width="144" height="44"/>
+                                <rect key="frame" x="181" y="508" width="144" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -550,7 +550,11 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <gestureRecognizers/>
                         <viewLayoutGuide key="safeArea" id="C60-UK-vUT"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Tcd-Ms-cmx" appends="YES" id="yB8-AX-69P"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="contentLabel" destination="LSa-Cj-GTX" id="F6Y-zB-Wwq"/>
@@ -565,6 +569,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nEI-EL-oBI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="down" id="Tcd-Ms-cmx">
+                    <connections>
+                        <action selector="swipeDown:" destination="Ofu-yq-Jb2" id="neh-2B-B22"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1741" y="-558"/>
         </scene>
@@ -716,6 +725,6 @@
         <image name="並べ替え矢印" width="100" height="100"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="gWj-2F-j2X"/>
+        <segue reference="7oy-A7-aGs"/>
     </inferredMetricsTieBreakers>
 </document>
