@@ -37,7 +37,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        ToDo.makeSampleData(number: 400)
+        ToDo.makeSampleData(number: 400)
         tableView.delegate = self
         tableView.dataSource = self
         self.myCalendar.dataSource = self

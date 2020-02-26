@@ -108,8 +108,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         default:
             priorityLabel.text = ""
         }
-        let scheduledAtString = ToDo.dateStringTodae(string: editKeys["scheduledAt"]!)
-        dateLabel.text = "\(scheduledAtString.0)/\(scheduledAtString.1)/\(scheduledAtString.2)"
+        if editKeys["scheduledAt"] == "予定日" {
+            dateLabel.text = "予定日"
+        } else {
+           let scheduledAtString = ToDo.dateStringTodae(string: editKeys["scheduledAt"]!)
+           dateLabel.text = "\(scheduledAtString.0)/\(scheduledAtString.1)/\(scheduledAtString.2)"
+        }
         tableView.reloadData()
     }
     
