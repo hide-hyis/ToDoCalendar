@@ -21,7 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let window = window{
                   window.rootViewController = storyboard.instantiateInitialViewController() as UIViewController?
                }
-          self.window?.makeKeyAndVisible()
+//        self.window?.rootViewController = ViewController()
+        self.window?.makeKeyAndVisible()
         // Override point for customization after application launch.
         
         return true
@@ -46,10 +47,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 switch UIDevice.current.model {
                 case "iPnone" :
-                storyboard = UIStoryboard(name: "se", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                     break
                 case "iPad" :
-                storyboard = UIStoryboard(name: "iPad", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 print("iPad")
                     break
                 default:
@@ -77,4 +78,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-

@@ -147,6 +147,14 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func swipeDown(_ sender: Any) {
+        if #available(iOS 13.0, *) {
+           } else {
+               self.dismiss(animated: true, completion: nil)
+           }
+    }
+    
+    
     @IBAction func searchAction(_ sender: Any) {
         
         let titleString = titleTextField.text!

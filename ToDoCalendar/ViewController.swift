@@ -37,6 +37,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        ToDo.makeSampleData(number: 400)
         tableView.delegate = self
         tableView.dataSource = self
         self.myCalendar.dataSource = self
@@ -47,8 +48,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月d日")
         selectedDateLabel.text = todayString
         doToDoCount()
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
-        makeSampleData(number: 400)
+        
         
         //iOS13以前でもnavBarItem画像を表示
         if #available(iOS 13.0, *) {
@@ -329,33 +329,5 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return [action]
     }
     
-    //サンプルとなるデータを引数の数だけ作る
-    func makeSampleData(number:Int){
-        let realm = try! Realm()
-        let todosCount = realm.objects(ToDo.self).count
-        if todosCount < number {
-            for i in 21...number{
-                var randMon = String(randomNum(lower: 1, upper: 13))
-                var randDay = String(randomNum(lower: 1, upper: 30))
-                let todoi = ToDo()
-                todoi.title = "titleNo.\(i)"
-                todoi.content = "contentNo.\(i)"
-                todoi.priority = Int(randomNum(lower: 1, upper: 4))
-                todoi.scheduledAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
-                todoi.dateAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
-                try! realm.write{
-                    realm.add(todoi)
-                }
-            }
-        }
-
-    }
-    //ランダムな整数を返す
-    func randomNum(lower: UInt32, upper: UInt32) -> UInt32 {
-        guard upper >= lower else {
-            return 0
-        }
-        return arc4random_uniform(upper - lower) + lower
-    }
 }
 

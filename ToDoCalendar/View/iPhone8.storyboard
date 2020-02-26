@@ -403,7 +403,11 @@
                             </textField>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <gestureRecognizers/>
                         <viewLayoutGuide key="safeArea" id="hdK-Sc-dXq"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="1iG-jW-XZj" appends="YES" id="Eel-HW-MTX"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="contentTextView" destination="RY6-Tb-hzV" id="5QQ-aq-3KC"/>
@@ -417,6 +421,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WFJ-gj-iyn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="down" id="1iG-jW-XZj">
+                    <connections>
+                        <action selector="swipeDown:" destination="tSa-mc-TGG" id="8ex-fE-N1s"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2576.8000000000002" y="127.28635682158921"/>
         </scene>

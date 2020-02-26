@@ -28,7 +28,6 @@
 		D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0623E13028008A522A /* AddToDoViewController.swift */; };
 		D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0823E18B5E008A522A /* DateUtils.swift */; };
 		D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */; };
-		D2D7596323F12EA900DA8437 /* NSpredicaete.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D7596223F12EA900DA8437 /* NSpredicaete.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,7 +66,6 @@
 		D29ABF0623E13028008A522A /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
 		D29ABF0823E18B5E008A522A /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
-		D2D7596223F12EA900DA8437 /* NSpredicaete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSpredicaete.swift; sourceTree = "<group>"; };
 		D2D7596423F4FD3C00DA8437 /* CalculateCalendarLogic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CalculateCalendarLogic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7596823F4FDA500DA8437 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7596C23F4FDAA00DA8437 /* FSCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FSCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,7 +140,6 @@
 				D29ABF0823E18B5E008A522A /* DateUtils.swift */,
 				89C49AB523ED835C00BABB0D /* Search.swift */,
 				89C49AB923EEC15500BABB0D /* Layout.swift */,
-				D2D7596223F12EA900DA8437 /* NSpredicaete.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -309,7 +306,6 @@
 				89C49AB623ED835C00BABB0D /* Search.swift in Sources */,
 				D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */,
 				D261404D23D690C10036161E /* ViewController.swift in Sources */,
-				D2D7596323F12EA900DA8437 /* NSpredicaete.swift in Sources */,
 				D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */,
 				D261404923D690C10036161E /* AppDelegate.swift in Sources */,
 				D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */,
@@ -459,7 +455,7 @@
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = Y5TNUF5F8X;
 				INFOPLIST_FILE = ToDoCalendar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -484,7 +480,7 @@
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = Y5TNUF5F8X;
 				INFOPLIST_FILE = ToDoCalendar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

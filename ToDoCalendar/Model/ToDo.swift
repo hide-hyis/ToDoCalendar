@@ -90,6 +90,35 @@ class ToDo: Object {
         return (yyyy, mm, dd)
     }
     
+    //サンプルとなるデータを引数の数だけ作る
+    class func makeSampleData(number:Int){
+        let realm = try! Realm()
+        let todosCount = realm.objects(ToDo.self).count
+        if todosCount < number {
+            for i in 21...number{
+                var randMon = String(randomNum(lower: 1, upper: 13))
+                var randDay = String(randomNum(lower: 1, upper: 30))
+                let todoi = ToDo()
+                todoi.title = "titleNo.\(i)"
+                todoi.content = "contentNo.\(i)"
+                todoi.priority = Int(randomNum(lower: 1, upper: 4))
+                todoi.scheduledAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
+                todoi.dateAt = DateUtils.dateFromString(string: "2020年\(randMon)月\(randDay)日", format: "yyyy年MM月dd日")
+                try! realm.write{
+                    realm.add(todoi)
+                }
+            }
+        }
+
+    }
+    
+    //ランダムな整数を返す
+    class func randomNum(lower: UInt32, upper: UInt32) -> UInt32 {
+        guard upper >= lower else {
+            return 0
+        }
+        return arc4random_uniform(upper - lower) + lower
+    }
 }
 
 
