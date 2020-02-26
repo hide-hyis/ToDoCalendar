@@ -49,19 +49,9 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         doToDoCount()
         
-        
-        //iOS13以前でもnavBarItem画像を表示
-        if #available(iOS 13.0, *) {
-        } else {
-            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "list")!, style: .plain, target: self, action:     #selector(goListAction))
-            searchBarButtonItem.tintColor = UIColor.black
-            navigationItem.rightBarButtonItem = searchBarButtonItem
-        }
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        
         super.viewWillAppear(animated)
         myCalendar.reloadData()
         tableView.reloadData()

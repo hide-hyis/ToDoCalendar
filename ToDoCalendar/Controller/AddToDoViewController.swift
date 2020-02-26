@@ -34,11 +34,10 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         selectedDateLabel.text = selectedDateString
 
-        //iOS13以前でも画像を表示
+        //iOS13以前でもナビバーを表示
         if #available(iOS 13.0, *) {
         } else {
             let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action:     #selector(backAction))
-            searchBarButtonItem.tintColor = UIColor.black
             navigationItem.leftBarButtonItem = searchBarButtonItem
         }
     }

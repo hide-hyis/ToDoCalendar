@@ -25,6 +25,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
     var datePicker: UIDatePicker = UIDatePicker()
+    let searchButton2  = UIButton()
     var delegate:CatchProtocol?
     
     override func viewDidLoad() {
@@ -58,20 +59,20 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     //       戻るボタン
             let backButton  = UIButton()
             backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
-            backButton.setImage(UIImage(named: "list"), for: .normal)
-            backButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: UIControl.State.normal)
+            let backButtonImage = UIImage(named: "list")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            backButton.setImage(backButtonImage, for: .normal)
             backButton.addTarget(self, action: #selector(backAction), for: UIControl.Event.touchUpInside)
             self.view.addSubview(backButton)
             self.view.bringSubviewToFront(backButton)
-    //        削除ボタン
-            let deleteButton  = UIButton()
-            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
-            deleteButton.setImage(UIImage(named: "search"), for: .normal)
-            deleteButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: UIControl.State.normal)
-            deleteButton.addTarget(self, action: #selector(searchAction), for: UIControl.Event.touchUpInside)
-            self.view.addSubview(deleteButton)
-            self.view.bringSubviewToFront(deleteButton)
+    //        検索ボタン
+            searchButton2.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            let searchButtonImage = UIImage(named: "search")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            searchButton2.setImage(searchButtonImage, for: .normal)
+            searchButton2.addTarget(self, action: #selector(searchAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(searchButton2)
+            self.view.bringSubviewToFront(searchButton2)
         }
+        
     }
     
     // UIDatePickerのDoneを押したら発火
@@ -172,6 +173,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
                 
             }
         }
+        if searchKeys.count == 0 { return }
         //日付は片側だけ選択NG
         if (searchKeys["dateFrom"] != nil && searchKeys["dateTo"] == nil) || (searchKeys["dateFrom"] == nil && searchKeys["dateTo"] != nil) {return}
         delegate?.catchData(key: searchKeys)

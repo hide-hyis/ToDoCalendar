@@ -84,7 +84,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
 //            戻るボタン
             let backButton  = UIButton()
             backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
-            backButton.setImage(UIImage(named: "calendar-1"), for: .normal)
+            let backButtonImage = UIImage(named: "calendar-1")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            backButton.setImage(backButtonImage, for: .normal)
             backButton.setTitleColor(UIColor.blue, for: .normal)
             backButton.addTarget(self, action: #selector(ToDoDetailViewController.backAction), for: UIControl.Event.touchUpInside)
             self.view.addSubview(backButton)
@@ -92,8 +93,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
 //            削除ボタン
             let deleteButton  = UIButton()
             deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
-            deleteButton.setImage(UIImage(named: "delete"), for: .normal)
-            deleteButton.setTitleColor(UIColor(red: 34/255, green: 134/255, blue: 247/255, alpha: 1), for: .normal)
+            let deleteButtonImage = UIImage(named: "delete")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            deleteButton.setImage(deleteButtonImage, for: .normal)
             deleteButton.addTarget(self, action: #selector(deleteAction), for: UIControl.Event.touchUpInside)
             self.view.addSubview(deleteButton)
             self.view.bringSubviewToFront(deleteButton)

@@ -34,4 +34,6 @@ class Search: Object {
         var todos = realm.objects(ToDo.self).sorted(byKeyPath: "\(sort!)", ascending: asc!).filter("isDone == \(isDoneString)")
         return (sort!, asc!, isDoneString, todos)
     }
+    
+    
 }
