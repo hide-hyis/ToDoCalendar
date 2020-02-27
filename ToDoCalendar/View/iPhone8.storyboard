@@ -113,7 +113,7 @@
             </objects>
             <point key="canvasLocation" x="856.79999999999995" y="111.0944527736132"/>
         </scene>
-        <!--ToDO-->
+        <!--ToDo-->
         <scene sceneID="wIx-n2-O9E">
             <objects>
                 <viewController id="XLk-ps-u12" customClass="ToDoListViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
@@ -210,7 +210,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" textLabel="0RZ-ai-a5r" detailTextLabel="04Z-Q5-ggC" style="IBUITableViewCellStyleValue1" id="CFw-tG-gp3">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="0RZ-ai-a5r" detailTextLabel="04Z-Q5-ggC" style="IBUITableViewCellStyleValue1" id="CFw-tG-gp3">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="CFw-tG-gp3" id="0YZ-Ok-ZDm">
@@ -248,7 +248,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="nNQ-cr-42g"/>
                     </view>
-                    <navigationItem key="navigationItem" title="ToDO" id="mCK-9H-9RS">
+                    <navigationItem key="navigationItem" title="ToDo" id="mCK-9H-9RS">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="calendar" catalog="system" id="RGV-GF-bXp">
                             <connections>
                                 <action selector="back:" destination="XLk-ps-u12" id="GUE-UA-Y4c"/>

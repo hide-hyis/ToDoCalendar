@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="laB-el-b3o">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -115,7 +116,7 @@
             </objects>
             <point key="canvasLocation" x="856.79999999999995" y="111.57635467980296"/>
         </scene>
-        <!--ToDO-->
+        <!--ToDo-->
         <scene sceneID="xta-1O-ffB">
             <objects>
                 <viewController id="bdS-bl-A0X" customClass="ToDoListViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
@@ -173,7 +174,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" textLabel="AQH-0O-zqL" detailTextLabel="8Pa-QS-aOy" style="IBUITableViewCellStyleValue1" id="MD7-0M-isn">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="AQH-0O-zqL" detailTextLabel="8Pa-QS-aOy" style="IBUITableViewCellStyleValue1" id="MD7-0M-isn">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MD7-0M-isn" id="Ept-cB-4M1">
@@ -250,7 +251,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="VQi-ZH-Uk5"/>
                     </view>
-                    <navigationItem key="navigationItem" title="ToDO" id="5lK-LS-HP6">
+                    <navigationItem key="navigationItem" title="ToDo" id="5lK-LS-HP6">
                         <barButtonItem key="leftBarButtonItem" title="calendar" image="calendar" catalog="system" largeContentSizeImage="calendar" style="plain" id="7Nz-a2-JVK">
                             <connections>
                                 <action selector="back:" destination="bdS-bl-A0X" id="cFE-Lj-ybs"/>
@@ -728,8 +729,8 @@
     <resources>
         <image name="addButton" width="640" height="333"/>
         <image name="calendar" catalog="system" width="64" height="52"/>
-        <image name="list.dash" width="16" height="16"/>
         <image name="list.dash" catalog="system" width="64" height="42"/>
+        <image name="list.dash" width="16" height="16"/>
         <image name="magnifyingglass" catalog="system" width="64" height="56"/>
         <image name="並べ替え矢印" width="100" height="100"/>
     </resources>

@@ -208,7 +208,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         let realm = try! Realm()
         let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
         
-        let alert: UIAlertController = UIAlertController(title: "アラート表示", message: "削除してもいいですか？", preferredStyle:  UIAlertController.Style.alert)
+        let alert: UIAlertController = UIAlertController(title: "todoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
 
         let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
                (action: UIAlertAction!) -> Void in
