@@ -23,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                }
 //        self.window?.rootViewController = ViewController()
         self.window?.makeKeyAndVisible()
+        
         // Override point for customization after application launch.
         
         return true
@@ -33,7 +34,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             var storyboard = UIStoryboard()
             let height = UIScreen.main.bounds.size.height
-            if height == 667 {
+            if height == 568{
+                storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
+                //iPhoneSE
+            } else if height == 667 {
                 storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 //iPhone8
             }else if height == 736 {
@@ -41,6 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 //iPhone8Plus
             }else if height == 812{
                 storyboard = UIStoryboard(name: "Main", bundle: nil)
+                //iPhoneX,XS,11Pro
             }else if height == 896{
                 storyboard = UIStoryboard(name: "Main", bundle: nil)
             }else{
