@@ -273,8 +273,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 cell.detailTextLabel?.text = ""
             }
             if todo.isDone == true{
-                cell.textLabel?.textColor = UIColor.gray
-                cell.detailTextLabel?.textColor = UIColor.gray
+                cell.textLabel?.textColor = UIColor(red: 210/255, green: 210/255, blue: 210/255, alpha: 1)
+                cell.detailTextLabel?.textColor = UIColor(red: 210/255, green: 210/255, blue: 210/255, alpha: 1)
             } else {
                 cell.textLabel?.textColor = UIColor.black
                 cell.detailTextLabel?.textColor = UIColor.black
