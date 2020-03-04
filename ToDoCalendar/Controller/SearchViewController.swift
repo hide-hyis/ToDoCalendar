@@ -173,9 +173,9 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
                 
             }
         }
-        if searchKeys.count == 0 { return }
-        //日付は片側だけ選択NG
-        if (searchKeys["dateFrom"] != nil && searchKeys["dateTo"] == nil) || (searchKeys["dateFrom"] == nil && searchKeys["dateTo"] != nil) {return}
+        let dateFromKey = DateUtils.dateFromString(string: searchKeys["dateFrom"]!, format: "yyyy年MM月dd日")
+        let dateToKey = DateUtils.dateFromString(string: searchKeys["dateTo"]!, format: "yyyy年MM月dd日")
+        if (searchKeys.count == 0) || (dateFromKey >= dateToKey) { return }
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
     }

@@ -39,20 +39,28 @@ class ToDo: Object {
     //textField入力値制限アラート
     class func textFieldAlert(_ textField: UITextField, _ button: UIButton, _ num: Int) {
         let limitedNum = num
+        let str = textField.text!
         if textField.text! == "" {
             invalidButton(button)
         }else {
             if textField.text!.count > num {
-                let str = textField.text!
+                let extraStr = str.count - limitedNum
                 let attrText = NSMutableAttributedString(string: str)
                 attrText.addAttributes([
                     .foregroundColor: UIColor.gray,
                     .backgroundColor: UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
-                ], range: NSMakeRange(limitedNum, str.count - limitedNum)
+                    ], range: NSRange(location:num, length:extraStr)
                 )
                 textField.attributedText = attrText
                 invalidButton(button)
-            }else {
+            }else if textField.text!.count <= num {
+                let attrText = NSMutableAttributedString(string: str)
+                attrText.addAttributes([
+                    .foregroundColor: UIColor.black,
+                    .backgroundColor: UIColor.white
+                    ], range: NSRange(location:0, length:textField.text!.count)
+                )
+                textField.attributedText = attrText
                 validButton(button)
             }
         }
@@ -90,7 +98,7 @@ class ToDo: Object {
         return (yyyy, mm, dd)
     }
     
-    //サンプルとなるデータを引数の数だけ作る
+    //サンプルデータを引数の数だけ作る
     class func makeSampleData(number:Int){
         let realm = try! Realm()
         let todosCount = realm.objects(ToDo.self).count

@@ -77,6 +77,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         ToDo.isDoneDisplay(isDone, isDoneSegment)
         
+        //擬似bナビバー
         if #available(iOS 13.0, *) {
         } else {
             Layout.blankView(self) //navに白紙
@@ -125,7 +126,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         super.didReceiveMemoryWarning()
     }
     
-    // キーボードを閉じる
+    // タイトル欄入力後バリデーションチェック
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         titleTextField.resignFirstResponder()
         return true
@@ -146,7 +147,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
-    
+    //内容欄入力後バリデーションチェック
     func textViewDidChange(_ textView: UITextView) {
         ToDo.textViewdAlert(contentTextView, editButton, 200)
     }
@@ -164,15 +165,17 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
-    
+    //星1つタップ
     @IBAction func star1Action(_ sender: Any) {
         Layout.star1Button(star1, star2, star3)
         priority = 1
     }
+    //星2つタップ
     @IBAction func star2Action(_ sender: Any) {
         Layout.star2Button(star1, star2, star3)
         priority = 2
     }
+    //星3つタップ
     @IBAction func star3Action(_ sender: Any) {
         Layout.star3Button(star1, star2, star3)
         priority = 3
@@ -208,7 +211,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         let realm = try! Realm()
         let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
         
-        let alert: UIAlertController = UIAlertController(title: "todoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
+        let alert: UIAlertController = UIAlertController(title: "ToDoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
 
         let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
                (action: UIAlertAction!) -> Void in
@@ -233,7 +236,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         self.dismiss(animated: true, completion: nil)
     }
     
-
+//    画面を下スワイプで画面遷移
     @IBAction func swipeDown(_ sender: Any) {
         if #available(iOS 13.0, *) {
         } else {

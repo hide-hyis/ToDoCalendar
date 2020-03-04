@@ -30,7 +30,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var dateFromKey: Date?
     var dateToKey: Date?
     var priority: Int?
-    var keysForSort = [String:String]()
     var predicates: [NSPredicate] = []
     var compoundedPredicate: NSCompoundPredicate?
     var segmentIndex:Int = 0
@@ -119,16 +118,22 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //検索ワードの受取
     func catchData(key: [String : String]) {
-        predicates = [] //検索内容の初期化
-        keysForSort = key
+        predicates.removeAll() //検索内容の初期化
         if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
         if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
-        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日") }
-        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日") }
-        if dateFromKey != nil && dateToKey != nil { predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg)) }
+        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日")} //dateFromを文字型から日付型に変換
+        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日")} //dateToを文字型から日付型に変換
+        if dateFromKey != nil && dateToKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg))
+        } else if dateToKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt <= %@", dateToKey! as CVarArg))
+        } else if dateFromKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt >= %@", dateFromKey! as CVarArg))
+        }
         if key["priority"] != nil { priority = Int(key["priority"]!)! }
         if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
         compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        print("検索条件\(key)")
         tableView.reloadData()
         titleLabel.text = "タイトル"
         contentLabel.text = "内容"
@@ -251,7 +256,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             cell.textLabel?.textColor = UIColor.black
             cell.detailTextLabel?.textColor = UIColor.black
         }
-        Layout.calendarTableCellFont(cell: cell)
+//        cell.textLabel
+        Layout.listTableCellFont(cell: cell)
         return cell
     }
     
@@ -291,32 +297,36 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool{
         return true
     }
+    
     // 完了/未完了処理
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let realm = try! Realm()
         Search.createDefault(realm)
         var search = Search.getSearchProperties(realm)
         if compoundedPredicate != nil {
             search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
         }
-        let action = UITableViewRowAction(style: .normal, title: search.3[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
-            if search.3[indexPath.row].isDone {
-                try! realm.write {
-                  search.3[indexPath.row].isDone = false
-                }
-//                tableView.reloadData()
-            } else {
-                try! realm.write {
-                  search.3[indexPath.row].isDone = true
-                }
-//                tableView.reloadData()
-            }
-            tableView.reloadData()
+        let action = UIContextualAction(style: .normal,
+                                        title: search.3[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
+              // 処理を実行
+                if search.3[indexPath.row].isDone {
+                                try! realm.write {
+                                  search.3[indexPath.row].isDone = false
+                                }
+                            } else {
+                                try! realm.write {
+                                  search.3[indexPath.row].isDone = true
+                                }
+                            }
+                            tableView.reloadData()
+              completionHandler(true)
         }
-        return [action]
+        let configuration = UISwipeActionsConfiguration(actions: [action])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
     }
     
-    
+    //上スワイプで詳細画面に遷移
     @IBAction func swipeUpAction(_ sender: Any) {
             performSegue(withIdentifier: "goDetailPage", sender: nil)
     }
@@ -341,6 +351,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
+    //検索内容を空にするクリアボタン
     @IBAction func clearAction(_ sender: Any) {
         if compoundedPredicate != nil {
             predicates = []

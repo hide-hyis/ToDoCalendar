@@ -45,7 +45,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         myCalendar.scrollDirection = .vertical
         
         let today = Date()
-        let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月d日")
+        let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月dd日")
         selectedDateLabel.text = todayString
         doToDoCount()
         
@@ -98,6 +98,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @IBAction func goListAction(_ sender: Any) {
         performSegue(withIdentifier: "goListPage", sender: nil)
     }
+    
     //選択した日付を取得
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Void {
         
@@ -292,31 +293,35 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     
     // 完了/未完了処理
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let realm = try! Realm()
         let dateString = self.selectedDateLabel!.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
         let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
         let todos = realm.objects(ToDo.self).filter(predicate)
-        let action = UITableViewRowAction(style: .normal, title: todos[indexPath.row].isDone ? "未完了" : "完了"){ action, indexPath in
-            
-            if todos[indexPath.row].isDone {
-                try! realm.write {
-                  todos[indexPath.row].isDone = false
+        let action = UIContextualAction(style: .normal,
+                                        title: todos[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
+              // 処理を実行
+                if todos[indexPath.row].isDone {
+                    try! realm.write {
+                      todos[indexPath.row].isDone = false
+                    }
+                    self.doToDoCount()
+                    self.myCalendar.reloadData()
+                    tableView.reloadData()
+                } else {
+                    try! realm.write {
+                      todos[indexPath.row].isDone = true
+                    }
+                    self.doToDoCount()
+                    self.myCalendar.reloadData()
+                    tableView.reloadData()
                 }
-                self.doToDoCount()
-                self.myCalendar.reloadData()
-                tableView.reloadData()
-            } else {
-                try! realm.write {
-                  todos[indexPath.row].isDone = true
-                }
-                self.doToDoCount()
-                self.myCalendar.reloadData()
-                tableView.reloadData()
-            }
+              completionHandler(true)
         }
-        return [action]
+        let configuration = UISwipeActionsConfiguration(actions: [action])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
     }
     
 }

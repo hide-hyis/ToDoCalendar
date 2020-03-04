@@ -50,8 +50,8 @@ class Layout: Object {
             cell.textLabel!.font = UIFont(name: "Arial", size: 15)
             cell.detailTextLabel!.font = UIFont(name: "Arial", size: 15)
         } else {
-            cell.textLabel!.font = UIFont(name: "Arial", size: 18)
-            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 18)
+            cell.textLabel!.font = UIFont(name: "Arial", size: 16)
+            cell.detailTextLabel!.font = UIFont(name: "Arial", size: 16)
         }
         
     }

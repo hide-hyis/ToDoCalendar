@@ -79,7 +79,7 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 {
-                let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+                let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
                 let todo = ToDo()
                 todo.title = titleTextField.text!
                 todo.content = contentTextField.text
