@@ -33,11 +33,14 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     var selectedIndexPath: NSIndexPath = NSIndexPath()
     let screenHeight = Int(UIScreen.main.bounds.size.height)
+    var pageMonth:Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ToDo.makeSampleData(number: 400)
+        let realm = try! Realm()
+        print("Realm Browser: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+//        ToDo.makeSampleData(number: 400)
         tableView.delegate  = self
         tableView.dataSource = self
         self.myCalendar.dataSource = self
@@ -48,7 +51,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月dd日")
         selectedDateLabel.text = todayString
         doToDoCount()
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -88,18 +90,19 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     override func didReceiveMemoryWarning() {
            super.didReceiveMemoryWarning()
-        
        }
     
+    //ToDo追加画面に遷移
     @IBAction func addAction(_ sender: Any) {
         performSegue(withIdentifier: "goAddPage", sender: nil)
     }
     
+    //ToDo一覧画面に遷移
     @IBAction func goListAction(_ sender: Any) {
         performSegue(withIdentifier: "goListPage", sender: nil)
     }
     
-    //選択した日付を取得
+    //日付をタップした時の処理
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Void {
         
         let tmpDate = Calendar(identifier: .gregorian)
@@ -109,6 +112,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = "\(year)年\(month)月\(day)日"
         tableView.reloadData()
         doToDoCount()
+        print("月：\(getMonthIdx(date))")
     }
     
     fileprivate let gregorian: Calendar = Calendar(identifier: .gregorian)
@@ -144,22 +148,67 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let tmpCalendar = Calendar(identifier: .gregorian)
         return tmpCalendar.component(.weekday, from: date)
     }
+    
+    //月判定
+    func getMonthIdx(_ date: Date) -> Int{
+        let tmpCalendar = Calendar(identifier: .gregorian)
+        return tmpCalendar.component(.month, from: date)
+    }
 
+    
+    //カレンダーの月送りで月を取得
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        let currentPage:Date = calendar.currentPage
+        let modifiedCurrentPage = Calendar.current.date(byAdding: .hour, value: 9, to: currentPage)  //9時間足した日付
+        let monthString = DateUtils.stringFromDate(date: modifiedCurrentPage!, format: "MM")
+        pageMonth = Int(monthString)!
+        
+        let realm = try! Realm()
+        let month = realm.objects(DateUtils.self).first
+        //pageMonthをDB上で更新していく
+        if month?.month != nil {
+            try! realm.write {
+                month!.month = pageMonth!
+            }
+        }
+    }
+    
+    
     // 土日や祝日の日の文字色を変える
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-        //祝日判定をする（祝日は赤色で表示する）
-        if self.judgeHoliday(date){
-            return UIColor.red
-        }
-        //土日の判定を行う（土曜日は青色、日曜日は赤色で表示する）
+        
         let weekday = self.getWeekIdx(date)
-        if weekday == 1 {   //日曜日
-            return UIColor.red
+        let today = Date()
+        let thisMonth = Calendar.current.component(.month, from: today)
+        let realm = try! Realm()
+        var pageMonth = realm.objects(DateUtils.self).first?.month
+        if pageMonth != nil {
+            next
+        }  else {
+            let month = DateUtils()
+            month.month = Calendar.current.component(.month, from: Date()) //今月を登録
+            try! realm.write {
+              realm.add(month)
+            }
+            pageMonth = realm.objects(DateUtils.self).first?.month
         }
-        else if weekday == 7 {  //土曜日
-            return UIColor.red
+        let selectedMonth = Calendar.current.component(.month, from: date)
+        let selectedDay = Calendar.current.component(.day, from: date)
+//        print("pageMonth: \(pageMonth!),selected: \(selectedMonth)/ \(selectedDay) ")
+        
+        
+        //祝日判定をする（祝日は赤色で表示する）
+        if selectedMonth == thisMonth && (self.judgeHoliday(date) || weekday == 1 || weekday == 7){ //今月かつ土日祝日
+                return UIColor.red
+        } else if selectedMonth != thisMonth && (self.judgeHoliday(date) || weekday == 1 || weekday == 7) { //今月以外で土日祝日
+            
+//            if selectedMonth == pageMonth! && (self.judgeHoliday(date) || weekday == 1 || weekday == 7){ //表示された月で土日祝日
+                return UIColor.red
+//            }
+//            return UIColor(red: 220/255, green: 90/255, blue: 80/255, alpha: 0.5)
         }
         return nil
+        
     }
     
     // 日の始まりと終わりを取得
@@ -169,7 +218,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return (begining, end)
     }
     
-    
+    //優先度の表示
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
         
         var maxPriority = 0
@@ -222,6 +271,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
+    //テーブルセルのセル数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let realm = try! Realm()
         let dateString = selectedDateLabel!.text

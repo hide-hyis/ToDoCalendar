@@ -22,11 +22,15 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var searchButton: UIBarButtonItem!
+    
     var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
     var datePicker: UIDatePicker = UIDatePicker()
-    let searchButton2  = UIButton()
+    var searchButton2  = UIButton()
     var delegate:CatchProtocol?
+    var dateFromKey:Date?
+    var dateToKey:Date?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,6 +119,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+//    優先度の星をタップしたアクション
     @IBAction func star1Action(_ sender: Any) {
         if priority != 1 {
             Layout.star1Button(star1, star2, star3)
@@ -167,15 +172,27 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
               "content": contentString,"dateFrom": dateFromString,
               "dateTo": dateToString, "priority": priorityString]
         var searchKeys = [String: String]()
+        
+        //空欄項目以外を配列searchKeysに投入
         for (key, value) in inputDictionary {
             if value != "" && value != "0" && value != "選択" {
                 searchKeys.updateValue(value, forKey: key)
                 
             }
         }
-        let dateFromKey = DateUtils.dateFromString(string: searchKeys["dateFrom"]!, format: "yyyy年MM月dd日")
-        let dateToKey = DateUtils.dateFromString(string: searchKeys["dateTo"]!, format: "yyyy年MM月dd日")
-        if (searchKeys.count == 0) || (dateFromKey >= dateToKey) { return }
+        //日付を日付型に変換
+        if searchKeys["dateFrom"] != nil {dateFromKey = DateUtils.dateFromString(string: searchKeys["dateFrom"]!, format: "yyyy年MM月dd日")}
+        if searchKeys["dateTo"] != nil {dateToKey = DateUtils.dateFromString(string: searchKeys["dateTo"]!, format: "yyyy年MM月dd日")}
+        
+        //検索項目なしor日付の不整合でバリデーション
+        if  ( searchKeys.count == 0) {
+            return
+        } else if  (dateFromKey != nil && dateToKey != nil) {
+            if ( dateFromKey!.compare(dateToKey!) == .orderedDescending){ //dateFromKeyがdateToKeyより後の日付の場合
+                return
+            }
+        }
+        
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
     }

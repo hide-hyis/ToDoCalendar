@@ -23,6 +23,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var isDone = Bool()
     var datePicker: UIDatePicker = UIDatePicker()
     var delegate:DetailProtocol?
+    var allY:CGFloat = 0.0
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -33,12 +34,16 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var editButton: UIButton!
+    @IBOutlet weak var testConstraint: NSLayoutConstraint!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+//        dateField.layer.borderWidth = 0.5
+//        dateField.layer.borderColor = UIColor.gray.cgColor
+        titleTextField.layer.borderWidth = 0.5
+        titleTextField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.delegate = self
         contentTextView.delegate = self
         dateField.text = selectedDateString
@@ -101,17 +106,15 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
             self.view.bringSubviewToFront(deleteButton)
             
             Layout.segmentLayout(isDoneSegment)
+            
         }
     }
-
-    
-        
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         presentingViewController?.beginAppearanceTransition(true, animated: animated)
         presentingViewController?.endAppearanceTransition()
-        
+
     }
     
     // UIDatePickerのDoneを押したら発火
@@ -133,6 +136,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+        titleTextField.resignFirstResponder()
+        contentTextView.resignFirstResponder()
     }
     
     //決定ボタンの無効/有効化

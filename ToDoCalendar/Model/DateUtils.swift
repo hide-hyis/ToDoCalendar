@@ -8,8 +8,14 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 
-class DateUtils {
+class DateUtils:Object {
+    @objc dynamic var month: Int
+    
+    required init() {
+        month = Calendar.current.component(.month, from: Date()) //今月を登録
+    }
     
     //StringからDate型に変換
     class func dateFromString(string: String, format: String) -> Date {
