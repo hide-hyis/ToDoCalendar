@@ -30,7 +30,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     var delegate:CatchProtocol?
     var dateFromKey:Date?
     var dateToKey:Date?
-    var searchResult = true
+    var isSearchResult = true //日付不整合バリデーションフラグ
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,10 +46,10 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         let toolbar2 = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
         let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         
-        let doneItem1 = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateFromDone))
-        toolbar1.setItems([spacelItem, doneItem1], animated: true)
-        let doneItem2 = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateToDone))
-        toolbar2.setItems([spacelItem, doneItem2], animated: true)
+        let dateFromDoneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateFromDone))
+        toolbar1.setItems([spacelItem, dateFromDoneButton], animated: true)
+        let dateToDoneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateToDone))
+        toolbar2.setItems([spacelItem, dateToDoneButton], animated: true)
         
         dateFromTextField.inputView = datePicker
         dateFromTextField.inputAccessoryView = toolbar1
@@ -79,27 +79,30 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    // UIDatePickerのDoneを押したら発火
+    // UIDatePickerのDateFromDoneを押したら発火
     @objc func dateFromDone() {
         dateFromTextField.endEditing(true)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日"
         dateFromTextField.text = "\(formatter.string(from: datePicker.date))"
-//        if ( dateFromTextField.text != "選択" && dateToTextField.text != "選択"){
-//            print("Date From :: dateFromTextField: \(dateFromTextField.text!),  dateToTextField: \(dateToTextField.text!)")
-//            self.dateCheck()
-//        }
+        if ( dateFromTextField.text != "選択" && dateToTextField.text != "選択"){
+            print("Date From -> dateFromTextField: \(dateFromTextField.text!),  dateToTextField: \(dateToTextField.text!)")
+            self.dateCheck()
+        }
     }
+    
+    // UIDatePickerのDateToを押したら発火
     @objc func dateToDone() {
         dateToTextField.endEditing(true)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日"
         dateToTextField.text = "\(formatter.string(from: datePicker.date))"
-//        if ( dateFromTextField.text != "選択" && dateToTextField.text != "選択"){
-//            print("Date To :: dateFromTextField: \(dateFromTextField.text!),  dateToTextField: \(dateToTextField.text!)")
-//            self.dateCheck()
-//        }
+        if ( dateFromTextField.text != "選択" && dateToTextField.text != "選択"){
+            print("Date To -> dateFromTextField: \(dateFromTextField.text!),  dateToTextField: \(dateToTextField.text!)")
+            self.dateCheck()
+        }
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -197,21 +200,19 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
             return
         } else if  (dateFromKey != nil && dateToKey != nil) {
             
-            //日付が不整合の場合
-            dateCheck()
-            if searchResult == false{
-                return
-            }
+            if isSearchResult == false {return}
         }
         
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
     }
     
-    func dateCheck(){
+    //日付が不整合の場合
+    func dateCheck() -> Bool {
+        dateFromKey = DateUtils.dateFromString(string: dateFromTextField.text!, format: "yyyy年MM月dd日")
+        dateToKey = DateUtils.dateFromString(string: dateToTextField.text!, format: "yyyy年MM月dd日")
+        print("dateFromKey: \(dateFromKey!),  dateToKey: \(dateToKey!)")
         
-//        dateFromKey = DateUtils.dateFromString(string: dateFromTextField.text!, format: "yyyy年MM月dd日")
-//        dateToKey = DateUtils.dateFromString(string: dateFromTextField.text!, format: "yyyy年MM月dd日")
         if ( dateFromKey!.compare(dateToKey!) == .orderedDescending){ //dateFromKeyがdateToKeyより後の日付の場合
     //      バリデーションを画面に反映
             dateFromTextField.backgroundColor = UIColor(red: 0.9, green: 0.3, blue: 0.2, alpha: 0.5)
@@ -222,15 +223,16 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
             dateToTextField.textColor = UIColor.gray
             dateToTextField.layer.cornerRadius = 10
             dateToTextField.textAlignment = NSTextAlignment.center
-            searchResult = false
-            return
+            isSearchResult = false
+            return isSearchResult
         }
-        
+        //日付OK
         dateFromTextField.backgroundColor = UIColor.clear
         dateFromTextField.textColor = UIColor.black
         dateToTextField.backgroundColor = UIColor.clear
         dateToTextField.textColor = UIColor.black
-        searchResult = true
-        return
+        isSearchResult = true
+        return isSearchResult
     }
+    
 }

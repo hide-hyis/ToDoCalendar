@@ -35,5 +35,4 @@ class Search: Object {
         return (sort!, asc!, isDoneString, todos)
     }
     
-    
 }
