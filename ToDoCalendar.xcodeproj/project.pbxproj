@@ -75,6 +75,7 @@
 		D2D7598A23F653B300DA8437 /* FSCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FSCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7598C23F653B300DA8437 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7598E23F653B300DA8437 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2F9AFAB241A14B800EDFA13 /* iPhone11.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = iPhone11.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,8 +149,9 @@
 			isa = PBXGroup;
 			children = (
 				D261405123D690C70036161E /* Assets.xcassets */,
-				D29ABF0023DFF23A008A522A /* Main.storyboard */,
 				899CE4E923F57C62008C4D99 /* iPhone8.storyboard */,
+				D2F9AFAB241A14B800EDFA13 /* iPhone11.storyboard */,
+				D29ABF0023DFF23A008A522A /* Main.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";

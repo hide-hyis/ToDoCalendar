@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 storyboard = UIStoryboard(name: "Main", bundle: nil)
                 //iPhoneX,XS,11Pro
             }else if height == 896{
-                storyboard = UIStoryboard(name: "Main", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone11", bundle: nil)
             }else{
                 
                 switch UIDevice.current.model {

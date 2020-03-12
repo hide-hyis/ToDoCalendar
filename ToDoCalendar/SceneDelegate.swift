@@ -44,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }else if height == 812{
                 storyboard = UIStoryboard(name: "Main", bundle: nil)
             }else if height == 896{
-                storyboard = UIStoryboard(name: "Main", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone11", bundle: nil)
             }else{
                 
                 switch UIDevice.current.model {
