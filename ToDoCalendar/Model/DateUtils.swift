@@ -45,5 +45,15 @@ class DateUtils:Object {
         dateField.inputView = datePicker
     }
     
+    class func createTimestamp() -> String{
+        let timeInterval = NSDate().timeIntervalSince1970
+        let myTimeInterval = TimeInterval(timeInterval)
+        let time = NSDate(timeIntervalSince1970: TimeInterval(myTimeInterval))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMddHHmmss"
+        let timestamp = formatter.string(from: time as Date)
+        return timestamp
+    }
+    
     
 }

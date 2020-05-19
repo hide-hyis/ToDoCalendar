@@ -10,6 +10,7 @@ import UIKit
 import RealmSwift
 import FSCalendar
 import CalculateCalendarLogic
+import Firebase
 
 //下線に色付け
 extension FSCalendar {
@@ -34,12 +35,15 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     var selectedIndexPath: NSIndexPath = NSIndexPath()
     let screenHeight = Int(UIScreen.main.bounds.size.height)
     var pageMonth:Int?
+    var maxPriority = 0 // 表示する優先度の初期化
+    var todoArray = [FToDo]()
     
+    
+    // MARK:  View Like cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let realm = try! Realm()
-        print("Realm Browser: \(Realm.Configuration.defaultConfiguration.fileURL!)")
+    
+//        print("Realm Browser: \(Realm.Configuration.defaultConfiguration.fileURL!)")
 //        ToDo.makeSampleData(number: 400)
         tableView.delegate  = self
         tableView.dataSource = self
@@ -50,14 +54,21 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let today = Date()
         let todayString = DateUtils.stringFromDate(date: today, format: "yyyy年MM月dd日")
         selectedDateLabel.text = todayString
-        doToDoCount()
+        showIsDoneTodo()
+        
+        checkTodoInFirebase()
+        
+        
+        
+//        firebasePlayground()
     }
-
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         myCalendar.reloadData()
         tableView.reloadData()
-        doToDoCount()
+        showIsDoneTodo()
         if let presented = self.presentedViewController {
             if type(of: presented) == ToDoDetailViewController.self {
                 //詳細画面から戻ってきたときreload
@@ -67,11 +78,83 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
+    // MARK: Convert Realm to Firebase databsase
+    func checkTodoInFirebase(){
+        USER_TODOS_REF.child("user1").observeSingleEvent(of: .value) { (snaphot) in
+            if snaphot.hasChildren(){
+                print("既にデータあり")
+            }else{
+                self.convertRealmToFirebase(user: "user1")
+            }
+        }
+    }
+    
+    func firebasePlayground(){
+        USER_TODOS_REF.child("user1").observe(.childAdded) { (snaphot) in
+                     let todoId = snaphot.key
+                     print(todoId)
+                    
+                    //日付の検索
+                    let query = TODO_REF.queryOrdered(byChild: "schedule").queryStarting(atValue: "20200414").queryEnding(atValue: "20200414")
+                    query.observe(.value) { (snapshot) in
+                        print(snapshot)
+                    }
+                    
+        //            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+        //                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+        //                let todo = ToDo(todoId: todoId, dictionary: dictionary)
+        //                print(todo)
+        //            }
+                 }
+    }
+    
+    func convertRealmToFirebase(user user: String){
+        let todos = realm.objects(ToDo.self)
+        
+        for todo in todos {
+//            let createdTimeString = DateUtils.stringFromDate(date: todo.dateAt, format: "yyyyMMddHHmmss")
+            let createdTimeUnix = todo.dateAt.timeIntervalSince1970
+//            let scheduleString = DateUtils.stringFromDate(date: todo.scheduledAt, format: "yyyyMMdd")
+            let scheduleUnix = todo.scheduledAt.timeIntervalSince1970
+            let scheduleUnixString = String(todo.scheduledAt.timeIntervalSince1970).prefix(10)
+            let scheduleString = String(scheduleUnixString)
+            
+            let values1 = ["title": todo.title,
+                          "content": todo.content,
+                          "schedule": scheduleUnix,
+                          "priority": todo.priority,
+                          "isDone": todo.isDone,
+                          "imageURL": "",
+                          "userId": user,
+                          "createdTime": createdTimeUnix,
+                          "updatedTime": createdTimeUnix] as [String: Any]
+            
+            
+//            let values2 = ["title": todo.title,
+//                          "content": todo.content,
+//                          "priority": todo.priority,
+//                          "isDone": todo.isDone,
+//                          "imageURL": "",
+//                          "userId": user,
+//                          "createdTime": createdTimeUnix,
+//                          "updatedTime": createdTimeUnix] as [String: Any]
+            
+            let todoId = TODO_REF.childByAutoId()
+            guard let todoIdKey = todoId.key else {return}
+            todoId.updateChildValues(values1)
+            
+            USER_TODOS_REF.child(user).updateChildValues([todoIdKey: 1])
+            
+            CALENDAR_TODOS_REF.child(user).child(scheduleString).updateChildValues([todoIdKey: 1])
+            
+            print("\(todo.title)\n\(todo.content)\n\(todo.scheduledAt)")
+        }
+    }
+    
     //完了済件数の表示
-    func doToDoCount(){
+    func showIsDoneTodo(){
         var done:Int = 0
         var total:Int = 0
-        let realm = try! Realm()
         let dateString = self.selectedDateLabel!.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
         let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
@@ -92,6 +175,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
            super.didReceiveMemoryWarning()
        }
     
+    // MARK: EVENT ACTION
+    
     //ToDo追加画面に遷移
     @IBAction func addAction(_ sender: Any) {
         performSegue(withIdentifier: "goAddPage", sender: nil)
@@ -102,6 +187,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         performSegue(withIdentifier: "goListPage", sender: nil)
     }
     
+    @IBAction func openSettingView(_ sender: Any) {
+//        let settingView = UINib(nibName: "SettingView", bundle: Bundle.main).instantiate(withOwner: self, options: nil).first as? UIView
+//        view.addSubview(settingView!)
+    }
+    
+    
     //日付をタップした時の処理
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Void {
         
@@ -111,8 +202,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let day = tmpDate.component(.day, from: date)
         selectedDateLabel.text = "\(year)年\(month)月\(day)日"
         tableView.reloadData()
-        doToDoCount()
-        print("月：\(getMonthIdx(date))")
+        showIsDoneTodo()
+//        print("月：\(getMonthIdx(date))")
     }
     
     fileprivate let gregorian: Calendar = Calendar(identifier: .gregorian)
@@ -122,6 +213,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return formatter
     }()
 
+    
+    // MARK:  - CaluculateCalendarLogic
     // 祝日判定を行い結果を返すメソッド(True:祝日)
     func judgeHoliday(_ date : Date) -> Bool {
         //祝日判定用のカレンダークラスのインスタンス
@@ -180,7 +273,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let weekday = self.getWeekIdx(date)
         let today = Date()
         let thisMonth = Calendar.current.component(.month, from: today)
-        let realm = try! Realm()
         var pageMonth = realm.objects(DateUtils.self).first?.month
         if pageMonth != nil {
             next
@@ -194,18 +286,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
         let selectedMonth = Calendar.current.component(.month, from: date)
         let selectedDay = Calendar.current.component(.day, from: date)
-//        print("pageMonth: \(pageMonth!),selected: \(selectedMonth)/ \(selectedDay) ")
-        
         
         //祝日判定をする（祝日は赤色で表示する）
         if selectedMonth == thisMonth && (self.judgeHoliday(date) || weekday == 1 || weekday == 7){ //今月かつ土日祝日
                 return UIColor.red
         } else if selectedMonth != thisMonth && (self.judgeHoliday(date) || weekday == 1 || weekday == 7) { //今月以外で土日祝日
-            
-//            if selectedMonth == pageMonth! && (self.judgeHoliday(date) || weekday == 1 || weekday == 7){ //表示された月で土日祝日
                 return UIColor.red
-//            }
-//            return UIColor(red: 220/255, green: 90/255, blue: 80/255, alpha: 0.5)
         }
         return nil
         
@@ -218,30 +304,72 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return (begining, end)
     }
     
-    //優先度の表示
+    //優先度(星しるし)の表示
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
+//        guard let currentUser = Auth.auth().currentUser?.uid else { return nil}
+        print("日付：\(date)")
+        let scheduleUnixString = String(date.timeIntervalSince1970).prefix(10)
+        let scheduleString = String(scheduleUnixString)
         
-        var maxPriority = 0
-                let realm = try! Realm()
                 var todos: Results<ToDo>!
                 let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(date).begining as CVarArg, getBeginingAndEndOfDay(date).end as CVarArg)
         todos = realm.objects(ToDo.self).filter(predicate).filter("isDone = false")
+
                 if todos!.isEmpty{
                     return ""
                 } else {
                     for todo in todos{
                         if todo.priority > maxPriority{
-                           maxPriority = todo.priority
+//                           maxPriority = todo.priority
                         }
                     }
                 }
-        if maxPriority == 1{
+        // 最大優先度の取得
+//        fetchMaxPriority(date: scheduleString)
+        CALENDAR_TODOS_REF.child("user1").child(scheduleString).observe(.value) { (snapshot) in
+            let todoId = snapshot.key
+            var dt: String = ""
+            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+                let todo = FToDo(todoId: todoId, dictionary: dictionary)
+                self.todoArray.append(todo)
+                dt = scheduleString
+                if dt == scheduleString{
+                    self.maxPriority = todo.priority; print("該当日:\(date), maxPriority: \(self.maxPriority), dt: \(dt)")
+                }
+            }
+        }
+        if self.maxPriority == 1{
+            self.maxPriority = 0
             return "⭐️"
-        } else if maxPriority == 2 {
+        } else if self.maxPriority == 2 {
+            self.maxPriority = 0
             return "⭐️⭐️"
         } else {
+            self.maxPriority = 0
             return "⭐️⭐️⭐️"
         }
+    }
+    
+    func fetchMaxPriority(date: String) -> Int {
+        CALENDAR_TODOS_REF.child("user1").child(date).observe(.childAdded) { (snapshot) in
+            let todoId = snapshot.key
+            var dt: String = ""
+            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+                let todo = FToDo(todoId: todoId, dictionary: dictionary)
+                self.todoArray.append(todo)
+                dt = date
+                if dt == date{
+                    self.maxPriority = todo.priority; print("該当日:\(date), maxPriority: \(self.maxPriority), dt: \(dt)")
+                }
+            }
+        }
+        return self.maxPriority
+    }
+    
+    func fetchToDo(){
+        
     }
     
     //値の受け渡し
@@ -271,14 +399,34 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
+    // MARK: UITableViewDelegate
+    
     //テーブルセルのセル数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let realm = try! Realm()
         let dateString = selectedDateLabel!.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
         let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
         let todos = realm.objects(ToDo.self).filter(predicate)
+        
+        // Firebaseより取得
+        var todoCount = 0
+        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+        let scheduleString = String(scheduleUnixString)
+        fetchCount(date: scheduleString) { (count) in
+            todoCount = count
+        }
+        print("todoCount:\(todoCount)")
         return todos.count
+    }
+    
+    func fetchCount(date: String, completion: @escaping(Int) -> ()){
+        CALENDAR_TODOS_REF.child("user1").child(date).observeSingleEvent(of: .value) { (snapshot) in
+            if let dictionary = snapshot.value as? Dictionary<String, AnyObject> {
+                
+                let todoCount = dictionary.count
+                completion(todoCount)
+            }
+        }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -299,12 +447,32 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     //Cellの生成
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let realm = try! Realm()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let dateString = selectedDateLabel!.text
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
         let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
         let todos = realm.objects(ToDo.self).filter(predicate)
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
+        
+        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+        let scheduleString = String(scheduleUnixString)
+//        var todoIdCheck: [String]()
+        CALENDAR_TODOS_REF.child("user1").child(scheduleString).observe(.childAdded) { (snapshot) in
+            let todoId = snapshot.key
+            self.todoArray.removeAll()
+            TODO_REF.child(todoId).observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+                
+//                if todoIdCheck != todoId {
+                    let todo = FToDo(todoId: todoId, dictionary: dictionary)
+//                    if self.todoArray.contains(todo) == false{
+//                        self.todoArray.append(todo)
+//                        print(self.todoArray)
+//                    }
+//                    todoIdCheck.append(todoId)
+//                }
+            })
+        }
         if todos.count > indexPath.row {
             let todo = todos[indexPath.row]
             if todo.title.count >= 11 {
@@ -356,14 +524,14 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                     try! realm.write {
                       todos[indexPath.row].isDone = false
                     }
-                    self.doToDoCount()
+                    self.showIsDoneTodo()
                     self.myCalendar.reloadData()
                     tableView.reloadData()
                 } else {
                     try! realm.write {
                       todos[indexPath.row].isDone = true
                     }
-                    self.doToDoCount()
+                    self.showIsDoneTodo()
                     self.myCalendar.reloadData()
                     tableView.reloadData()
                 }
@@ -373,6 +541,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
     }
+    
+    
     
 }
 

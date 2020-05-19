@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import Firebase
 
 class ToDo: Object {
     @objc dynamic var title: String  = ""
@@ -17,6 +18,53 @@ class ToDo: Object {
     @objc dynamic var dateAt: Date = NSDate() as Date
     @objc dynamic var isDone: Bool = false
     
+    var todoId: String!
+    var userId: String!
+    var categoryId: String!
+    var schedule: Int! // 予定日
+    var imageURL: String!
+    var createdTime: Double! // 作成時間
+    var updatedTime: String! // 更新時間
+    
+    init(todoId: String!, dictionary: Dictionary<String, AnyObject>) {
+        self.todoId = todoId
+        
+        if let title = dictionary["title"] as? String{
+            self.title = title
+        }
+        
+        if let content = dictionary["content"] as? String{
+            self.content = content
+        }
+        
+        if let userId = dictionary["userId"] as? String{
+            self.userId = userId
+        }
+        
+        if let schedule = dictionary["schedule"] as? Int{
+            self.schedule = schedule
+        }
+        
+        if let isDone = dictionary["isDone"] as? Bool{
+            self.isDone = isDone
+        }
+        
+        if let priority = dictionary["priority"] as? Int{
+            self.priority = priority
+        }
+        
+        if let dateAt = dictionary["dateAt"] as? Double{
+            self.createdTime = dateAt
+        }
+        
+        if let updatedTime = dictionary["updatedTime"] as? String{
+            self.updatedTime = updatedTime
+        }
+    }
+    
+    override required init() {
+//        fatalError("init() has not been implemented")
+    }
     
     class func isDoneDisplay( _ isDone:Bool, _ isDoneSegment:UISegmentedControl){
         if isDone {

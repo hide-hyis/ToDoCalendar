@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
         sleep(1)
         
         let storyboard:UIStoryboard = self.grabStoryboard()
@@ -34,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             var storyboard = UIStoryboard()
             let height = UIScreen.main.bounds.size.height
+            print("スクリーンサイズ: \(height)")
             if height == 568{
                 storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 //iPhoneSE

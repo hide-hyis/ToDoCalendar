@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Firebase
 
 class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
@@ -76,10 +77,12 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
     
     
     @IBAction func saveAction(_ sender: Any) {
-        
+//        let currentId = Auth.auth().currentUser?.uid
+        let currentId = "user1"
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 {
                 let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
+            /*
                 let todo = ToDo()
                 todo.title = titleTextField.text!
                 todo.content = contentTextField.text
@@ -87,10 +90,32 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
                 todo.priority = priority
                 todo.isDone = false
                  
-                let realm = try! Realm()
                 try! realm.write{
                     realm.add(todo)
                 }
+            */
+                let scheduleUnix = selectedDate.timeIntervalSince1970
+                let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+                let scheduleString = String(scheduleUnixString)
+                let createdTimeUnix = Date().timeIntervalSince1970
+                
+                let values = ["title": titleTextField.text!,
+                            "content": contentTextField.text!,
+                            "schedule": scheduleUnix,
+                            "priority": priority,
+                            "isDone": false,
+                            "imageURL": "",
+                            "userId": "user1",
+                            "createdTime": createdTimeUnix,
+                            "updatedTime": createdTimeUnix] as [String: Any]
+            
+                let todoId = TODO_REF.childByAutoId()
+                guard let todoIdKey = todoId.key else {return}
+                todoId.updateChildValues(values)
+                
+                USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
+                
+                CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
                 self.navigationController?.popViewController(animated: true)
         } else{
             print("項目を全て記入してください")

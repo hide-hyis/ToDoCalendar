@@ -18,11 +18,18 @@
 		D22E41F423FBD8490025869D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D7598E23F653B300DA8437 /* RealmSwift.framework */; };
 		D22E41F723FBD8770025869D /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D251894323E9492E00DD8125 /* ToDoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */; };
+		D25BA6C8241B1BC300DEC361 /* iPhone11.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D25BA6C7241B1BC300DEC361 /* iPhone11.storyboard */; };
 		D261404923D690C10036161E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404823D690C10036161E /* AppDelegate.swift */; };
 		D261404B23D690C10036161E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404A23D690C10036161E /* SceneDelegate.swift */; };
 		D261404D23D690C10036161E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404C23D690C10036161E /* ViewController.swift */; };
 		D261405223D690C70036161E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D261405123D690C70036161E /* Assets.xcassets */; };
 		D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D261405323D690C70036161E /* LaunchScreen.storyboard */; };
+		D27DC454246D387C00176201 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC453246D387C00176201 /* SettingView.swift */; };
+		D27DC456246D3B0700176201 /* SettingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D27DC455246D3B0700176201 /* SettingView.xib */; };
+		D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D27DC458246E540F00176201 /* GoogleService-Info.plist */; };
+		D27DC45B246E54C900176201 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45A246E54C900176201 /* Constants.swift */; };
+		D27DC45D246E744100176201 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45C246E744100176201 /* User.swift */; };
+		D27DC4912473D9A600176201 /* FToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC4902473D9A500176201 /* FToDo.swift */; };
 		D29ABF0123DFF23A008A522A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D29ABF0023DFF23A008A522A /* Main.storyboard */; };
 		D29ABF0323E00A43008A522A /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0223E00A43008A522A /* ToDo.swift */; };
 		D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0623E13028008A522A /* AddToDoViewController.swift */; };
@@ -54,6 +61,7 @@
 		89C49AB923EEC15500BABB0D /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		D22E41EC23FBC60A0025869D /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoDetailViewController.swift; sourceTree = "<group>"; };
+		D25BA6C7241B1BC300DEC361 /* iPhone11.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone11.storyboard; sourceTree = "<group>"; };
 		D261404523D690C10036161E /* ToDoCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D261404823D690C10036161E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D261404A23D690C10036161E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +69,12 @@
 		D261405123D690C70036161E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D261405423D690C70036161E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D261405623D690C70036161E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D27DC453246D387C00176201 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		D27DC455246D3B0700176201 /* SettingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingView.xib; sourceTree = "<group>"; };
+		D27DC458246E540F00176201 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D27DC45A246E54C900176201 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		D27DC45C246E744100176201 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		D27DC4902473D9A500176201 /* FToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FToDo.swift; sourceTree = "<group>"; };
 		D29ABF0023DFF23A008A522A /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D29ABF0223E00A43008A522A /* ToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		D29ABF0623E13028008A522A /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
@@ -75,7 +89,6 @@
 		D2D7598A23F653B300DA8437 /* FSCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FSCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7598C23F653B300DA8437 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D7598E23F653B300DA8437 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2F9AFAB241A14B800EDFA13 /* iPhone11.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = iPhone11.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				D261404723D690C10036161E /* ToDoCalendar */,
+				D27DC458246E540F00176201 /* GoogleService-Info.plist */,
 				D261404623D690C10036161E /* Products */,
 				9F8135600E3176B4A7219B7F /* Pods */,
 				FF1D8C23CCE0EA6BAB06E7A5 /* Frameworks */,
@@ -124,6 +138,7 @@
 		D261404723D690C10036161E /* ToDoCalendar */ = {
 			isa = PBXGroup;
 			children = (
+				D27DC457246E50C700176201 /* Utils */,
 				D29ABEFF23DFF16B008A522A /* Controller */,
 				D29ABEFE23DFF158008A522A /* View */,
 				D29ABEFD23DFF14E008A522A /* Model */,
@@ -134,13 +149,23 @@
 			path = ToDoCalendar;
 			sourceTree = "<group>";
 		};
+		D27DC457246E50C700176201 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D27DC45A246E54C900176201 /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		D29ABEFD23DFF14E008A522A /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				D29ABF0223E00A43008A522A /* ToDo.swift */,
+				D27DC4902473D9A500176201 /* FToDo.swift */,
 				D29ABF0823E18B5E008A522A /* DateUtils.swift */,
 				89C49AB523ED835C00BABB0D /* Search.swift */,
 				89C49AB923EEC15500BABB0D /* Layout.swift */,
+				D27DC45C246E744100176201 /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -149,9 +174,11 @@
 			isa = PBXGroup;
 			children = (
 				D261405123D690C70036161E /* Assets.xcassets */,
+				D25BA6C7241B1BC300DEC361 /* iPhone11.storyboard */,
 				899CE4E923F57C62008C4D99 /* iPhone8.storyboard */,
-				D2F9AFAB241A14B800EDFA13 /* iPhone11.storyboard */,
 				D29ABF0023DFF23A008A522A /* Main.storyboard */,
+				D27DC453246D387C00176201 /* SettingView.swift */,
+				D27DC455246D3B0700176201 /* SettingView.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -200,6 +227,7 @@
 				D261404323D690C10036161E /* Resources */,
 				D2D7597523F5232600DA8437 /* Embed Frameworks */,
 				46B641A8017E7690F963EE5E /* [CP] Embed Pods Frameworks */,
+				D2941514241B3EEF0022FBD6 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -249,9 +277,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				899CE4EA23F57C62008C4D99 /* iPhone8.storyboard in Resources */,
+				D25BA6C8241B1BC300DEC361 /* iPhone11.storyboard in Resources */,
 				D29ABF0123DFF23A008A522A /* Main.storyboard in Resources */,
+				D27DC456246D3B0700176201 /* SettingView.xib in Resources */,
 				D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */,
 				D261405223D690C70036161E /* Assets.xcassets in Resources */,
+				D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +305,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ToDoCalendar/Pods-ToDoCalendar-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D2941514241B3EEF0022FBD6 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nAPP_PATH=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\n";
 		};
 		E4DE9AC575EA332D32917E02 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -308,11 +357,15 @@
 				89C49AB623ED835C00BABB0D /* Search.swift in Sources */,
 				D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */,
 				D261404D23D690C10036161E /* ViewController.swift in Sources */,
+				D27DC4912473D9A600176201 /* FToDo.swift in Sources */,
 				D29ABF0923E18B5E008A522A /* DateUtils.swift in Sources */,
 				D261404923D690C10036161E /* AppDelegate.swift in Sources */,
+				D27DC45D246E744100176201 /* User.swift in Sources */,
 				D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */,
+				D27DC45B246E54C900176201 /* Constants.swift in Sources */,
 				89C49ABA23EEC15500BABB0D /* Layout.swift in Sources */,
 				D251894323E9492E00DD8125 /* ToDoDetailViewController.swift in Sources */,
+				D27DC454246D387C00176201 /* SettingView.swift in Sources */,
 				D261404B23D690C10036161E /* SceneDelegate.swift in Sources */,
 				D29ABF0323E00A43008A522A /* ToDo.swift in Sources */,
 			);
@@ -439,7 +492,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -454,7 +507,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1.1.0;
 				DEVELOPMENT_TEAM = Y5TNUF5F8X;
 				INFOPLIST_FILE = ToDoCalendar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -462,7 +515,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ishii.ToDoCalendar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -479,7 +532,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1.1.0;
 				DEVELOPMENT_TEAM = Y5TNUF5F8X;
 				INFOPLIST_FILE = ToDoCalendar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -487,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ishii.ToDoCalendar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
