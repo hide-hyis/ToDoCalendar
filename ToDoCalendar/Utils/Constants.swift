@@ -17,7 +17,7 @@ let STORE_REF = Storage.storage().reference()
 let USER_REF = DB_REF.child("users")
 let USER_TODOS_REF = DB_REF.child("user-todos")
 
-let TODO_REF = DB_REF.child("todos")
+let TODOS_REF = DB_REF.child("todos")
 let CALENDAR_TODOS_REF = DB_REF.child("calendar-todos")
 
 let realm = try! Realm()

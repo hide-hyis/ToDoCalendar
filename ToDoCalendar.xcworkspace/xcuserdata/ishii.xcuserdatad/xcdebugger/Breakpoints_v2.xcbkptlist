@@ -48,8 +48,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "417"
             endingLineNumber = "417"
-            landmarkName = "tableView(_:numberOfRowsInSection:)"
-            landmarkType = "7">
+            landmarkName = "ViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "419"
             endingLineNumber = "419"
-            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            landmarkName = "fetchCount(date:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -160,7 +160,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "332"
                   endingLineNumber = "332"
-                  offsetFromSymbolStart = "380">
+                  offsetFromSymbolStart = "548">
                </Location>
                <Location
                   uuid = "7C299C76-70B4-41D2-BE21-1421C65B2FD1 - 252fc13f2a5013d3"
@@ -183,7 +183,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FEFF78C6-2C04-46BA-BC6E-D55197991688"
+            uuid = "354B8FCA-AB71-48B3-8946-17508010FDB4"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -196,7 +196,7 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "FEFF78C6-2C04-46BA-BC6E-D55197991688 - 12ae67ea264d46a8"
+                  uuid = "354B8FCA-AB71-48B3-8946-17508010FDB4 - 12ae67ea264d46a8"
                   shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -208,10 +208,10 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "329"
                   endingLineNumber = "329"
-                  offsetFromSymbolStart = "2020">
+                  offsetFromSymbolStart = "1652">
                </Location>
                <Location
-                  uuid = "FEFF78C6-2C04-46BA-BC6E-D55197991688 - 43870cad85e5ae32"
+                  uuid = "354B8FCA-AB71-48B3-8946-17508010FDB4 - 43870cad85e5ae32"
                   shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"

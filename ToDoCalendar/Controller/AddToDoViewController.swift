@@ -82,18 +82,18 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 {
                 let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
-            /*
-                let todo = ToDo()
-                todo.title = titleTextField.text!
-                todo.content = contentTextField.text
-                todo.scheduledAt = selectedDate as Date
-                todo.priority = priority
-                todo.isDone = false
-                 
-                try! realm.write{
-                    realm.add(todo)
-                }
-            */
+            
+//                let todo = ToDo()
+//                todo.title = titleTextField.text!
+//                todo.content = contentTextField.text
+//                todo.scheduledAt = selectedDate as Date
+//                todo.priority = priority
+//                todo.isDone = false
+//
+//                try! realm.write{
+//                    realm.add(todo)
+//                }
+            
                 let scheduleUnix = selectedDate.timeIntervalSince1970
                 let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
                 let scheduleString = String(scheduleUnixString)
@@ -109,13 +109,14 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
                             "createdTime": createdTimeUnix,
                             "updatedTime": createdTimeUnix] as [String: Any]
             
-                let todoId = TODO_REF.childByAutoId()
+                let todoId = TODOS_REF.childByAutoId()
                 guard let todoIdKey = todoId.key else {return}
                 todoId.updateChildValues(values)
                 
                 USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
                 
                 CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
+            
                 self.navigationController?.popViewController(animated: true)
         } else{
             print("項目を全て記入してください")

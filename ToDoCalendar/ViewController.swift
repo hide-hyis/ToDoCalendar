@@ -95,12 +95,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                      print(todoId)
                     
                     //日付の検索
-                    let query = TODO_REF.queryOrdered(byChild: "schedule").queryStarting(atValue: "20200414").queryEnding(atValue: "20200414")
+                    let query = TODOS_REF.queryOrdered(byChild: "schedule").queryStarting(atValue: "20200414").queryEnding(atValue: "20200414")
                     query.observe(.value) { (snapshot) in
                         print(snapshot)
                     }
                     
-        //            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+        //            TODOS_REF.child(todoId).observe(.value) { (snapshot) in
         //                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
         //                let todo = ToDo(todoId: todoId, dictionary: dictionary)
         //                print(todo)
@@ -139,7 +139,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
 //                          "createdTime": createdTimeUnix,
 //                          "updatedTime": createdTimeUnix] as [String: Any]
             
-            let todoId = TODO_REF.childByAutoId()
+            let todoId = TODOS_REF.childByAutoId()
             guard let todoIdKey = todoId.key else {return}
             todoId.updateChildValues(values1)
             
@@ -307,7 +307,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     //優先度(星しるし)の表示
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
 //        guard let currentUser = Auth.auth().currentUser?.uid else { return nil}
-        print("日付：\(date)")
+//        print("日付：\(date)")
         let scheduleUnixString = String(date.timeIntervalSince1970).prefix(10)
         let scheduleString = String(scheduleUnixString)
         
@@ -328,12 +328,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
 //        fetchMaxPriority(date: scheduleString)
         CALENDAR_TODOS_REF.child("user1").child(scheduleString).observe(.value) { (snapshot) in
             let todoId = snapshot.key
-            var dt: String = ""
-            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+            var dt: String = "";print("1")
+            TODOS_REF.child(todoId).observeSingleEvent(of: .childAdded) { (snapshot) in
                 guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
                 let todo = FToDo(todoId: todoId, dictionary: dictionary)
                 self.todoArray.append(todo)
-                dt = scheduleString
+                dt = scheduleString;print("2")
                 if dt == scheduleString{
                     self.maxPriority = todo.priority; print("該当日:\(date), maxPriority: \(self.maxPriority), dt: \(dt)")
                 }
@@ -355,7 +355,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         CALENDAR_TODOS_REF.child("user1").child(date).observe(.childAdded) { (snapshot) in
             let todoId = snapshot.key
             var dt: String = ""
-            TODO_REF.child(todoId).observe(.value) { (snapshot) in
+            TODOS_REF.child(todoId).observe(.value) { (snapshot) in
                 guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
                 let todo = FToDo(todoId: todoId, dictionary: dictionary)
                 self.todoArray.append(todo)
@@ -366,10 +366,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             }
         }
         return self.maxPriority
-    }
-    
-    func fetchToDo(){
-        
     }
     
     //値の受け渡し
@@ -460,7 +456,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         CALENDAR_TODOS_REF.child("user1").child(scheduleString).observe(.childAdded) { (snapshot) in
             let todoId = snapshot.key
             self.todoArray.removeAll()
-            TODO_REF.child(todoId).observeSingleEvent(of: .value, with: { (snapshot) in
+            TODOS_REF.child(todoId).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
                 
 //                if todoIdCheck != todoId {

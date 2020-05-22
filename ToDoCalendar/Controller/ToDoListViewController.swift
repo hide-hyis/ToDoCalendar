@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Firebase
 
 class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol, DetailProtocol {
     
@@ -35,10 +36,17 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var segmentIndex:Int = 0
     var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
+    var todoArray = [FToDo]()     // ユーザーが持つtodo全件
+    var resultArray = [FToDo]()   // filter後のtodo全件
+    var segmentCheck = false      // 未完/完了タブの切替
+    var asc = true                // 逆順フラグ
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        
+        fetchFToDo()
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
         self.navigationItem.hidesBackButton = true
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,31 +57,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         Layout.buttonBorderRadius(buttono: clearButton, width: 1.0, radius: 10.0)
         Layout.buttonBorderRadius(buttono: searchButton, width: 1.0, radius: 10.0)
         
-        let realm = try! Realm()
-        let search = realm.objects(Search.self).first
-        //sortセグメントの初期表示
-        switch  search?.sort{
-        case "dateAt":
-            segmentIndex = 0
-        case "scheduledAt":
-            segmentIndex = 1
-        case "priority":
-            segmentIndex = 2
-        default:
-            segmentIndex = 0
-        }
-        sortSegment.selectedSegmentIndex = segmentIndex
         
-        //未完,完了セグメントの初期表示
-        switch search?.isDone {
-        case false:
-            isDoneSegmentIndex = 0
-        case true:
-            isDoneSegmentIndex = 1
-        default:
-            isDoneSegmentIndex = 0
-        }
-        isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
+        configureSegment()
         
         //iOS13以前でもナビバーを表示
         if #available(iOS 13.0, *) {
@@ -86,7 +71,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
         
     }
-    
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -141,29 +125,27 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         priorityLabel.text = "★"
     }
     
+    
+    // MARK: EVENT ACTION
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
     
     //ソートの切替
     @IBAction func segmentAction(_ sender: Any) {
-        let realm = try! Realm()
         let search = realm.objects(Search.self).first
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
-            try! realm.write {
-                search!.sort = "dateAt"
-            }
+            try! realm.write {search!.sort = "dateAt"}
+            UserDefaults.standard.set(" ", forKey: "sortKey")
             tableView.reloadData()
         case 1:
-            try! realm.write {
-                search!.sort = "scheduledAt"
-            }
+            try! realm.write {search!.sort = "scheduledAt"}
+            UserDefaults.standard.set("schedule", forKey: "sortKey")
             tableView.reloadData()
         case 2:
-            try! realm.write {
-                search!.sort = "priority"
-            }
+            try! realm.write {search!.sort = "priority"}
+            UserDefaults.standard.set("priority", forKey: "sortKey")
             tableView.reloadData()
         default:
             return
@@ -172,15 +154,16 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
 //    未完/完了セグメント切替処理
     @IBAction func switchIsDone(_ sender: Any) {
-        let realm = try! Realm()
         let search = realm.objects(Search.self).last
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
+            UserDefaults.standard.set(false, forKey: "segmentCheck")
             try! realm.write {
                 search!.isDone = false
             }
             tableView.reloadData()
         case 1:
+            UserDefaults.standard.set(true, forKey: "segmentCheck")
             try! realm.write {
                 search!.isDone = true
             }
@@ -192,7 +175,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //逆順切替
     @IBAction func sortRev(_ sender: Any) {
-        let realm = try! Realm()
+        /* Realm DB
         let search = realm.objects(Search.self).last
         if search!.asc {
             try! realm.write {
@@ -203,127 +186,14 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
                 search!.asc = true
             }
         }
+        */
+        
+        if asc {
+            asc = false
+        }else{
+            asc = true
+        }
         tableView.reloadData()
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-                return tableView.layer.bounds.height/5
-    }
-    
-    //セルの数
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        let realm = try! Realm()
-        Search.createDefault(realm)
-        var search = Search.getSearchProperties(realm)
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        return search.3.count
-    }
-    
-    //セルの生成
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let realm = try! Realm()
-        Search.createDefault(realm)
-        var search = Search.getSearchProperties(realm)
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let todo = search.3[indexPath.row]
-        let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
-        if todo.title.count >= 11 {
-            let longTitle = todo.title.prefix(10)
-            cell.textLabel!.text = longTitle + "..."
-        } else {
-            cell.textLabel!.text = todo.title
-        }
-        switch todo.priority {
-        case 1:
-            cell.detailTextLabel?.text = "\(date)           ★"
-        case 2:
-            cell.detailTextLabel?.text = "\(date)       ★★"
-        case 3:
-            cell.detailTextLabel?.text = "\(date)   ★★★"
-        default:
-            cell.detailTextLabel?.text = ""
-        }
-        if todo.isDone == true{
-            cell.textLabel?.textColor = UIColor.gray
-            cell.detailTextLabel?.textColor = UIColor.gray
-        } else {
-            cell.textLabel?.textColor = UIColor.black
-            cell.detailTextLabel?.textColor = UIColor.black
-        }
-//        cell.textLabel
-        Layout.listTableCellFont(cell: cell)
-        return cell
-    }
-    
-    //セルクリックで下部詳細表示
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
-        
-        let realm = try! Realm()
-        var search = Search.getSearchProperties(realm)//Searchプロパティとtodosの取得
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        let todo = search.3[indexPath.row]
-        titleLabel.text = todo.title
-        contentLabel.text = todo.content
-        dateLabel.text = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
-        switch todo.priority {
-        case 1:
-            priorityLabel.text = "★"
-        case 2:
-            priorityLabel.text = "★★"
-        case 3:
-            priorityLabel.text = "★★★"
-        default:
-            priorityLabel.text = ""
-        }
-        if todo.isDone == true {
-            titleLabel.textColor = UIColor.gray; contentLabel.textColor = UIColor.gray
-            dateLabel.textColor = UIColor.gray; priorityLabel.textColor = UIColor.gray
-        } else {
-            titleLabel.textColor = UIColor.black; contentLabel.textColor = UIColor.black
-            dateLabel.textColor = UIColor.black;  priorityLabel.textColor = UIColor.black
-        }
-        swipeGesture.isEnabled = true
-    }
-    
-    //セルの編集許可
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool{
-        return true
-    }
-    
-    // 完了/未完了処理
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let realm = try! Realm()
-        Search.createDefault(realm)
-        var search = Search.getSearchProperties(realm)
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        let action = UIContextualAction(style: .normal,
-                                        title: search.3[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
-              // 処理を実行
-                if search.3[indexPath.row].isDone {
-                                try! realm.write {
-                                  search.3[indexPath.row].isDone = false
-                                }
-                            } else {
-                                try! realm.write {
-                                  search.3[indexPath.row].isDone = true
-                                }
-                            }
-                            tableView.reloadData()
-              completionHandler(true)
-        }
-        let configuration = UISwipeActionsConfiguration(actions: [action])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
     }
     
     //上スワイプで詳細画面に遷移
@@ -360,8 +230,269 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
-
+    // MARK: UITableViewDelegate
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+                return tableView.layer.bounds.height/5
+    }
     
+    //セルの数
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        /*  Realm DB
+        Search.createDefault(realm)
+        var search = Search.getSearchProperties(realm)
+        if compoundedPredicate != nil {
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
+        }
+        return search.3.count
+        */
+        
+        makeResultArray()
+        return resultArray.count
+    }
+    
+    //セルの生成
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
+        /*  Realm DB
+        Search.createDefault(realm)
+        var search = Search.getSearchProperties(realm)
+        if compoundedPredicate != nil {
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
+        }
+        let todo = search.3[indexPath.row]
+        let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
 
+        if todo.title.count >= 11 {
+            let longTitle = todo.title.prefix(10)
+            cell.textLabel!.text = longTitle + "..."
+        } else {
+            cell.textLabel!.text = todo.title
+        }
+        switch todo.priority {
+        case 1:
+            cell.detailTextLabel?.text = "\(date)           ★"
+        case 2:
+            cell.detailTextLabel?.text = "\(date)       ★★"
+        case 3:
+            cell.detailTextLabel?.text = "\(date)   ★★★"
+        default:
+            cell.detailTextLabel?.text = ""
+        }
+        if todo.isDone == true{
+            cell.textLabel?.textColor = UIColor.gray
+            cell.detailTextLabel?.textColor = UIColor.gray
+        } else {
+            cell.textLabel?.textColor = UIColor.black
+            cell.detailTextLabel?.textColor = UIColor.black
+        }
+        */
+        
+        todoArrayForCell(cell: cell, indexPath: indexPath)
+        
+        Layout.listTableCellFont(cell: cell)
+        return cell
+    }
+    //セルクリックで下部詳細表示
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        /*　　Realm DB
+        var search = Search.getSearchProperties(realm)//Searchプロパティとtodosの取得
+        if compoundedPredicate != nil {
+            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
+        }
+         let todo = search.3[indexPath.row]
+         */
+        
+         makeResultArray()
+         let todo = resultArray[indexPath.row]
+        titleLabel.text = todo.title
+        contentLabel.text = todo.content
+        let day = Date(timeIntervalSince1970: Double(todo.scheduled))
+        dateLabel.text = DateUtils.stringFromDate(date: day, format: "YYYY/MM/dd")
+        switch todo.priority {
+        case 1:
+            priorityLabel.text = "★"
+        case 2:
+            priorityLabel.text = "★★"
+        case 3:
+            priorityLabel.text = "★★★"
+        default:
+            priorityLabel.text = ""
+        }
+        if todo.isDone == true {
+            titleLabel.textColor = UIColor.gray; contentLabel.textColor = UIColor.gray
+            dateLabel.textColor = UIColor.gray; priorityLabel.textColor = UIColor.gray
+        } else {
+            titleLabel.textColor = UIColor.black; contentLabel.textColor = UIColor.black
+            dateLabel.textColor = UIColor.black;  priorityLabel.textColor = UIColor.black
+        }
+        swipeGesture.isEnabled = true
+    }
+    
+    //セルの編集許可
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool{
+        return true
+    }
+    
+    // 完了/未完了処理
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        Search.createDefault(realm)
+//        var search = Search.getSearchProperties(realm)
+//        if compoundedPredicate != nil {
+//            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
+//        }
+//        let action = UIContextualAction(style: .normal,
+//                                        title: search.3[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
+//              // 処理を実行
+//                if search.3[indexPath.row].isDone {
+//                                try! realm.write {
+//                                  search.3[indexPath.row].isDone = false
+//                                }
+//                            } else {
+//                                try! realm.write {
+//                                  search.3[indexPath.row].isDone = true
+//                                }
+//                            }
+//                            tableView.reloadData()
+//              completionHandler(true)
+//        }
+        
+        makeResultArray()
+        
+        let action = UIContextualAction(style: .normal,
+                                        title: resultArray[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
+                                            
+              // 完了切替処理を実行(Firebase)
+              self.handleSwitchIsDone(indexPath: indexPath)
+             
+              tableView.reloadData()
+              completionHandler(true)
+        }
+        
+        
+        let configuration = UISwipeActionsConfiguration(actions: [action])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
+    
+    // MARK: - Handler
+    
+    func configureSegment(){
+        let search = realm.objects(Search.self).first
+        //sortセグメントの初期表示
+        switch  search?.sort{
+        case "dateAt":
+            segmentIndex = 0
+        case "scheduledAt":
+            segmentIndex = 1
+        case "priority":
+            segmentIndex = 2
+        default:
+            segmentIndex = 0
+        }
+        sortSegment.selectedSegmentIndex = segmentIndex
+        
+        //未完,完了セグメントの初期表示
+        switch search?.isDone {
+        case false:
+            isDoneSegmentIndex = 0
+        case true:
+            isDoneSegmentIndex = 1
+        default:
+            isDoneSegmentIndex = 0
+        }
+        isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
+    }
+    
+    func fetchFToDo(){
+        USER_TODOS_REF.child("user1").observe(.childAdded) { (snapshot) in
+            let todoId = snapshot.key
+            
+            TODOS_REF.child(todoId).observeSingleEvent(of: .value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+                print(dictionary)
+                
+                let todo = FToDo(todoId: todoId, dictionary: dictionary)
+                self.todoArray.append(todo)
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    // TableView表示のcellをFirebaseのデータから当てはめる
+    func todoArrayForCell(cell: UITableViewCell, indexPath: IndexPath){
+        makeResultArray()
+        if resultArray.isEmpty {return}
+        
+        let todo = resultArray[indexPath.row]
+        let day = Date(timeIntervalSince1970: Double(todo.scheduled))
+        let date = DateUtils.stringFromDate(date: day, format: "YYYY/MM/dd")
+        if todo.title.count >= 11 {
+            let longTitle = todo.title.prefix(10)
+            cell.textLabel!.text = longTitle + "..."
+        } else {
+            cell.textLabel!.text = todo.title
+        }
+        switch todo.priority {
+        case 1:
+            cell.detailTextLabel?.text = "\(date)           ★"
+        case 2:
+            cell.detailTextLabel?.text = "\(date)       ★★"
+        case 3:
+            cell.detailTextLabel?.text = "\(date)   ★★★"
+        default:
+            cell.detailTextLabel?.text = ""
+        }
+        if todo.isDone == true{
+            cell.textLabel?.textColor = UIColor.gray
+            cell.detailTextLabel?.textColor = UIColor.gray
+        } else {
+            cell.textLabel?.textColor = UIColor.black
+            cell.detailTextLabel?.textColor = UIColor.black
+        }
+    }
+    
+    func makeResultArray(){
+        
+        segmentCheck = UserDefaults.standard.bool(forKey: "segmentCheck")
+        resultArray = todoArray.filter({$0.isDone == segmentCheck})
+        // 表示のソート
+        switch UserDefaults.standard.string(forKey: "sortKey") {
+        case "createdTime":
+            self.resultArray.sort { (todo1, todo2) -> Bool in
+                return todo1.createdTime < todo2.createdTime
+            }
+        case "schedule":
+            self.resultArray.sort { (todo1, todo2) -> Bool in
+                return todo1.scheduled < todo2.scheduled
+            }
+        case "priority":
+            self.resultArray.sort { (todo1, todo2) -> Bool in
+                return todo1.priority < todo2.priority
+            }
+        default:
+            self.resultArray.sort { (todo1, todo2) -> Bool in
+                return todo1.createdTime > todo2.createdTime
+            }
+        }
+        // 逆順
+        if !asc{
+            resultArray.reverse()
+        }
+    }
+    
+    // 完了/未完了切替処理
+    func handleSwitchIsDone(indexPath: IndexPath){
+        guard let todoId = self.resultArray[indexPath.row].todoId else {return}
+        if self.resultArray[indexPath.row].isDone {
+        
+            TODOS_REF.child(todoId).child("isDone").setValue(false)
+            self.resultArray[indexPath.row].isDone = false
+        } else {
+            
+            TODOS_REF.child(todoId).child("isDone").setValue(true)
+            self.resultArray[indexPath.row].isDone = true
+        }
+    }
 
 }

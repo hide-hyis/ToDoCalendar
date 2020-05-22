@@ -19,7 +19,7 @@ class FToDo{
     var imageURL: String!
     var isDone: Bool!
     var createdTime: Double! // 作成時間
-    var updatedTime: String! // 更新時間
+    var updatedTime: Double! // 更新時間
     
     init(todoId: String!, dictionary: Dictionary<String, AnyObject>) {
         self.todoId = todoId
@@ -48,11 +48,11 @@ class FToDo{
             self.priority = priority
         }
         
-        if let dateAt = dictionary["dateAt"] as? Double{
+        if let dateAt = dictionary["createdTime"] as? Double{
             self.createdTime = dateAt
         }
         
-        if let updatedTime = dictionary["updatedTime"] as? String{
+        if let updatedTime = dictionary["updatedTime"] as? Double{
             self.updatedTime = updatedTime
         }
     }
