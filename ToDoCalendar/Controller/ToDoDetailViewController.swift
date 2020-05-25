@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Firebase
 
 
 protocol DetailProtocol {
@@ -24,6 +25,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var datePicker: UIDatePicker = UIDatePicker()
     var delegate:DetailProtocol?
     var allY:CGFloat = 0.0
+//    var todo: FToDo
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -40,8 +42,6 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        dateField.layer.borderWidth = 0.5
-//        dateField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.layer.borderWidth = 0.5
         titleTextField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.delegate = self

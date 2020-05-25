@@ -188,9 +188,9 @@
 			children = (
 				D261404823D690C10036161E /* AppDelegate.swift */,
 				D261404C23D690C10036161E /* ViewController.swift */,
+				D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */,
 				D29ABF0623E13028008A522A /* AddToDoViewController.swift */,
 				D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */,
-				D2D7595E23EBEC8100DA8437 /* ToDoListViewController.swift */,
 				89C49AB723EEBC8700BABB0D /* SearchViewController.swift */,
 			);
 			path = Controller;
