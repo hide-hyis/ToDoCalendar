@@ -36,12 +36,16 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var segmentIndex:Int = 0
     var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
-    var todoArray = [FToDo]()     // ユーザーが持つtodo全件
-    var resultArray = [FToDo]()   // filter後のtodo全件
-    var segmentCheck = false      // 未完/完了タブの切替
-    var asc = true                // 逆順フラグ
+    var todoArray = [FToDo]()               // ユーザーが持つtodo全件
+    var resultArray = [FToDo]()             // filter後のtodo全件
+    var selectedDateTodoArray = [FToDo]()   // 重複しない選択日のToDo配列
+    var todo:FToDo?                         //タップされたtodo項目
+    var segmentCheck = false               // 未完/完了タブの切替
+    var asc = true                         // 逆順フラグ
+    var selectedIndexPath: NSIndexPath = NSIndexPath()
     
     
+    // MARK: View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -205,15 +209,20 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goDetailPage"{
             let nextVC = segue.destination as! ToDoDetailViewController
-            nextVC.titleString = titleLabel.text!
+            /*
             let realm = try! Realm()
             let todo = realm.objects(ToDo.self).filter(" title == %@", titleLabel.text!).first
             let dateString = DateUtils.stringFromDate(date: todo!.scheduledAt, format: "yyyy年MM月dd日")
-            nextVC.selectedDateString = dateString
+            nextVC.titleString = titleLabel.text!
             nextVC.titleString = todo!.title
             nextVC.contentString = todo!.content
             nextVC.priority = todo!.priority
             nextVC.isDone = todo!.isDone
+            */
+            let dateComponentsArray = dateLabel!.text!.components(separatedBy: "/")
+            let datestr = "\(dateComponentsArray[0])年\(dateComponentsArray[1])月\(dateComponentsArray[2])日"
+            nextVC.todo = self.todo
+            nextVC.selectedDateString = datestr
             nextVC.delegate = self
         }else if segue.identifier == "goSearchPage" {
             let nextVC = segue.destination as! SearchViewController
@@ -303,13 +312,15 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
          let todo = search.3[indexPath.row]
          */
         
+        self.selectedIndexPath = indexPath as NSIndexPath
          makeResultArray()
-         let todo = resultArray[indexPath.row]
-        titleLabel.text = todo.title
-        contentLabel.text = todo.content
-        let day = Date(timeIntervalSince1970: Double(todo.scheduled))
+         todo = resultArray[indexPath.row]
+        
+        titleLabel.text = self.todo!.title
+        contentLabel.text = self.todo!.content
+        let day = Date(timeIntervalSince1970: Double(todo!.scheduled))
         dateLabel.text = DateUtils.stringFromDate(date: day, format: "YYYY/MM/dd")
-        switch todo.priority {
+        switch todo!.priority {
         case 1:
             priorityLabel.text = "★"
         case 2:
@@ -319,7 +330,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         default:
             priorityLabel.text = ""
         }
-        if todo.isDone == true {
+        if todo!.isDone == true {
             titleLabel.textColor = UIColor.gray; contentLabel.textColor = UIColor.gray
             dateLabel.textColor = UIColor.gray; priorityLabel.textColor = UIColor.gray
         } else {
@@ -404,20 +415,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
     }
     
-    func fetchFToDo(){
-        USER_TODOS_REF.child("user1").observe(.childAdded) { (snapshot) in
-            let todoId = snapshot.key
-            
-            TODOS_REF.child(todoId).observeSingleEvent(of: .value) { (snapshot) in
-                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
-                print(dictionary)
-                
-                let todo = FToDo(todoId: todoId, dictionary: dictionary)
-                self.todoArray.append(todo)
-                self.tableView.reloadData()
-            }
-        }
-    }
 
     // TableView表示のcellをFirebaseのデータから当てはめる
     func todoArrayForCell(cell: UITableViewCell, indexPath: IndexPath){
@@ -494,5 +491,21 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             self.resultArray[indexPath.row].isDone = true
         }
     }
-
+    
+    
+    
+    // MARK: API
+    func fetchFToDo(){
+        USER_TODOS_REF.child("user1").observe(.childAdded) { (snapshot) in
+            let todoId = snapshot.key
+            
+            TODOS_REF.child(todoId).observeSingleEvent(of: .value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+                
+                let todo = FToDo(todoId: todoId, dictionary: dictionary)
+                self.todoArray.append(todo)
+                self.tableView.reloadData()
+            }
+        }
+    }
 }
