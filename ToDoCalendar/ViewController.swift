@@ -68,9 +68,10 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.todoArray.removeAll()
         fetchFToDo()
-//        myCalendar.reloadData()
-        tableView.reloadData()
+        let dateString = selectedDateLabel!.text
+        fetchSelectedTodos(date: dateString!)
         showIsDoneTodo()
         if let presented = self.presentedViewController {
             if type(of: presented) == ToDoDetailViewController.self {
@@ -140,7 +141,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             
             CALENDAR_TODOS_REF.child(user).child(scheduleString).updateChildValues([todoIdKey: 1])
             
-            print("\(todo.title)\n\(todo.content)\n\(todo.scheduledAt)")
         }
     }
     
@@ -315,34 +315,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
-    //値の受け渡し
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == "goAddPage" {
-            let nextVC = segue.destination as! AddToDoViewController
-            nextVC.selectedDateString = selectedDateLabel.text!
-        } else if segue.identifier == "goDetailPage" {
-            let nextVC = segue.destination as! ToDoDetailViewController
-            nextVC.titleString = selectedDateLabel.text!
-            let indexPath = self.selectedIndexPath
-            let dateString = selectedDateLabel!.text
-            /*
-            let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-            let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-            let todos = realm.objects(ToDo.self).filter(predicate)
-            */
-            nextVC.selectedDateString = dateString!
-            nextVC.titleString = todos[indexPath.row].title
-            nextVC.contentString = todos[indexPath.row].content
-            nextVC.priority = todos[indexPath.row].priority
-            nextVC.isDone = todos[indexPath.row].isDone
-            if #available(iOS 13, *) {
-            } else {
-                nextVC.modalPresentationStyle = .pageSheet
-            }
-        }
-    }
-    
     // MARK: UITableViewDelegate
     
     //テーブルセルのセル数
@@ -459,6 +431,38 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
     }
     
+    //値の受け渡し
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "goAddPage" {
+            let nextVC = segue.destination as! AddToDoViewController
+            nextVC.selectedDateString = selectedDateLabel.text!
+        } else if segue.identifier == "goDetailPage" {
+            let nextVC = segue.destination as! ToDoDetailViewController
+            nextVC.titleString = selectedDateLabel.text!
+            let indexPath = self.selectedIndexPath
+            let dateString = selectedDateLabel!.text
+            /*
+            let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
+            let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
+            let todos = realm.objects(ToDo.self).filter(predicate)
+            nextVC.titleString = todos[indexPath.row].title
+            nextVC.contentString = todos[indexPath.row].content
+            nextVC.priority = todos[indexPath.row].priority
+            nextVC.isDone = todos[indexPath.row].isDone
+            */
+            fetchSelectedTodos(date: dateString!)
+            let ftodo = selectedDateTodoArray[indexPath.row]
+            nextVC.todo = ftodo
+            nextVC.selectedDateString = dateString!
+            if #available(iOS 13, *) {
+            } else {
+                nextVC.modalPresentationStyle = .pageSheet
+            }
+        }
+    }
+    
+    // MARK: Handlers
     //完了済件数の表示
     func showIsDoneTodo(){
         var done:Int = 0
@@ -484,6 +488,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         }
         return
     }
+    
+    
     // MARK: API
     
     func fetchFToDo(){
@@ -496,6 +502,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 let todo = FToDo(todoId: todoId, dictionary: dictionary)
                 self.todoArray.append(todo)
                 self.myCalendar.reloadData()
+                self.tableView.reloadData()
             }
         }
     }
@@ -517,5 +524,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             }
         }
     }
+    
+    
 }
 

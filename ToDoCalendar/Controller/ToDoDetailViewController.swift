@@ -25,7 +25,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var datePicker: UIDatePicker = UIDatePicker()
     var delegate:DetailProtocol?
     var allY:CGFloat = 0.0
-//    var todo: FToDo
+    var todo: FToDo?
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -38,7 +38,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var testConstraint: NSLayoutConstraint!
     
-    
+    // MARK: View Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -46,29 +46,20 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         titleTextField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.delegate = self
         contentTextView.delegate = self
-        dateField.text = selectedDateString
-        contentTextView.text = contentString
-        titleTextField.text = titleString
-        switch priority {
-        case 1:
-            Layout.star1Button(star1, star2, star3)
-            priority = 1
-        case 2:
-            Layout.star2Button(star1, star2, star3)
-            priority = 2
-        case 3:
-            Layout.star3Button(star1, star2, star3)
-            priority = 3
-        default:
-            return
-        }
+        
+        let dateFromUnix = Date(timeIntervalSince1970: Double(todo!.scheduled))
+        let dateString = DateUtils.stringFromDate(date: dateFromUnix, format: "yyyy年MM月dd日")
+        priority = (todo?.priority)!
+        
+        //表示するToDoの取得
+        configureToDo(date: dateString)
         
         contentTextView.layer.borderWidth = 1.0
         contentTextView.layer.borderColor = UIColor.gray.cgColor
         contentTextView.layer.cornerRadius = 1.0
         
         DateUtils.pickerConfig(datePicker, dateField)
-        let date = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月d日")
+        let date = DateUtils.dateFromString(string: dateString, format: "yyyy年MM月d日")
         datePicker.date = date
         // 決定バーの生成
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
@@ -80,7 +71,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         dateField.inputView = datePicker
         dateField.inputAccessoryView = toolbar
         
-        ToDo.isDoneDisplay(isDone, isDoneSegment)
+//        ToDo.isDoneDisplay(isDone, isDoneSegment)
         
         //擬似bナビバー
         if #available(iOS 13.0, *) {
@@ -110,11 +101,157 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         presentingViewController?.beginAppearanceTransition(true, animated: animated)
         presentingViewController?.endAppearanceTransition()
 
+    }
+    
+    
+    // MARK: EVENT ACTION
+    //完了切替
+    @IBAction func segmentAction(_ sender: Any) {
+        
+        switch (sender as AnyObject).selectedSegmentIndex {
+        case 0:
+            todo?.isDone = false
+        case 1:
+            todo?.isDone = true
+        default:
+            print("エラ-")
+        }
+    }
+    
+    //星1つタップ
+    @IBAction func star1Action(_ sender: Any) {
+        Layout.star1Button(star1, star2, star3)
+        priority = 1
+    }
+    //星2つタップ
+    @IBAction func star2Action(_ sender: Any) {
+        Layout.star2Button(star1, star2, star3)
+        priority = 2
+    }
+    //星3つタップ
+    @IBAction func star3Action(_ sender: Any) {
+        Layout.star3Button(star1, star2, star3)
+        priority = 3
+    }
+    
+    //編集機能
+    @IBAction func editAction(_ sender: Any) {
+        let dateString = dateField.text
+        let updateTime = Date().timeIntervalSince1970
+        
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
+//        let scheduleUnix = selectedDate.timeIntervalSince1970
+        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+        let scheduleInt = Int(scheduleUnixString)
+//        let todo = realm.objects(ToDo.self).filter(" title == %@", titleString).first
+        let editTitle:String = titleTextField.text!
+        guard let todoId = todo?.todoId else {return}
+        
+        if titleTextField.text != "" && titleTextField.text!.count < 16
+        && contentTextView.text!.count < 201 && priority != 0 {
+//                try! realm.write{
+//                    todo!.title = editTitle
+//                    todo!.content = contentTextView.text
+//                    todo!.priority = priority
+//                    todo!.scheduledAt = selectedDate
+//                    todo!.isDone = isDone
+//                }
+
+            let values = ["title": editTitle,
+                        "content": contentTextView.text,
+                        "schedule": scheduleInt,
+                        "priority": priority,
+                        "isDone": todo?.isDone,
+                        "imageURL": "",
+                        "userId": todo?.userId,
+                        "createdTime": todo?.createdTime,
+                        "updatedTime": updateTime] as [String: Any]
+            print(todo)
+            TODOS_REF.child(todoId).updateChildValues(values)
+            let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
+            delegate?.catchtable(editKeys: keys as! [String : String])
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+    }
+    
+    
+    //削除機能
+    @IBAction func deleteAction(_ sender: Any) {
+//        let currentUid = Auth.auth().currentUser?.uid
+//        let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
+        
+        let alert: UIAlertController = UIAlertController(title: "ToDoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
+
+        let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
+               (action: UIAlertAction!) -> Void in
+//               try! realm.write{
+//                   realm.delete(todo!)
+//               }
+            
+                guard let todoId = self.todo?.todoId else {return}
+                USER_TODOS_REF.child("user1").child(todoId).removeValue { (err, ref) in
+                    TODOS_REF.child(todoId).removeValue()
+                }
+            let keys = ["title": "タイトル", "content": "内容", "priority": "1", "scheduledAt": "予定日"] as [String : Any]
+            self.delegate?.catchtable(editKeys: keys as! [String : String])
+            self.dismiss(animated: true, completion: nil)
+           })
+        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
+               (action: UIAlertAction!) -> Void in
+           })
+
+           alert.addAction(cancelAction)
+           alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
+    }
+
+    @IBAction func backAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+//    画面を下スワイプで画面遷移
+    @IBAction func swipeDown(_ sender: Any) {
+        if #available(iOS 13.0, *) {
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    
+    // MARK: Handlers
+    func configureToDo(date dateString: String){
+        dateField.text = dateString
+        contentTextView.text = todo?.content
+        titleTextField.text = todo?.title
+        
+        switch priority {
+        case 1:
+            Layout.star1Button(star1, star2, star3)
+            todo?.priority = 1
+        case 2:
+            Layout.star2Button(star1, star2, star3)
+            todo?.priority = 2
+        case 3:
+            Layout.star3Button(star1, star2, star3)
+            todo?.priority = 3
+        default:
+            return
+        }
+        
+        guard let isDone = todo?.isDone else {return}
+        if isDone {
+            isDoneSegment.selectedSegmentIndex = 1
+        } else {
+            isDoneSegment.selectedSegmentIndex = 0
+        }
     }
     
     // UIDatePickerのDoneを押したら発火
@@ -154,99 +291,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     //内容欄入力後バリデーションチェック
     func textViewDidChange(_ textView: UITextView) {
+        
         ToDo.textViewdAlert(contentTextView, editButton, 200)
     }
-    
-    //完了切替
-    @IBAction func segmentAction(_ sender: Any) {
-        
-        switch (sender as AnyObject).selectedSegmentIndex {
-        case 0:
-            isDone = false
-        case 1:
-            isDone = true
-        default:
-            print("エラ-")
-        }
-    }
-    
-    //星1つタップ
-    @IBAction func star1Action(_ sender: Any) {
-        Layout.star1Button(star1, star2, star3)
-        priority = 1
-    }
-    //星2つタップ
-    @IBAction func star2Action(_ sender: Any) {
-        Layout.star2Button(star1, star2, star3)
-        priority = 2
-    }
-    //星3つタップ
-    @IBAction func star3Action(_ sender: Any) {
-        Layout.star3Button(star1, star2, star3)
-        priority = 3
-    }
-    
-    //編集機能
-    @IBAction func editAction(_ sender: Any) {
-        let dateString = dateField.text
-        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
-        let realm = try! Realm()
-        let todo = realm.objects(ToDo.self).filter(" title == %@", titleString).first
-        let editTitle:String = titleTextField.text!
-        if titleTextField.text != "" && titleTextField.text!.count < 16
-        && contentTextView.text!.count < 201 && priority != 0 {
-                try! realm.write{
-                    todo!.title = editTitle
-                    todo!.content = contentTextView.text
-                    todo!.priority = priority
-                    todo!.scheduledAt = selectedDate
-                    todo!.isDone = isDone
-                }
-            let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
-            delegate?.catchtable(editKeys: keys as! [String : String])
-            self.dismiss(animated: true, completion: nil)
-        }
-        
-    }
-    
-    
-    //削除機能
-    @IBAction func deleteAction(_ sender: Any) {
-        
-        let realm = try! Realm()
-        let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
-        
-        let alert: UIAlertController = UIAlertController(title: "ToDoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
-
-        let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
-               (action: UIAlertAction!) -> Void in
-               try! realm.write{
-                   realm.delete(todo!)
-               }
-            let keys = ["title": "タイトル", "content": "内容", "priority": "1", "scheduledAt": "予定日"] as [String : Any]
-            self.delegate?.catchtable(editKeys: keys as! [String : String])
-            self.dismiss(animated: true, completion: nil)
-           })
-        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
-               (action: UIAlertAction!) -> Void in
-           })
-
-           alert.addAction(cancelAction)
-           alert.addAction(deleteAction)
-
-        present(alert, animated: true, completion: nil)
-    }
-
-    @IBAction func backAction(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-//    画面を下スワイプで画面遷移
-    @IBAction func swipeDown(_ sender: Any) {
-        if #available(iOS 13.0, *) {
-        } else {
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-    
 }
