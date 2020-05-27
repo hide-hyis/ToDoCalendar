@@ -8,11 +8,11 @@
 
 import Foundation
 
-class FToDo{
+@objc class FToDo: NSObject{
     var todoId: String!
     var userId: String!
-    var title: String!
-    var content: String!
+    @objc var title: String!
+    @objc var content: String!
     var priority: Int!
     var categoryId: String!
     var scheduled: Int! // 予定日

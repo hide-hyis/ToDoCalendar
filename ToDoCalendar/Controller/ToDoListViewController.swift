@@ -37,11 +37,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
     var todoArray = [FToDo]()               // ユーザーが持つtodo全件
-    var resultArray = [FToDo]()             // filter後のtodo全件
-    var selectedDateTodoArray = [FToDo]()   // 重複しない選択日のToDo配列
+    var resultArray = [FToDo]()             // 並び替えfilter後のtodo全件
     var todo:FToDo?                         //タップされたtodo項目
-    var segmentCheck = false               // 未完/完了タブの切替
+    var isDoneCheck = false                 // 未完/完了タブの切替
     var asc = true                         // 逆順フラグ
+    var searchKeyWord = [String: Any]()    //検索キーワード
     var selectedIndexPath: NSIndexPath = NSIndexPath()
     
     
@@ -50,7 +50,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         super.viewDidLoad()
         
         fetchFToDo()
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
         self.navigationItem.hidesBackButton = true
         tableView.delegate = self
         tableView.dataSource = self
@@ -65,21 +64,20 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         configureSegment()
         
         //iOS13以前でもナビバーを表示
-        if #available(iOS 13.0, *) {
-        } else {
-            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action: #selector(back))
-            navigationItem.leftBarButtonItem = searchBarButtonItem
-            
-            Layout.segmentLayout(sortSegment)
-            Layout.segmentLayout(isDoneSegment)
-        }
+        makeNavbar()
         
     }
 
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if let presented = self.presentedViewController {
+            if type(of: presented) == ToDoDetailViewController.self {
+                todoArray.removeAll()
+                fetchFToDo()
+            }
+        }
         tableView.reloadData()
-        
     }
     
     func catchtable(editKeys: [String: String]) {
@@ -104,30 +102,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         tableView.reloadData()
     }
     
-    //検索ワードの受取
-    func catchData(key: [String : String]) {
-        predicates.removeAll() //検索内容の初期化
-        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
-        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
-        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日")} //dateFromを文字型から日付型に変換
-        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日")} //dateToを文字型から日付型に変換
-        if dateFromKey != nil && dateToKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg))
-        } else if dateToKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt <= %@", dateToKey! as CVarArg))
-        } else if dateFromKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt >= %@", dateFromKey! as CVarArg))
-        }
-        if key["priority"] != nil { priority = Int(key["priority"]!)! }
-        if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
-        compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-        print("検索条件\(key)")
-        tableView.reloadData()
-        titleLabel.text = "タイトル"
-        contentLabel.text = "内容"
-        dateLabel.text = "予定日"
-        priorityLabel.text = "★"
-    }
     
     
     // MARK: EVENT ACTION
@@ -137,18 +111,18 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //ソートの切替
     @IBAction func segmentAction(_ sender: Any) {
-        let search = realm.objects(Search.self).first
+//        let search = realm.objects(Search.self).first
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
-            try! realm.write {search!.sort = "dateAt"}
+//            try! realm.write {search!.sort = "dateAt"}
             UserDefaults.standard.set(" ", forKey: "sortKey")
             tableView.reloadData()
         case 1:
-            try! realm.write {search!.sort = "scheduledAt"}
+//            try! realm.write {search!.sort = "scheduledAt"}
             UserDefaults.standard.set("schedule", forKey: "sortKey")
             tableView.reloadData()
         case 2:
-            try! realm.write {search!.sort = "priority"}
+//            try! realm.write {search!.sort = "priority"}
             UserDefaults.standard.set("priority", forKey: "sortKey")
             tableView.reloadData()
         default:
@@ -158,19 +132,19 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
 //    未完/完了セグメント切替処理
     @IBAction func switchIsDone(_ sender: Any) {
-        let search = realm.objects(Search.self).last
+//        let search = realm.objects(Search.self).last
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
-            UserDefaults.standard.set(false, forKey: "segmentCheck")
-            try! realm.write {
-                search!.isDone = false
-            }
+            UserDefaults.standard.set(false, forKey: "isDoneCheck")
+//            try! realm.write {
+//                search!.isDone = false
+//            }
             tableView.reloadData()
         case 1:
-            UserDefaults.standard.set(true, forKey: "segmentCheck")
-            try! realm.write {
-                search!.isDone = true
-            }
+            UserDefaults.standard.set(true, forKey: "isDoneCheck")
+//            try! realm.write {
+//                search!.isDone = true
+//            }
             tableView.reloadData()
         default:
             return
@@ -232,9 +206,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //検索内容を空にするクリアボタン
     @IBAction func clearAction(_ sender: Any) {
-        if compoundedPredicate != nil {
-            predicates = []
-            compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        if !searchKeyWord.isEmpty {
+//            predicates = []
+//            compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            searchKeyWord.removeAll()
             tableView.reloadData()
         }
     }
@@ -316,6 +291,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
          makeResultArray()
          todo = resultArray[indexPath.row]
         
+        
         titleLabel.text = self.todo!.title
         contentLabel.text = self.todo!.content
         let day = Date(timeIntervalSince1970: Double(todo!.scheduled))
@@ -386,15 +362,49 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         return configuration
     }
     
+    // MARK: CatchProtocol
+    //検索ワードの受取
+    func catchData(key: [String : String]) {
+        /*
+        predicates.removeAll() //検索内容の初期化
+        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
+        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
+        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日")} //dateFromを文字型から日付型に変換
+        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日")} //dateToを文字型から日付型に変換
+        if dateFromKey != nil && dateToKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg))
+        } else if dateToKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt <= %@", dateToKey! as CVarArg))
+        } else if dateFromKey != nil {
+            predicates.append(NSPredicate(format:"scheduledAt >= %@", dateFromKey! as CVarArg))
+        }
+        if key["priority"] != nil { priority = Int(key["priority"]!)! }
+        if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
+        compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+         */
+        searchKeyWord.removeAll()
+        if key["title"] != nil { searchKeyWord["title"] = key["title"] }
+        if key["content"] != nil { searchKeyWord["content"] = key["content"] }
+        if key["priority"] != nil { searchKeyWord["priority"] = key["priority"] }
+        if key["dateFrom"] != nil { searchKeyWord["dateFrom"] = key["dateFrom"] }
+        if key["dateTo"] != nil { searchKeyWord["dateTo"] = key["dateTo"] }
+        tableView.reloadData()
+        titleLabel.text = "タイトル"
+        contentLabel.text = "内容"
+        dateLabel.text = "予定日"
+        priorityLabel.text = "★"
+    }
+    
     // MARK: - Handler
     
     func configureSegment(){
-        let search = realm.objects(Search.self).first
+//        let search = realm.objects(Search.self).first
         //sortセグメントの初期表示
-        switch  search?.sort{
-        case "dateAt":
+        let sort = UserDefaults.standard.string(forKey: "sortKey")
+        switch  sort{
+        case " ":
             segmentIndex = 0
-        case "scheduledAt":
+        case "schedule":
             segmentIndex = 1
         case "priority":
             segmentIndex = 2
@@ -404,13 +414,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         sortSegment.selectedSegmentIndex = segmentIndex
         
         //未完,完了セグメントの初期表示
-        switch search?.isDone {
+        let isDoneCheck = UserDefaults.standard.bool(forKey: "isDoneCheck")
+        switch isDoneCheck {
         case false:
             isDoneSegmentIndex = 0
         case true:
             isDoneSegmentIndex = 1
-        default:
-            isDoneSegmentIndex = 0
         }
         isDoneSegment.selectedSegmentIndex = isDoneSegmentIndex
     }
@@ -420,6 +429,10 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func todoArrayForCell(cell: UITableViewCell, indexPath: IndexPath){
         makeResultArray()
         if resultArray.isEmpty {return}
+        
+//        let preKey = NSPredicate(format: "title CONTAINS[c] %@", "会議")
+//        let afterArray = (resultArray as NSArray).filtered(using: preKey)
+//        print("resultArray: \(resultArray.count)件\n検索結果:\n\(afterArray)")
         
         let todo = resultArray[indexPath.row]
         let day = Date(timeIntervalSince1970: Double(todo.scheduled))
@@ -451,9 +464,15 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     func makeResultArray(){
         
-        segmentCheck = UserDefaults.standard.bool(forKey: "segmentCheck")
-        resultArray = todoArray.filter({$0.isDone == segmentCheck})
-        // 表示のソート
+        isDoneCheck = UserDefaults.standard.bool(forKey: "isDoneCheck")
+        resultArray = todoArray.filter({$0.isDone == isDoneCheck})
+        
+        //検索キーワードがあれば検索処理
+        if !searchKeyWord.isEmpty{
+            resultArrayForSearch()
+        }
+        
+        // 一覧表示用のソート
         switch UserDefaults.standard.string(forKey: "sortKey") {
         case "createdTime":
             self.resultArray.sort { (todo1, todo2) -> Bool in
@@ -478,6 +497,46 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
+    // 検索処理
+    func resultArrayForSearch(){
+        
+            if (searchKeyWord["title"] != nil){
+                resultArray = resultArray.filter({ $0.title.contains(searchKeyWord["title"] as! String) })
+            }
+            if (searchKeyWord["content"] != nil){
+                resultArray = resultArray.filter({ $0.content.contains(searchKeyWord["content"] as! String) })
+            }
+            if (searchKeyWord["priority"] != nil){
+                let priorityKey = searchKeyWord["priority"] as! String
+                resultArray = resultArray.filter({ $0.priority == Int(priorityKey) })
+            }
+            if (searchKeyWord["dateFrom"] != nil && searchKeyWord["dateTo"] != nil){
+                let dateFrom = unixFromDateString(date: searchKeyWord["dateFrom"])
+                let dateTo = unixFromDateString(date: searchKeyWord["dateTo"])
+                
+                resultArray = resultArray.filter({ $0.scheduled >= dateFrom && $0.scheduled <= dateTo })
+            } else if (searchKeyWord["dateFrom"] != nil){
+                let dateFrom = unixFromDateString(date: searchKeyWord["dateFrom"])
+                
+                resultArray = resultArray.filter({ $0.scheduled >= dateFrom })
+                if !resultArray.isEmpty{
+                    for todo in resultArray{
+                        print("title: \(todo.title)予定日: \( NSDate(timeIntervalSince1970: Double(todo.scheduled) ) ).time)")
+                    }
+                }
+            }  else if (searchKeyWord["dateTo"] != nil){
+                let dateTo = unixFromDateString(date: searchKeyWord["dateTo"])
+                
+                resultArray = resultArray.filter({ $0.scheduled <= dateTo })
+            }
+    }
+    
+    // 検索内容の日付をUNIX型に変換
+    func unixFromDateString(date dateString: Any) -> Int{
+        let date = DateUtils.dateFromString(string: (dateString as! String), format: "yyyy年MM月dd日")
+        return Int(date.timeIntervalSince1970)
+    }
+    
     // 完了/未完了切替処理
     func handleSwitchIsDone(indexPath: IndexPath){
         guard let todoId = self.resultArray[indexPath.row].todoId else {return}
@@ -492,7 +551,17 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         }
     }
     
-    
+    //iOS13以前でもナビバーを表示
+    func makeNavbar(){
+        if #available(iOS 13.0, *) {
+        } else {
+            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action: #selector(back))
+            navigationItem.leftBarButtonItem = searchBarButtonItem
+            
+            Layout.segmentLayout(sortSegment)
+            Layout.segmentLayout(isDoneSegment)
+        }
+    }
     
     // MARK: API
     func fetchFToDo(){

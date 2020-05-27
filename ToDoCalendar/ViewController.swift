@@ -418,18 +418,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return configuration
     }
     
-    func handleSwitchIsDone(indexPath: IndexPath){
-        guard let todoId = self.selectedDateTodoArray[indexPath.row].todoId else {return}
-        if self.selectedDateTodoArray[indexPath.row].isDone {
-        
-            TODOS_REF.child(todoId).child("isDone").setValue(false)
-            self.selectedDateTodoArray[indexPath.row].isDone = false
-        } else {
-            
-            TODOS_REF.child(todoId).child("isDone").setValue(true)
-            self.selectedDateTodoArray[indexPath.row].isDone = true
-        }
-    }
     
     //値の受け渡し
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -489,6 +477,20 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         return
     }
     
+    func handleSwitchIsDone(indexPath: IndexPath){
+        guard let todoId = self.selectedDateTodoArray[indexPath.row].todoId else {return}
+        if self.selectedDateTodoArray[indexPath.row].isDone {
+        
+            TODOS_REF.child(todoId).child("isDone").setValue(false)
+            self.selectedDateTodoArray[indexPath.row].isDone = false
+        } else {
+            
+            TODOS_REF.child(todoId).child("isDone").setValue(true)
+            self.selectedDateTodoArray[indexPath.row].isDone = true
+        }
+        self.showIsDoneTodo()
+        self.myCalendar.reloadData()
+    }
     
     // MARK: API
     

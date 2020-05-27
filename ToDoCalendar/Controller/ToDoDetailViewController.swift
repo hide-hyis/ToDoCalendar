@@ -58,48 +58,15 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         contentTextView.layer.borderColor = UIColor.gray.cgColor
         contentTextView.layer.cornerRadius = 1.0
         
-        DateUtils.pickerConfig(datePicker, dateField)
-        let date = DateUtils.dateFromString(string: dateString, format: "yyyy年MM月d日")
-        datePicker.date = date
-        // 決定バーの生成
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
-        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
-        toolbar.setItems([spacelItem, doneItem], animated: true)
-
-        // インプットビュー設定(紐づいているUITextfieldへ代入)
-        dateField.inputView = datePicker
-        dateField.inputAccessoryView = toolbar
+        configureDatePicker(date: dateString)
         
 //        ToDo.isDoneDisplay(isDone, isDoneSegment)
         
-        //擬似bナビバー
-        if #available(iOS 13.0, *) {
-        } else {
-            Layout.blankView(self) //navに白紙
-            Layout.navBarTitle(self, "ToDo") //navBarTitle
-//            戻るボタン
-            let backButton  = UIButton()
-            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
-            let backButtonImage = UIImage(named: "calendar-1")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
-            backButton.setImage(backButtonImage, for: .normal)
-            backButton.setTitleColor(UIColor.blue, for: .normal)
-            backButton.addTarget(self, action: #selector(ToDoDetailViewController.backAction), for: UIControl.Event.touchUpInside)
-            self.view.addSubview(backButton)
-            self.view.bringSubviewToFront(backButton)
-//            削除ボタン
-            let deleteButton  = UIButton()
-            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
-            let deleteButtonImage = UIImage(named: "delete")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
-            deleteButton.setImage(deleteButtonImage, for: .normal)
-            deleteButton.addTarget(self, action: #selector(deleteAction), for: UIControl.Event.touchUpInside)
-            self.view.addSubview(deleteButton)
-            self.view.bringSubviewToFront(deleteButton)
-            
-            Layout.segmentLayout(isDoneSegment)
-            
-        }
+        //iOS13以前用の擬似ナビバーを生成
+        makeNavbar()
+        
     }
+    
     
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -181,7 +148,6 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
     }
     
-    
     //削除機能
     @IBAction func deleteAction(_ sender: Any) {
 //        let currentUid = Auth.auth().currentUser?.uid
@@ -194,11 +160,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
 //               try! realm.write{
 //                   realm.delete(todo!)
 //               }
-            
-                guard let todoId = self.todo?.todoId else {return}
-                USER_TODOS_REF.child("user1").child(todoId).removeValue { (err, ref) in
-                    TODOS_REF.child(todoId).removeValue()
-                }
+                self.deleteTodoFromServer()
+                
             let keys = ["title": "タイトル", "content": "内容", "priority": "1", "scheduledAt": "予定日"] as [String : Any]
             self.delegate?.catchtable(editKeys: keys as! [String : String])
             self.dismiss(animated: true, completion: nil)
@@ -293,5 +256,60 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     func textViewDidChange(_ textView: UITextView) {
         
         ToDo.textViewdAlert(contentTextView, editButton, 200)
+    }
+    
+
+    //擬似bナビバー
+    func makeNavbar(){
+        if #available(iOS 13.0, *) {
+        } else {
+            Layout.blankView(self) //navに白紙
+            Layout.navBarTitle(self, "ToDo") //navBarTitle
+//            戻るボタン
+            let backButton  = UIButton()
+            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+            let backButtonImage = UIImage(named: "calendar-1")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            backButton.setImage(backButtonImage, for: .normal)
+            backButton.setTitleColor(UIColor.blue, for: .normal)
+            backButton.addTarget(self, action: #selector(ToDoDetailViewController.backAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(backButton)
+            self.view.bringSubviewToFront(backButton)
+//            削除ボタン
+            let deleteButton  = UIButton()
+            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            let deleteButtonImage = UIImage(named: "delete")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+            deleteButton.setImage(deleteButtonImage, for: .normal)
+            deleteButton.addTarget(self, action: #selector(deleteAction), for: UIControl.Event.touchUpInside)
+            self.view.addSubview(deleteButton)
+            self.view.bringSubviewToFront(deleteButton)
+            
+            Layout.segmentLayout(isDoneSegment)
+            
+        }
+    }
+    
+    
+    func configureDatePicker(date dateString: String){
+        DateUtils.pickerConfig(datePicker, dateField)
+        let date = DateUtils.dateFromString(string: dateString, format: "yyyy年MM月d日")
+        datePicker.date = date
+        // 決定バーの生成
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 35))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
+        toolbar.setItems([spacelItem, doneItem], animated: true)
+
+        // インプットビュー設定(紐づいているUITextfieldへ代入)
+        dateField.inputView = datePicker
+        dateField.inputAccessoryView = toolbar
+    }
+    
+    // MARK:　API
+    // FirebaseにToDo削除を送信
+    func deleteTodoFromServer(){
+        guard let todoId = self.todo?.todoId else {return}
+        USER_TODOS_REF.child("user1").child(todoId).removeValue { (err, ref) in
+            TODOS_REF.child(todoId).removeValue()
+        }
     }
 }

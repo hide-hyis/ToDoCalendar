@@ -34,13 +34,10 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         Layout.textViewOutLine(contentTextField)
         
         selectedDateLabel.text = selectedDateString
-
-        //iOS13以前でもナビバーを表示
-        if #available(iOS 13.0, *) {
-        } else {
-            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action:     #selector(backAction))
-            navigationItem.leftBarButtonItem = searchBarButtonItem
-        }
+        
+        //iOS13以前用の擬似ナビバーを生成
+        makeNavbar()
+        
     }
     
     @IBAction func starButton(_ sender: Any) {
@@ -128,6 +125,16 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
     
     @IBAction func backAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    
+    //iOS13以前でもナビバーを表示
+    func makeNavbar(){
+        if #available(iOS 13.0, *) {
+        } else {
+            let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action:     #selector(backAction))
+            navigationItem.leftBarButtonItem = searchBarButtonItem
+        }
     }
 }
 
