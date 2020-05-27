@@ -118,7 +118,7 @@
             <objects>
                 <viewController id="XLk-ps-u12" customClass="ToDoListViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MNY-6C-iaF">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Cp3-r5-j4d">
@@ -589,7 +589,7 @@
             <objects>
                 <viewController id="Ri3-Cj-weI" customClass="AddToDoViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oqB-Bf-ejQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="タイトル" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D46-Pw-REE">
@@ -715,12 +715,114 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="C5v-v4-8bW" kind="relationship" relationship="rootViewController" id="9DV-fD-OUT"/>
+                        <segue destination="4Br-bW-nKZ" kind="relationship" relationship="rootViewController" id="CxW-d4-09i"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2oW-Qo-IML" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-50.724637681159422" y="112.5"/>
+            <point key="canvasLocation" x="-705" y="111"/>
+        </scene>
+        <!--ログイン-->
+        <scene sceneID="xZ7-X7-5Xo">
+            <objects>
+                <viewController id="4Br-bW-nKZ" customClass="LoginViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fwb-yH-H49">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="メールアドレス" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5GZ-ip-xu3">
+                                <rect key="frame" x="20" y="104" width="335" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="パスワード" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jDt-Tz-PcQ">
+                                <rect key="frame" x="20" y="168" width="335" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lXa-5u-dca">
+                                <rect key="frame" x="20" y="318.5" width="335" height="35"/>
+                                <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <state key="normal" title="ログイン">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="loginOrSignin:" destination="4Br-bW-nKZ" eventType="touchUpInside" id="XP9-AH-Km3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jnn-gC-Bmz">
+                                <rect key="frame" x="138" y="461.5" width="99" height="27"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="パスワード再設定">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendPasswordReset:" destination="4Br-bW-nKZ" eventType="touchUpInside" id="GHv-J3-Mwd"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w5P-10-TgE">
+                                <rect key="frame" x="138" y="404.5" width="99" height="27"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="メール認証再送信">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendEmailVerification:" destination="4Br-bW-nKZ" eventType="touchUpInside" id="Lvq-s5-hI1"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="パスワードの確認" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6ta-ee-57b">
+                                <rect key="frame" x="20" y="232" width="335" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bbw-mT-wO9">
+                                <rect key="frame" x="164" y="589" width="172" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="はじめての方は、新規登録から">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="changeMode:" destination="4Br-bW-nKZ" eventType="touchUpInside" id="ME6-Zp-x0p"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="5GZ-ip-xu3" firstAttribute="top" secondItem="ZRh-4h-EDQ" secondAttribute="top" constant="60" id="08a-FG-b7Q"/>
+                            <constraint firstItem="jDt-Tz-PcQ" firstAttribute="top" secondItem="5GZ-ip-xu3" secondAttribute="bottom" constant="30" id="3sP-YQ-Dca"/>
+                            <constraint firstItem="6ta-ee-57b" firstAttribute="top" secondItem="jDt-Tz-PcQ" secondAttribute="bottom" constant="30" id="4WA-VG-HUm"/>
+                            <constraint firstItem="ZRh-4h-EDQ" firstAttribute="trailing" secondItem="6ta-ee-57b" secondAttribute="trailing" constant="20" id="65D-Ll-ki4"/>
+                            <constraint firstItem="lXa-5u-dca" firstAttribute="centerY" secondItem="fwb-yH-H49" secondAttribute="centerY" id="69D-6B-csw"/>
+                            <constraint firstItem="lXa-5u-dca" firstAttribute="centerX" secondItem="fwb-yH-H49" secondAttribute="centerX" id="A2R-i5-0g2"/>
+                            <constraint firstItem="w5P-10-TgE" firstAttribute="top" secondItem="lXa-5u-dca" secondAttribute="bottom" constant="56" id="Dil-jp-BOO"/>
+                            <constraint firstItem="ZRh-4h-EDQ" firstAttribute="trailing" secondItem="5GZ-ip-xu3" secondAttribute="trailing" constant="20" id="GPp-qx-Qh4"/>
+                            <constraint firstItem="ZRh-4h-EDQ" firstAttribute="trailing" secondItem="lXa-5u-dca" secondAttribute="trailing" constant="20" id="IsG-gV-hhF"/>
+                            <constraint firstItem="jDt-Tz-PcQ" firstAttribute="leading" secondItem="ZRh-4h-EDQ" secondAttribute="leading" constant="20" id="Kg8-MO-r57"/>
+                            <constraint firstItem="6ta-ee-57b" firstAttribute="leading" secondItem="ZRh-4h-EDQ" secondAttribute="leading" constant="20" id="OYV-ye-QeA"/>
+                            <constraint firstItem="5GZ-ip-xu3" firstAttribute="leading" secondItem="ZRh-4h-EDQ" secondAttribute="leading" constant="20" id="TzT-vD-Wtu"/>
+                            <constraint firstItem="ZRh-4h-EDQ" firstAttribute="trailing" secondItem="jDt-Tz-PcQ" secondAttribute="trailing" constant="20" id="WUw-Fy-Qea"/>
+                            <constraint firstItem="w5P-10-TgE" firstAttribute="centerX" secondItem="fwb-yH-H49" secondAttribute="centerX" id="cDo-SI-v9A"/>
+                            <constraint firstItem="lXa-5u-dca" firstAttribute="leading" secondItem="ZRh-4h-EDQ" secondAttribute="leading" constant="20" id="o2b-ju-Ca0"/>
+                            <constraint firstItem="Jnn-gC-Bmz" firstAttribute="centerX" secondItem="fwb-yH-H49" secondAttribute="centerX" id="p8H-xl-g41"/>
+                            <constraint firstItem="Jnn-gC-Bmz" firstAttribute="top" secondItem="w5P-10-TgE" secondAttribute="bottom" constant="30" id="xiA-jn-G4J"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ZRh-4h-EDQ"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="ログイン" id="kQu-fS-F49"/>
+                    <connections>
+                        <outlet property="button" destination="lXa-5u-dca" id="H61-gn-a59"/>
+                        <outlet property="checkPasswordTextField" destination="6ta-ee-57b" id="xXr-RS-YYe"/>
+                        <outlet property="emailTextField" destination="5GZ-ip-xu3" id="XXj-HS-iu7"/>
+                        <outlet property="emailVerificationButton" destination="w5P-10-TgE" id="H2I-cy-WLf"/>
+                        <outlet property="modeButton" destination="bbw-mT-wO9" id="bKM-eC-Vh5"/>
+                        <outlet property="passResetButton" destination="Jnn-gC-Bmz" id="ifm-IM-Mb3"/>
+                        <outlet property="passwordTextField" destination="jDt-Tz-PcQ" id="JGh-9d-HPZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gAt-mb-baI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="16.800000000000001" y="110.19490254872565"/>
         </scene>
     </scenes>
     <resources>

@@ -388,6 +388,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                                         title: selectedDateTodoArray[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
                                           // 処理を実行
                                           self.handleSwitchIsDone(indexPath: indexPath)
+                                          self.myCalendar.reloadData()
                                           tableView.reloadData()
               completionHandler(true)
         }
@@ -448,7 +449,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             self.selectedDateTodoArray[indexPath.row].isDone = true
         }
         self.showIsDoneTodo()
-        self.myCalendar.reloadData()
     }
     
     // MARK: API
