@@ -26,13 +26,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
     
-    var titleKey: String?
-    var contentKey: String?
-    var dateFromKey: Date?
-    var dateToKey: Date?
+    
     var priority: Int?
-    var predicates: [NSPredicate] = []
-    var compoundedPredicate: NSCompoundPredicate?
     var segmentIndex:Int = 0
     var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
@@ -114,15 +109,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
 //        let search = realm.objects(Search.self).first
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
-//            try! realm.write {search!.sort = "dateAt"}
             UserDefaults.standard.set(" ", forKey: "sortKey")
             tableView.reloadData()
         case 1:
-//            try! realm.write {search!.sort = "scheduledAt"}
             UserDefaults.standard.set("schedule", forKey: "sortKey")
             tableView.reloadData()
         case 2:
-//            try! realm.write {search!.sort = "priority"}
             UserDefaults.standard.set("priority", forKey: "sortKey")
             tableView.reloadData()
         default:
@@ -132,19 +124,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
 //    未完/完了セグメント切替処理
     @IBAction func switchIsDone(_ sender: Any) {
-//        let search = realm.objects(Search.self).last
         switch (sender as AnyObject).selectedSegmentIndex {
         case 0:
             UserDefaults.standard.set(false, forKey: "isDoneCheck")
-//            try! realm.write {
-//                search!.isDone = false
-//            }
             tableView.reloadData()
         case 1:
             UserDefaults.standard.set(true, forKey: "isDoneCheck")
-//            try! realm.write {
-//                search!.isDone = true
-//            }
             tableView.reloadData()
         default:
             return
@@ -153,18 +138,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //逆順切替
     @IBAction func sortRev(_ sender: Any) {
-        /* Realm DB
-        let search = realm.objects(Search.self).last
-        if search!.asc {
-            try! realm.write {
-            search!.asc = false
-            }
-        } else {
-            try! realm.write {
-                search!.asc = true
-            }
-        }
-        */
         
         if asc {
             asc = false
@@ -183,20 +156,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goDetailPage"{
             let nextVC = segue.destination as! ToDoDetailViewController
-            /*
-            let realm = try! Realm()
-            let todo = realm.objects(ToDo.self).filter(" title == %@", titleLabel.text!).first
-            let dateString = DateUtils.stringFromDate(date: todo!.scheduledAt, format: "yyyy年MM月dd日")
-            nextVC.titleString = titleLabel.text!
-            nextVC.titleString = todo!.title
-            nextVC.contentString = todo!.content
-            nextVC.priority = todo!.priority
-            nextVC.isDone = todo!.isDone
-            */
             let dateComponentsArray = dateLabel!.text!.components(separatedBy: "/")
             let datestr = "\(dateComponentsArray[0])年\(dateComponentsArray[1])月\(dateComponentsArray[2])日"
             nextVC.todo = self.todo
-            nextVC.selectedDateString = datestr
             nextVC.delegate = self
         }else if segue.identifier == "goSearchPage" {
             let nextVC = segue.destination as! SearchViewController
@@ -207,8 +169,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     //検索内容を空にするクリアボタン
     @IBAction func clearAction(_ sender: Any) {
         if !searchKeyWord.isEmpty {
-//            predicates = []
-//            compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
             searchKeyWord.removeAll()
             tableView.reloadData()
         }
@@ -221,14 +181,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     //セルの数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        /*  Realm DB
-        Search.createDefault(realm)
-        var search = Search.getSearchProperties(realm)
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        return search.3.count
-        */
         
         makeResultArray()
         return resultArray.count
@@ -238,40 +190,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        /*  Realm DB
-        Search.createDefault(realm)
-        var search = Search.getSearchProperties(realm)
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-        let todo = search.3[indexPath.row]
-        let date = DateUtils.stringFromDate(date: todo.scheduledAt, format: "YYYY/MM/dd")
-
-        if todo.title.count >= 11 {
-            let longTitle = todo.title.prefix(10)
-            cell.textLabel!.text = longTitle + "..."
-        } else {
-            cell.textLabel!.text = todo.title
-        }
-        switch todo.priority {
-        case 1:
-            cell.detailTextLabel?.text = "\(date)           ★"
-        case 2:
-            cell.detailTextLabel?.text = "\(date)       ★★"
-        case 3:
-            cell.detailTextLabel?.text = "\(date)   ★★★"
-        default:
-            cell.detailTextLabel?.text = ""
-        }
-        if todo.isDone == true{
-            cell.textLabel?.textColor = UIColor.gray
-            cell.detailTextLabel?.textColor = UIColor.gray
-        } else {
-            cell.textLabel?.textColor = UIColor.black
-            cell.detailTextLabel?.textColor = UIColor.black
-        }
-        */
-        
         todoArrayForCell(cell: cell, indexPath: indexPath)
         
         Layout.listTableCellFont(cell: cell)
@@ -279,13 +197,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     //セルクリックで下部詳細表示
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
-        /*　　Realm DB
-        var search = Search.getSearchProperties(realm)//Searchプロパティとtodosの取得
-        if compoundedPredicate != nil {
-            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-        }
-         let todo = search.3[indexPath.row]
-         */
         
         self.selectedIndexPath = indexPath as NSIndexPath
          makeResultArray()
@@ -323,26 +234,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     // 完了/未完了処理
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        Search.createDefault(realm)
-//        var search = Search.getSearchProperties(realm)
-//        if compoundedPredicate != nil {
-//            search.3 = realm.objects(ToDo.self).sorted(byKeyPath: "\(search.0)", ascending: search.1).filter(compoundedPredicate!).filter("isDone == \(search.2)")
-//        }
-//        let action = UIContextualAction(style: .normal,
-//                                        title: search.3[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
-//              // 処理を実行
-//                if search.3[indexPath.row].isDone {
-//                                try! realm.write {
-//                                  search.3[indexPath.row].isDone = false
-//                                }
-//                            } else {
-//                                try! realm.write {
-//                                  search.3[indexPath.row].isDone = true
-//                                }
-//                            }
-//                            tableView.reloadData()
-//              completionHandler(true)
-//        }
         
         makeResultArray()
         
@@ -365,23 +256,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     // MARK: CatchProtocol
     //検索ワードの受取
     func catchData(key: [String : String]) {
-        /*
-        predicates.removeAll() //検索内容の初期化
-        if key["title"] != nil { predicates.append(NSPredicate(format: "title CONTAINS[c] %@", key["title"]!)) }
-        if key["content"] != nil { predicates.append(NSPredicate(format: "content CONTAINS[c] %@", key["content"]!)) }
-        if key["dateFrom"] != nil { dateFromKey = DateUtils.dateFromString(string: key["dateFrom"]!, format: "yyyy年MM月dd日")} //dateFromを文字型から日付型に変換
-        if key["dateTo"] != nil { dateToKey = DateUtils.dateFromString(string: key["dateTo"]!, format: "yyyy年MM月dd日")} //dateToを文字型から日付型に変換
-        if dateFromKey != nil && dateToKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt >= %@ AND scheduledAt <= %@", dateFromKey! as CVarArg, dateToKey! as CVarArg))
-        } else if dateToKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt <= %@", dateToKey! as CVarArg))
-        } else if dateFromKey != nil {
-            predicates.append(NSPredicate(format:"scheduledAt >= %@", dateFromKey! as CVarArg))
-        }
-        if key["priority"] != nil { priority = Int(key["priority"]!)! }
-        if priority != nil { predicates.append(NSPredicate(format: "priority == %i", priority!)) }
-        compoundedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-         */
         searchKeyWord.removeAll()
         if key["title"] != nil { searchKeyWord["title"] = key["title"] }
         if key["content"] != nil { searchKeyWord["content"] = key["content"] }

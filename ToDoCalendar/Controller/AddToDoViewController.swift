@@ -80,17 +80,6 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         && contentTextField.text!.count < 201 && priority != 0 {
                 let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
             
-//                let todo = ToDo()
-//                todo.title = titleTextField.text!
-//                todo.content = contentTextField.text
-//                todo.scheduledAt = selectedDate as Date
-//                todo.priority = priority
-//                todo.isDone = false
-//
-//                try! realm.write{
-//                    realm.add(todo)
-//                }
-            
                 let scheduleUnix = selectedDate.timeIntervalSince1970
                 let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
                 let scheduleString = String(scheduleUnixString)

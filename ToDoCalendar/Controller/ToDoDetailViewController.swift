@@ -17,10 +17,7 @@ protocol DetailProtocol {
 
 class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
-    var titleString = String()
-    var contentString = String()
     var priority = Int()
-    var selectedDateString = String()
     var isDone = Bool()
     var datePicker: UIDatePicker = UIDatePicker()
     var delegate:DetailProtocol?
@@ -113,22 +110,13 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         let updateTime = Date().timeIntervalSince1970
         
         let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
-//        let scheduleUnix = selectedDate.timeIntervalSince1970
         let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
         let scheduleInt = Int(scheduleUnixString)
-//        let todo = realm.objects(ToDo.self).filter(" title == %@", titleString).first
         let editTitle:String = titleTextField.text!
         guard let todoId = todo?.todoId else {return}
         
         if titleTextField.text != "" && titleTextField.text!.count < 16
         && contentTextView.text!.count < 201 && priority != 0 {
-//                try! realm.write{
-//                    todo!.title = editTitle
-//                    todo!.content = contentTextView.text
-//                    todo!.priority = priority
-//                    todo!.scheduledAt = selectedDate
-//                    todo!.isDone = isDone
-//                }
 
             let values = ["title": editTitle,
                         "content": contentTextView.text,
@@ -150,16 +138,11 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     //削除機能
     @IBAction func deleteAction(_ sender: Any) {
-//        let currentUid = Auth.auth().currentUser?.uid
-//        let todo = realm.objects(ToDo.self).filter(" title == %@", titleTextField.text!).first
         
         let alert: UIAlertController = UIAlertController(title: "ToDoを削除しますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
 
         let deleteAction: UIAlertAction = UIAlertAction(title: "削除", style: UIAlertAction.Style.destructive, handler:{
                (action: UIAlertAction!) -> Void in
-//               try! realm.write{
-//                   realm.delete(todo!)
-//               }
                 self.deleteTodoFromServer()
                 
             let keys = ["title": "タイトル", "content": "内容", "priority": "1", "scheduledAt": "予定日"] as [String : Any]

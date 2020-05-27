@@ -45,7 +45,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     override func viewDidLoad() {
         super.viewDidLoad()
     
-//        print("Realm Browser: \(Realm.Configuration.defaultConfiguration.fileURL!)")
 //        ToDo.makeSampleData(number: 400)
         tableView.delegate  = self
         tableView.dataSource = self
@@ -282,15 +281,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
 //        guard let currentUser = Auth.auth().currentUser?.uid else { return nil}
         
-        /*
-        var todos: Results<ToDo>!
-        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(date).begining as CVarArg, getBeginingAndEndOfDay(date).end as CVarArg)
-        todos = realm.objects(ToDo.self).filter(predicate).filter("isDone = false")
-        
-        if todos!.isEmpty{
-            return ""
-        }
-        */
         
         // 最大優先度の取得 (Firebase)
         let scheduleUnixString = String(date.timeIntervalSince1970).prefix(10)
@@ -320,9 +310,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     //テーブルセルのセル数
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let dateString = selectedDateLabel!.text
-//        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-//        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-//        let todos = realm.objects(ToDo.self).filter(predicate)
         
         // Firebaseより取得
         fetchSelectedTodos(date: dateString!)
@@ -335,10 +322,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let dateString = selectedDateLabel!.text
-//        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-//        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-//        let todos = realm.objects(ToDo.self).filter(predicate)
-        
         
         fetchSelectedTodos(date: dateString!)
         
@@ -400,11 +383,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     // 完了/未完了処理
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let dateString = self.selectedDateLabel!.text
-        /*
-        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-        let todos = realm.objects(ToDo.self).filter(predicate)
-        */
         fetchSelectedTodos(date: dateString!)
         let action = UIContextualAction(style: .normal,
                                         title: selectedDateTodoArray[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
@@ -427,22 +405,11 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             nextVC.selectedDateString = selectedDateLabel.text!
         } else if segue.identifier == "goDetailPage" {
             let nextVC = segue.destination as! ToDoDetailViewController
-            nextVC.titleString = selectedDateLabel.text!
             let indexPath = self.selectedIndexPath
             let dateString = selectedDateLabel!.text
-            /*
-            let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-            let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", getBeginingAndEndOfDay(selectedDate).begining as CVarArg, getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-            let todos = realm.objects(ToDo.self).filter(predicate)
-            nextVC.titleString = todos[indexPath.row].title
-            nextVC.contentString = todos[indexPath.row].content
-            nextVC.priority = todos[indexPath.row].priority
-            nextVC.isDone = todos[indexPath.row].isDone
-            */
             fetchSelectedTodos(date: dateString!)
             let ftodo = selectedDateTodoArray[indexPath.row]
             nextVC.todo = ftodo
-            nextVC.selectedDateString = dateString!
             if #available(iOS 13, *) {
             } else {
                 nextVC.modalPresentationStyle = .pageSheet
@@ -456,14 +423,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         var done:Int = 0
         var total:Int = 0
         let dateString = self.selectedDateLabel!.text
-        /*
-        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月dd日")
-        let predicate = NSPredicate(format: "%@ =< scheduledAt AND scheduledAt < %@", self.getBeginingAndEndOfDay(selectedDate).begining as CVarArg, self.getBeginingAndEndOfDay(selectedDate).end as CVarArg)
-        let todos = realm.objects(ToDo.self).filter(predicate)
-        for todo in todos{
-            if todo.isDone { done += 1 }
-        }
-        */
         fetchSelectedTodos(date: dateString!)
         for todo in selectedDateTodoArray{
             if todo.isDone { done += 1 }
