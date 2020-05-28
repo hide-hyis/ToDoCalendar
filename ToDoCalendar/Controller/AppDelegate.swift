@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             var storyboard = UIStoryboard()
             let height = UIScreen.main.bounds.size.height
-            print("スクリーンサイズ: \(height)")
+//            print("スクリーンサイズ: \(height)")
             if height == 568{
                 storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 //iPhoneSE

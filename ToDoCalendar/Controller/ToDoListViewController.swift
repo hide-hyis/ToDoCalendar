@@ -439,7 +439,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     // MARK: API
     func fetchFToDo(){
-        USER_TODOS_REF.child("user1").observe(.childAdded) { (snapshot) in
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        USER_TODOS_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             let todoId = snapshot.key
             
             TODOS_REF.child(todoId).observeSingleEvent(of: .value) { (snapshot) in

@@ -46,10 +46,14 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         super.viewDidLoad()
     
 //        ToDo.makeSampleData(number: 400)
-        tableView.delegate  = self
-        tableView.dataSource = self
+        
+        checkTodoInFirebase()
+        
+        fetchFToDo()
         self.myCalendar.dataSource = self
         self.myCalendar.delegate = self
+        tableView.delegate  = self
+        tableView.dataSource = self
         myCalendar.scrollDirection = .vertical
         
         let today = Date()
@@ -57,9 +61,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         showIsDoneTodo()
         
-        checkTodoInFirebase()
-        
-        fetchFToDo()
         
 //        firebasePlayground()
     }
@@ -83,17 +84,19 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     // Convert Realm to Firebase databsase
     func checkTodoInFirebase(){
-        USER_TODOS_REF.child("user1").observeSingleEvent(of: .value) { (snaphot) in
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        USER_TODOS_REF.child(currentUid).observeSingleEvent(of: .value) { (snaphot) in
             if snaphot.hasChildren(){
                 print("既にデータあり")
             }else{
-                self.convertRealmToFirebase(user: "user1")
+                self.convertRealmToFirebase(user: currentUid)
             }
         }
     }
     
     func firebasePlayground(){
-        USER_TODOS_REF.child("user1").observe(.childAdded) { (snaphot) in
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        USER_TODOS_REF.child(currentUid).observe(.childAdded) { (snaphot) in
                      let todoId = snaphot.key
                      print(todoId)
                     
@@ -112,6 +115,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     
     func convertRealmToFirebase(user user: String){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
         let todos = realm.objects(ToDo.self)
         
         for todo in todos {
@@ -454,7 +458,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     // MARK: API
     
     func fetchFToDo(){
-        USER_TODOS_REF.child("user1").observe(.childAdded) { (snapshot) in
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        USER_TODOS_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             let todoId = snapshot.key
             
             TODOS_REF.child(todoId).observeSingleEvent(of: .value) { (snapshot) in

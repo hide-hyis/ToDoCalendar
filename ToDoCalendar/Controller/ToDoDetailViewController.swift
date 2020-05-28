@@ -290,8 +290,10 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     // MARK:　API
     // FirebaseにToDo削除を送信
     func deleteTodoFromServer(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
         guard let todoId = self.todo?.todoId else {return}
-        USER_TODOS_REF.child("user1").child(todoId).removeValue { (err, ref) in
+        USER_TODOS_REF.child(currentUid).child(todoId).removeValue { (err, ref) in
             TODOS_REF.child(todoId).removeValue()
         }
     }

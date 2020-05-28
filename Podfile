@@ -12,4 +12,5 @@ pod 'CalculateCalendarLogic'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
 pod 'Firebase/Storage'
+pod 'JGProgressHUD'
 end
