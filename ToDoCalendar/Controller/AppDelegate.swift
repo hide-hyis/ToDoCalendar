@@ -15,12 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
         FirebaseApp.configure()
         sleep(1)
         
+        
         let storyboard:UIStoryboard = self.grabStoryboard()
-               
+//        var rootVC: UIViewController
         if let window = window{
+//            if Auth.auth().currentUser != nil {
+//                rootVC = storyboard.instantiateViewController(withIdentifier:     "ViewController")
+//            }else{
+//                rootVC = storyboard.instantiateViewController(withIdentifier:     "LoginViewController")
+//            }
                   window.rootViewController = storyboard.instantiateInitialViewController() as UIViewController?
                }
 //        self.window?.rootViewController = ViewController()

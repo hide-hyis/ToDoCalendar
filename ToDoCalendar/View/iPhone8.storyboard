@@ -11,7 +11,7 @@
         <!--カレンダー-->
         <scene sceneID="cPY-W3-Keo">
             <objects>
-                <viewController storyboardIdentifier="ViewController" id="C5v-v4-8bW" customClass="ViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="ViewController" storyboardIdentifier="ViewController" id="C5v-v4-8bW" customClass="ViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HGB-86-G6p">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -704,10 +704,11 @@
             </objects>
             <point key="canvasLocation" x="1741" y="851"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Main Navigation Controller-->
         <scene sceneID="WtB-gc-zYs">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JZX-5c-AYr" sceneMemberID="viewController">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2oW-Qo-IML" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JZX-5c-AYr" customClass="MainNavigationController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="qyw-j8-pRg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -715,17 +716,16 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="4Br-bW-nKZ" kind="relationship" relationship="rootViewController" id="EdO-LT-LK5"/>
+                        <segue destination="4Br-bW-nKZ" kind="relationship" relationship="rootViewController" id="q87-Nd-ftL"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2oW-Qo-IML" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-705" y="111"/>
+            <point key="canvasLocation" x="-140" y="-263"/>
         </scene>
         <!--ログイン-->
         <scene sceneID="xZ7-X7-5Xo">
             <objects>
-                <viewController id="4Br-bW-nKZ" customClass="LoginViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="LoginViewController" storyboardIdentifier="LoginViewController" id="4Br-bW-nKZ" customClass="LoginViewController" customModule="ToDoCalendar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fwb-yH-H49">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -830,7 +830,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gAt-mb-baI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="90" y="111"/>
+            <point key="canvasLocation" x="882" y="-606"/>
         </scene>
     </scenes>
     <resources>

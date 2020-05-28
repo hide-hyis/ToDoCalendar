@@ -45,9 +45,9 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     override func viewDidLoad() {
         super.viewDidLoad()
     
-//        ToDo.makeSampleData(number: 400)
+//        ToDo.makeSampleData(number: 50)
         
-        checkTodoInFirebase()
+//        checkTodoInFirebase()
         
         fetchFToDo()
         self.myCalendar.dataSource = self

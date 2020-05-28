@@ -33,7 +33,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         // ログイン中であればカレンダー画面に遷移
-        checkLogin()
+//        checkLogin()
 
         emailTextField.delegate = self
         passwordTextField.delegate = self
@@ -195,6 +195,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         )
         modeButton.setAttributedTitle(attrText, for: .normal)
     }
+    
     // 新規登録バリデーション
     func registerValidation() -> Bool{
 
@@ -284,6 +285,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                     
                     self.jgprogressSuccess(str: "確認用メールを送信しました")
+
+                    self.checkTodoInFirebase()
+                    
                     // UIをログインに変更する
                     self.changeLoginMode()
                 }
@@ -292,6 +296,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
+    
     func loginValidation() -> Bool{
         let email = self.emailTextField.text
         let password = self.passwordTextField.text
@@ -340,4 +345,53 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         hud.show(in: self.view)
         hud.dismiss(afterDelay: 2.0, animated: true)
     }
+    
+// MARK: Realm Database -> Firebase Database
+    // Convert Realm to Firebase databsase
+    func checkTodoInFirebase(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        // ＊＊＊＊＊＊＊＊＊＊＊＊＊  ここの挙動要確認  ＊＊＊＊＊＊＊＊＊＊＊＊＊
+        USER_TODOS_REF.child(currentUid).observeSingleEvent(of: .value) { (snaphot) in
+            if snaphot.hasChildren(){
+                print("既にデータあり")
+            }else{
+                self.convertRealmToFirebase(user: currentUid)
+            }
+        }
+    }
+
+    func convertRealmToFirebase(user user: String){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        let todos = realm.objects(ToDo.self)
+        
+        for todo in todos {
+//            let createdTimeString = DateUtils.stringFromDate(date: todo.dateAt, format: "yyyyMMddHHmmss")
+            let createdTimeUnix = todo.dateAt.timeIntervalSince1970
+//            let scheduleString = DateUtils.stringFromDate(date: todo.scheduledAt, format: "yyyyMMdd")
+            let scheduleUnix = todo.scheduledAt.timeIntervalSince1970
+            let scheduleUnixString = String(todo.scheduledAt.timeIntervalSince1970).prefix(10)
+            let scheduleString = String(scheduleUnixString)
+            
+            let values1 = ["title": todo.title,
+                          "content": todo.content,
+                          "schedule": scheduleUnix,
+                          "priority": todo.priority,
+                          "isDone": todo.isDone,
+                          "imageURL": "",
+                          "userId": user,
+                          "createdTime": createdTimeUnix,
+                          "updatedTime": createdTimeUnix] as [String: Any]
+            
+            let todoId = TODOS_REF.childByAutoId()
+            guard let todoIdKey = todoId.key else {return}
+            todoId.updateChildValues(values1)
+            
+            USER_TODOS_REF.child(user).updateChildValues([todoIdKey: 1])
+            
+            CALENDAR_TODOS_REF.child(user).child(scheduleString).updateChildValues([todoIdKey: 1])
+            
+        }
+    }
+        
 }
