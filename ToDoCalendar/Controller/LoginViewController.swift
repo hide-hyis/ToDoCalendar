@@ -241,7 +241,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }else{
                 guard let currentUid = authResult?.user.uid else {return}
                 // ログイン成功画面遷移
+                let updatedTimeUnix = Date().timeIntervalSince1970
+                
                 USER_REF.child(currentUid).child("isLogin").setValue(true)
+                USER_REF.child(currentUid).child("updatedTime").setValue(updatedTimeUnix)
                 let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
                 self.navigationController?.pushViewController(calendarVC, animated: true)
             }

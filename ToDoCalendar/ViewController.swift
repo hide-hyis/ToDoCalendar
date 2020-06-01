@@ -49,7 +49,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     var toolbar = UIToolbar()
     let postponeData = ["1日","2日","3日","4日","5日","6日","7日",]
     var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
-    var postponeTodoId: Int?
+    var postponeTodoIndex: Int?
     
     // MARK:  View Life cycle
     override func viewDidLoad() {
@@ -416,7 +416,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                                         title: "先送り") { (action, view, completionHandler) in
                                             
                                           // 処理を実行
-                                          self.postponeTodoId = indexPath.row
+                                          self.postponeTodoIndex = indexPath.row
                                           self.toggleShowPostpone()
                                           self.myCalendar.reloadData()
                                           tableView.reloadData()
@@ -469,11 +469,11 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let pickerLabel = UILabel()
         pickerLabel.textAlignment = NSTextAlignment.center
         pickerLabel.text = self.postponeData[row]
+        pickerLabel.font = UIFont.systemFont(ofSize: 22)
         return pickerLabel
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print("pickerView\(postponeData[row])が選択されました")
         selectedPostponeDay = row + 1
     }
     
@@ -498,13 +498,17 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     func handleSwitchIsDone(indexPath: IndexPath){
         guard let todoId = self.selectedDateTodoArray[indexPath.row].todoId else {return}
+        let updatedTimeUnix = Date().timeIntervalSince1970
+        
         if self.selectedDateTodoArray[indexPath.row].isDone {
         
             TODOS_REF.child(todoId).child("isDone").setValue(false)
+            TODOS_REF.child(todoId).child("updatedTime").setValue(updatedTimeUnix)
             self.selectedDateTodoArray[indexPath.row].isDone = false
         } else {
             
             TODOS_REF.child(todoId).child("isDone").setValue(true)
+            TODOS_REF.child(todoId).child("updatedTime").setValue(updatedTimeUnix)
             self.selectedDateTodoArray[indexPath.row].isDone = true
         }
         self.showIsDoneTodo()
@@ -548,9 +552,11 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     @objc func logout(){
         
         do{
+            let updatedTimeUnix = Date().timeIntervalSince1970
             guard let currentUid = Auth.auth().currentUser?.uid else {return}
             try Auth.auth().signOut()
             USER_REF.child(currentUid).child("isLogin").setValue(false)
+            USER_REF.child(currentUid).child("updatedTime").setValue(updatedTimeUnix)
             jgprogressError(str: "ユーザーログアウト")
             let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
             self.navigationController?.popViewController(animated: true)
@@ -579,16 +585,16 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     // 先延ばし機能の実行
     @objc func handlePostpone(){
 
-        let createdTimeUnix = Date().timeIntervalSince1970
-        let todoId = self.selectedDateTodoArray[self.postponeTodoId!].todoId
-        let baseDateIntUnix = self.selectedDateTodoArray[self.postponeTodoId!].scheduled
+        let updatedTimeUnix = Date().timeIntervalSince1970
+        let todoId = self.selectedDateTodoArray[self.postponeTodoIndex!].todoId
+        let baseDateIntUnix = self.selectedDateTodoArray[self.postponeTodoIndex!].scheduled
         let baseDate = Date(timeIntervalSince1970: Double(baseDateIntUnix!))
         let modifiedDate = Calendar.current.date(byAdding: .day, value: self.selectedPostponeDay, to: baseDate)!
         let modifiedUnixDate = modifiedDate.timeIntervalSince1970
         
         TODOS_REF.child(todoId!).child("schedule").setValue(modifiedUnixDate)
-        TODOS_REF.child(todoId!).child("updatedTime").setValue(createdTimeUnix)
-        self.selectedDateTodoArray[self.postponeTodoId!].createdTime = modifiedUnixDate
+        TODOS_REF.child(todoId!).child("updatedTime").setValue(updatedTimeUnix)
+        self.selectedDateTodoArray[self.postponeTodoIndex!].scheduled = Int(modifiedUnixDate)
         
         self.myCalendar.reloadData()
         self.tableView.reloadData()

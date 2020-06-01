@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import Firebase
 
-class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, CatchProtocol, DetailProtocol {
+class ToDoListViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, CatchProtocol, DetailProtocol {
     
     
     
@@ -31,6 +31,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var segmentIndex:Int = 0
     var isDoneSegmentIndex:Int = 0
     let screenHeight = Int(UIScreen.main.bounds.size.height)
+    let screenWidth = Int(UIScreen.main.bounds.size.width)
     var todoArray = [FToDo]()               // ユーザーが持つtodo全件
     var resultArray = [FToDo]()             // 並び替えfilter後のtodo全件
     var todo:FToDo?                         //タップされたtodo項目
@@ -38,6 +39,11 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     var asc = true                         // 逆順フラグ
     var searchKeyWord = [String: Any]()    //検索キーワード
     var selectedIndexPath: NSIndexPath = NSIndexPath()
+    var postponePickerView = UIPickerView()                    // 先送り表示用のピッカー
+    var toolbar = UIToolbar()
+    let postponeData = ["1日","2日","3日","4日","5日","6日","7日",]
+    var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
+    var postponeTodoIndex: Int?
     
     
     // MARK: View Lifecycle
@@ -58,11 +64,12 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         
         configureSegment()
         
+        // 先送り用ピッカービューの生成
+        configurePickerView()
         //iOS13以前でもナビバーを表示
         makeNavbar()
         
     }
-
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -237,7 +244,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         
         makeResultArray()
         
-        let action = UIContextualAction(style: .normal,
+        let isDoneAction = UIContextualAction(style: .normal,
                                         title: resultArray[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
                                             
               // 完了切替処理を実行(Firebase)
@@ -246,13 +253,48 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
               tableView.reloadData()
               completionHandler(true)
         }
+        let postponeAction = UIContextualAction(style: .normal,
+                                        title: "先送り") { (action, view, completionHandler) in
+                                            
+                                          // 処理を実行
+                                          self.postponeTodoIndex = indexPath.row
+                                          self.toggleShowPostpone()
+                                          tableView.reloadData()
+              completionHandler(true)
+        }
+        postponeAction.backgroundColor = UIColor.rgb(red: 113, green: 155, blue: 128, alpha: 1)
         
-        
-        let configuration = UISwipeActionsConfiguration(actions: [action])
-        configuration.performsFirstActionWithFullSwipe = false
+        let configuration: UISwipeActionsConfiguration?
+        if resultArray[indexPath.row].isDone{
+            configuration = UISwipeActionsConfiguration(actions: [isDoneAction])
+        }else{
+            configuration = UISwipeActionsConfiguration(actions: [isDoneAction, postponeAction])
+        }
+        configuration!.performsFirstActionWithFullSwipe = false
         return configuration
     }
     
+    // MARK: UIPickerViewDelegate
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return postponeData.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        let pickerLabel = UILabel()
+        pickerLabel.textAlignment = NSTextAlignment.center
+        pickerLabel.text = self.postponeData[row]
+        pickerLabel.font = UIFont.systemFont(ofSize: 22)
+        return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        selectedPostponeDay = row + 1
+    }
     // MARK: CatchProtocol
     //検索ワードの受取
     func catchData(key: [String : String]) {
@@ -270,6 +312,66 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     // MARK: - Handler
+    
+    func configurePickerView(){
+        // ツールバーの生成
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellShowPostpone))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handlePostpone))
+        toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
+        toolbar.isUserInteractionEnabled = true
+        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.backgroundColor = .white
+        view.addSubview(toolbar)
+        toolbar.isHidden = true
+        
+        postponePickerView.delegate = self
+        postponePickerView.dataSource = self
+        let pickerWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+        postponePickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        postponePickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
+        view.addSubview(postponePickerView)
+        postponePickerView.isHidden = true
+    }
+    
+    // 先延ばしピッカーの表示切替
+    func toggleShowPostpone(){
+        if self.postponePickerView.isHidden == false{
+            
+            self.postponePickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }else{
+            self.postponePickerView.isHidden = false
+            self.toolbar.isHidden = false
+        }
+    }
+    
+    @objc func cancellShowPostpone(){
+        if self.postponePickerView.isHidden == false{
+            
+            self.postponePickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }
+    }
+    // 先延ばし機能の実行
+    @objc func handlePostpone(){
+        
+        let updatedTimeUnix = Date().timeIntervalSince1970
+        let todoId = self.resultArray[self.postponeTodoIndex!].todoId
+        let baseDateIntUnix = self.resultArray[self.postponeTodoIndex!].scheduled
+        let baseDate = Date(timeIntervalSince1970: Double(baseDateIntUnix!))
+        let modifiedDate = Calendar.current.date(byAdding: .day, value: self.selectedPostponeDay, to: baseDate)!
+        let modifiedUnixDate = modifiedDate.timeIntervalSince1970
+        
+        TODOS_REF.child(todoId!).child("schedule").setValue(modifiedUnixDate)
+        TODOS_REF.child(todoId!).child("updatedTime").setValue(updatedTimeUnix)
+        self.resultArray[self.postponeTodoIndex!].scheduled = Int(modifiedUnixDate)
+        
+        self.tableView.reloadData()
+        
+        toggleShowPostpone()
+    }
     
     func configureSegment(){
 //        let search = realm.objects(Search.self).first
@@ -413,14 +515,17 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     // 完了/未完了切替処理
     func handleSwitchIsDone(indexPath: IndexPath){
+        let updatedTimeUnix = Date().timeIntervalSince1970
         guard let todoId = self.resultArray[indexPath.row].todoId else {return}
         if self.resultArray[indexPath.row].isDone {
         
             TODOS_REF.child(todoId).child("isDone").setValue(false)
+            TODOS_REF.child(todoId).child("updatedTime").setValue(updatedTimeUnix)
             self.resultArray[indexPath.row].isDone = false
         } else {
             
             TODOS_REF.child(todoId).child("isDone").setValue(true)
+            TODOS_REF.child(todoId).child("updatedTime").setValue(updatedTimeUnix)
             self.resultArray[indexPath.row].isDone = true
         }
     }
