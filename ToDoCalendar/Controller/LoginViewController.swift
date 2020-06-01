@@ -35,9 +35,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         // ログイン中であればカレンダー画面に遷移
 //        checkLogin()
 
-        emailTextField.delegate = self
-        passwordTextField.delegate = self
-        checkPasswordTextField.delegate = self
         
         emailTextField.keyboardType = .emailAddress
         
@@ -59,6 +56,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         button.layer.cornerRadius = 5
         checkPasswordTextField.isHidden = true
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+        checkPasswordTextField.delegate = self
     }
     
     
@@ -119,7 +119,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 guard let currentUid = Auth.auth().currentUser?.uid else {return}
                 try Auth.auth().signOut()
                 USER_REF.child(currentUid).child("isLogin").setValue(false)
-                jgprogressError(str: "ユーザーログアウト")
+                jgprogressError(str: "ログアウトしました")
             }catch let error as NSError{
                 print("エラー：", error)
             }

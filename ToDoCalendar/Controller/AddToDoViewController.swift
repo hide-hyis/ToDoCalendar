@@ -75,7 +75,6 @@ class AddToDoViewController: UIViewController, UITextFieldDelegate, UITextViewDe
     
     @IBAction func saveAction(_ sender: Any) {
         guard let currentId = Auth.auth().currentUser?.uid else {return}
-//        let currentId = "user1"
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 {
                 let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")

@@ -11,6 +11,7 @@ import RealmSwift
 import FSCalendar
 import CalculateCalendarLogic
 import Firebase
+import JGProgressHUD
 
 //下線に色付け
 extension FSCalendar {
@@ -22,7 +23,8 @@ extension FSCalendar {
     }
 }
 
-class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,FSCalendarDelegateAppearance, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,FSCalendarDelegateAppearance, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
+    
     
     
 
@@ -34,12 +36,20 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     var selectedIndexPath: NSIndexPath = NSIndexPath()
     let screenHeight = Int(UIScreen.main.bounds.size.height)
+    let screenWidth = Int(UIScreen.main.bounds.size.width)
     var pageMonth:Int?
-    var maxPriority = 0 // 表示する優先度の初期化
+    var maxPriority = 0                                         // 表示する優先度の初期化
     var todoArray = [FToDo]()
-    var filteredTodoArray = [FToDo]() // クリックされた日付のToDo
-    var selectedDateTodoArray = [FToDo]() // 重複しない選択日のToDo配列
-    
+    var filteredTodoArray = [FToDo]()                          // クリックされた日付のToDo
+    var selectedDateTodoArray = [FToDo]()                      // 重複しない選択日のToDo配列
+    var hud = JGProgressHUD(style: .dark)
+    var toggle = false // CustomViewの表示切替用フラグ
+    var customView: UIView?
+    var postponePickerView = UIPickerView()                    // 先送り表示用のピッカー
+    var toolbar = UIToolbar()
+    let postponeData = ["1日","2日","3日","4日","5日","6日","7日",]
+    var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
+    var postponeTodoId: Int?
     
     // MARK:  View Life cycle
     override func viewDidLoad() {
@@ -48,6 +58,11 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
 //        ToDo.makeSampleData(number: 50)
         
 //        checkTodoInFirebase()
+        configureNavBarleft()
+        
+        // 先送り用ピッカービューの生成
+        configurePickerView()
+        
         
         fetchFToDo()
         self.myCalendar.dataSource = self
@@ -61,8 +76,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         selectedDateLabel.text = todayString
         showIsDoneTodo()
         
-        
-//        firebasePlayground()
     }
     
     
@@ -78,9 +91,12 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 //詳細画面から戻ってきたときreload
                 myCalendar.reloadData()
                 tableView.reloadData()
+            }else if type(of: presented) == SettingViewController.self && Auth.auth().currentUser == nil{
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }
+    
     
     // Convert Realm to Firebase databsase
     func checkTodoInFirebase(){
@@ -388,7 +404,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let dateString = self.selectedDateLabel!.text
         fetchSelectedTodos(date: dateString!)
-        let action = UIContextualAction(style: .normal,
+        let isDoneAction = UIContextualAction(style: .normal,
                                         title: selectedDateTodoArray[indexPath.row].isDone ? "未完了" : "完了") { (action, view, completionHandler) in
                                           // 処理を実行
                                           self.handleSwitchIsDone(indexPath: indexPath)
@@ -396,8 +412,25 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                                           tableView.reloadData()
               completionHandler(true)
         }
-        let configuration = UISwipeActionsConfiguration(actions: [action])
-        configuration.performsFirstActionWithFullSwipe = false
+        let postponeAction = UIContextualAction(style: .normal,
+                                        title: "先送り") { (action, view, completionHandler) in
+                                            
+                                          // 処理を実行
+                                          self.postponeTodoId = indexPath.row
+                                          self.toggleShowPostpone()
+                                          self.myCalendar.reloadData()
+                                          tableView.reloadData()
+              completionHandler(true)
+        }
+        postponeAction.backgroundColor = UIColor.rgb(red: 113, green: 155, blue: 128, alpha: 1)
+        
+        let configuration: UISwipeActionsConfiguration?
+        if selectedDateTodoArray[indexPath.row].isDone{
+            configuration = UISwipeActionsConfiguration(actions: [isDoneAction])
+        }else{
+            configuration = UISwipeActionsConfiguration(actions: [isDoneAction, postponeAction])
+        }
+        configuration!.performsFirstActionWithFullSwipe = false
         return configuration
     }
     
@@ -420,6 +453,28 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
                 nextVC.modalPresentationStyle = .pageSheet
             }
         }
+    }
+    
+    // MARK: UIPickerViewDelegate
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return postponeData.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        let pickerLabel = UILabel()
+        pickerLabel.textAlignment = NSTextAlignment.center
+        pickerLabel.text = self.postponeData[row]
+        return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("pickerView\(postponeData[row])が選択されました")
+        selectedPostponeDay = row + 1
     }
     
     // MARK: Handlers
@@ -453,6 +508,129 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
             self.selectedDateTodoArray[indexPath.row].isDone = true
         }
         self.showIsDoneTodo()
+    }
+    
+    func configureNavBarleft(){
+        
+        let gearImage = UIImage(named: "gear")?.withRenderingMode(.alwaysTemplate)
+        let reSize:CGSize = CGSize.init(width: 25, height:25)
+        let settingImage = gearImage!.resize(size: reSize)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: settingImage, style: .plain, target: self, action: #selector(showSetting))
+        
+    }
+    
+    @objc func showSetting(){
+        let navBarHeight =  self.navigationController?.navigationBar.frame.size.height
+        let settingVC = self.storyboard?.instantiateViewController(withIdentifier: "SettingViewController") as! SettingViewController
+        settingVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical
+        settingVC.modalPresentationStyle = .overCurrentContext
+        settingVC.navHeight = navBarHeight
+        settingVC.calendarVC = self
+//        settingVC.view.backgroundColor = UIColor.clear
+        self.present(settingVC, animated: true, completion: nil)
+    }
+    
+    // 設定UIViewの表示切替 
+    @objc func showUiview(){
+        if self.toggle{
+            customView?.isHidden = true
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
+            self.toggle = false
+        }else{
+            customView!.isHidden = false
+            self.navigationController?.setNavigationBarHidden(true, animated: false)
+            self.toggle = true
+        }
+        
+    }
+    
+    // ログアウト処理
+    @objc func logout(){
+        
+        do{
+            guard let currentUid = Auth.auth().currentUser?.uid else {return}
+            try Auth.auth().signOut()
+            USER_REF.child(currentUid).child("isLogin").setValue(false)
+            jgprogressError(str: "ユーザーログアウト")
+            let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            self.navigationController?.popViewController(animated: true)
+        }catch let error as NSError{
+            print("エラー：", error)
+        }
+    }
+    
+    func renderLogin(){
+        let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    // 先延ばしピッカーの表示切替
+    @objc func toggleShowPostpone(){
+        if self.postponePickerView.isHidden == false{
+            
+            self.postponePickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }else{
+            self.postponePickerView.isHidden = false
+            self.toolbar.isHidden = false
+        }
+    }
+    
+    // 先延ばし機能の実行
+    @objc func handlePostpone(){
+
+        let createdTimeUnix = Date().timeIntervalSince1970
+        let todoId = self.selectedDateTodoArray[self.postponeTodoId!].todoId
+        let baseDateIntUnix = self.selectedDateTodoArray[self.postponeTodoId!].scheduled
+        let baseDate = Date(timeIntervalSince1970: Double(baseDateIntUnix!))
+        let modifiedDate = Calendar.current.date(byAdding: .day, value: self.selectedPostponeDay, to: baseDate)!
+        let modifiedUnixDate = modifiedDate.timeIntervalSince1970
+        
+        TODOS_REF.child(todoId!).child("schedule").setValue(modifiedUnixDate)
+        TODOS_REF.child(todoId!).child("updatedTime").setValue(createdTimeUnix)
+        self.selectedDateTodoArray[self.postponeTodoId!].createdTime = modifiedUnixDate
+        
+        self.myCalendar.reloadData()
+        self.tableView.reloadData()
+        toggleShowPostpone()
+    }
+    
+    // エラー用JGProgress
+    func jgprogressError(str: String){
+        hud.textLabel.text = str
+        hud.indicatorView = JGProgressHUDErrorIndicatorView()
+        hud.show(in: self.view)
+        hud.dismiss(afterDelay: 2.0, animated: true)
+    }
+    
+    // 成功用JGProgress
+    func jgprogressSuccess(str: String){
+        hud.textLabel.text = str
+        hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+        hud.show(in: self.view)
+        hud.dismiss(afterDelay: 2.0, animated: true)
+    }
+    
+    func configurePickerView(){
+        // ツールバーの生成
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(toggleShowPostpone))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handlePostpone))
+        toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
+        toolbar.isUserInteractionEnabled = true
+        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.backgroundColor = .white
+        view.addSubview(toolbar)
+        toolbar.isHidden = true
+        
+        postponePickerView.delegate = self
+        postponePickerView.dataSource = self
+        let pickerWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+        postponePickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        postponePickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
+        view.addSubview(postponePickerView)
+        postponePickerView.isHidden = true
     }
     
     // MARK: API
