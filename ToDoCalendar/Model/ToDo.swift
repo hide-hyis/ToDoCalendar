@@ -81,7 +81,7 @@ class ToDo: Object {
     
     class func validButton( _ button:UIButton){
         button.isEnabled = true
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .normal)
     }
     
     //textField入力値制限アラート

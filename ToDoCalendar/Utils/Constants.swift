@@ -19,5 +19,6 @@ let USER_TODOS_REF = DB_REF.child("user-todos")
 
 let TODOS_REF = DB_REF.child("todos")
 let CALENDAR_TODOS_REF = DB_REF.child("calendar-todos")
+let CATEGORIES_REF = DB_REF.child("categories")
 
 let realm = try! Realm()
