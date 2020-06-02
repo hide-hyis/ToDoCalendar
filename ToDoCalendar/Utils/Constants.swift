@@ -21,4 +21,6 @@ let TODOS_REF = DB_REF.child("todos")
 let CALENDAR_TODOS_REF = DB_REF.child("calendar-todos")
 let CATEGORIES_REF = DB_REF.child("categories")
 
+let STORAGE_TODO_IMAGES_REF = STORE_REF.child("todo_images")
+
 let realm = try! Realm()

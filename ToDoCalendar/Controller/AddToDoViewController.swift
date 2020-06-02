@@ -26,7 +26,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var imageView: UIImageView!
     
     var selectedDateString = String()
-    
+    var selectedTodoImage: UIImage?
     var priority = 1
     
     override func viewDidLoad() {
@@ -92,41 +92,71 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func saveAction(_ sender: Any) {
         guard let currentId = Auth.auth().currentUser?.uid else {return}
+        
+        
+        // 記入内容のバリデーション
         if titleTextField.text! != "" && titleTextField.text!.count < 16
-        && contentTextField.text!.count < 201 && priority != 0 {
-                let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
+        && contentTextField.text!.count < 201 && priority != 0 && self.selectedTodoImage != nil{
             
-                let scheduleUnix = selectedDate.timeIntervalSince1970
-                let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
-                let scheduleString = String(scheduleUnixString)
-                let createdTimeUnix = Date().timeIntervalSince1970
-                
-                let values = ["title": titleTextField.text!,
-                            "content": contentTextField.text!,
-                            "schedule": scheduleUnix,
-                            "priority": priority,
-                            "isDone": false,
-                            "imageURL": "",
-                            "userId": currentId,
-                            "createdTime": createdTimeUnix,
-                            "updatedTime": createdTimeUnix] as [String: Any]
+            // image uploadData
+            guard let todoImage = self.selectedTodoImage else {return}
+            guard let uploadData = todoImage.jpegData(compressionQuality: 0.5) else {return}
+            // update storage
+            let filename = NSUUID().uuidString
+            let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
+            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
             
-                let todoId = TODOS_REF.childByAutoId()
-                guard let todoIdKey = todoId.key else {return}
-                todoId.updateChildValues(values)
-                
-                USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
-                
-                CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
-            
-                self.navigationController?.popViewController(animated: true)
-        } else{
+                //エラーハンドル
+                if let error = error{
+                    print("画像のアップロードエラー", error.localizedDescription)
+                    return
+                }
+                    
+                storageRef.downloadURL { (url, error) in
+                    guard let todoImageUrl = url?.absoluteString else {return}
+                    
+                    // DBへ情報の送信
+                    self.inputValues(uid: currentId, withImage: todoImageUrl)
+                }
+            }
+        }else if titleTextField.text! != "" && titleTextField.text!.count < 16
+        && contentTextField.text!.count < 201 && priority != 0{
+
+            // DBへ情報の送信
+           inputValues(uid: currentId, withImage: "")
+        }else{
             print("項目を全て記入してください")
-            
         }
     }
     
-    
+    func inputValues(uid currentId: String, withImage: String){
+        let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
+                   
+                       let scheduleUnix = selectedDate.timeIntervalSince1970
+                       let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+                       let scheduleString = String(scheduleUnixString)
+                       let createdTimeUnix = Date().timeIntervalSince1970
+                       
+                       let values = ["title": titleTextField.text!,
+                                   "content": contentTextField.text!,
+                                   "schedule": scheduleUnix,
+                                   "priority": priority,
+                                   "isDone": false,
+                                   "imageURL": withImage,
+                                   "userId": currentId,
+                                   "createdTime": createdTimeUnix,
+                                   "updatedTime": createdTimeUnix] as [String: Any]
+                   
+                       let todoId = TODOS_REF.childByAutoId()
+                       guard let todoIdKey = todoId.key else {return}
+                       todoId.updateChildValues(values)
+                       
+                       USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
+                       
+                       CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
+                   
+                       self.navigationController?.popViewController(animated: true)
+    }
     
     @IBAction func backAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -178,8 +208,9 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
          
         if let pickedImage = info[.editedImage] as? UIImage{
             let size = CGSize(width: 130, height: 130)
-            let resizeImage = pickedImage.resize(size: size)
-            self.imageView.image = resizeImage
+            selectedTodoImage = pickedImage.resize(size: size)
+            self.imageView.image = selectedTodoImage
+            
             if let imageUrl = info[UIImagePickerController.InfoKey.referenceURL] as? NSURL{
 
                 print("DEBUG imageUrl: \(imageUrl)")
@@ -216,7 +247,8 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
 
         let deleteAction: UIAlertAction = UIAlertAction(title: "取り消し", style: UIAlertAction.Style.destructive, handler:{
                (action: UIAlertAction!) -> Void in
-                print("画像の削除")
+            self.imageView.image = UIImage(named: "plus-icon")
+            self.selectedTodoImage = nil
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in
