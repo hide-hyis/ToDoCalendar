@@ -48,6 +48,9 @@ import Foundation
             self.priority = priority
         }
         
+        if let imageURL = dictionary["imageURL"] as? String{
+            self.imageURL = imageURL
+        }
         if let dateAt = dictionary["createdTime"] as? Double{
             self.createdTime = dateAt
         }

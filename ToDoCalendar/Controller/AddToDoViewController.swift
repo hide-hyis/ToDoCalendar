@@ -55,11 +55,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         makeNavbar()
         
     }
-    
-    @objc func imageTapped(){
-        print("ピッカー起動")
-        showPicker()
-    }
     func textViewDidBeginEditing(_ textView: UITextView) {
         if contentTextField.textColor == UIColor.lightGray {
             contentTextField.text = nil
@@ -115,48 +110,20 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
                 storageRef.downloadURL { (url, error) in
                     guard let todoImageUrl = url?.absoluteString else {return}
                     
-                    // DBへ情報の送信
+                    // DBへ情報の送信(画像を保存する場合)
                     self.inputValues(uid: currentId, withImage: todoImageUrl)
                 }
             }
         }else if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0{
 
-            // DBへ情報の送信
+            // DBへ情報の送信(画像を保存しない場合)
            inputValues(uid: currentId, withImage: "")
         }else{
             print("項目を全て記入してください")
         }
     }
     
-    func inputValues(uid currentId: String, withImage: String){
-        let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
-                   
-                       let scheduleUnix = selectedDate.timeIntervalSince1970
-                       let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
-                       let scheduleString = String(scheduleUnixString)
-                       let createdTimeUnix = Date().timeIntervalSince1970
-                       
-                       let values = ["title": titleTextField.text!,
-                                   "content": contentTextField.text!,
-                                   "schedule": scheduleUnix,
-                                   "priority": priority,
-                                   "isDone": false,
-                                   "imageURL": withImage,
-                                   "userId": currentId,
-                                   "createdTime": createdTimeUnix,
-                                   "updatedTime": createdTimeUnix] as [String: Any]
-                   
-                       let todoId = TODOS_REF.childByAutoId()
-                       guard let todoIdKey = todoId.key else {return}
-                       todoId.updateChildValues(values)
-                       
-                       USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
-                       
-                       CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
-                   
-                       self.navigationController?.popViewController(animated: true)
-    }
     
     @IBAction func backAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -165,7 +132,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     // MARK: UIImagePickerControllerDelegate
     // アルバムの起動
     func handleLibrary(){
-        print("アルバムの起動")
         let sourceType = UIImagePickerController.SourceType.photoLibrary
         
         //ライブラリが利用可能か
@@ -185,7 +151,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     // カメラの起動
     func handleCamera(){
         
-        print("カメラの起動")
         let sourceType = UIImagePickerController.SourceType.camera
         
         //カメラが利用可能か
@@ -213,7 +178,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             if let imageUrl = info[UIImagePickerController.InfoKey.referenceURL] as? NSURL{
 
-                print("DEBUG imageUrl: \(imageUrl)")
             }
             picker.dismiss(animated: true, completion: nil)
         }
@@ -270,6 +234,40 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
            alert.addAction(deleteAction)
 
         present(alert, animated: true, completion: nil)
+    }
+    
+    func inputValues(uid currentId: String, withImage: String){
+        let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
+                   
+                       let scheduleUnix = selectedDate.timeIntervalSince1970
+                       let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+                       let scheduleString = String(scheduleUnixString)
+                       let createdTimeUnix = Date().timeIntervalSince1970
+                       
+                       let values = ["title": titleTextField.text!,
+                                   "content": contentTextField.text!,
+                                   "schedule": scheduleUnix,
+                                   "priority": priority,
+                                   "isDone": false,
+                                   "imageURL": withImage,
+                                   "userId": currentId,
+                                   "createdTime": createdTimeUnix,
+                                   "updatedTime": createdTimeUnix] as [String: Any]
+                   
+                       let todoId = TODOS_REF.childByAutoId()
+                       guard let todoIdKey = todoId.key else {return}
+                       todoId.updateChildValues(values)
+                       
+                       USER_TODOS_REF.child(currentId).updateChildValues([todoIdKey: 1])
+                       
+                       CALENDAR_TODOS_REF.child(currentId).child(scheduleString).updateChildValues([todoIdKey: 1])
+                   
+                       self.navigationController?.popViewController(animated: true)
+    }
+    
+    
+    @objc func imageTapped(){
+        showPicker()
     }
     //iOS13以前でもナビバーを表示
     func makeNavbar(){

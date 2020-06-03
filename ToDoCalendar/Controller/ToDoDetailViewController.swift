@@ -9,13 +9,14 @@
 import UIKit
 import RealmSwift
 import Firebase
+import Photos
 
 
 protocol DetailProtocol {
     func catchtable(editKeys: [String: String])
 }
 
-class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
+class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
 
     var priority = Int()
     var isDone = Bool()
@@ -23,6 +24,7 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     var delegate:DetailProtocol?
     var allY:CGFloat = 0.0
     var todo: FToDo?
+    var selectedTodoImage: UIImage?
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -34,6 +36,8 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var testConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var categoryLabel: UILabel!
     
     // MARK: View Life cycle
     override func viewDidLoad() {
@@ -57,13 +61,16 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         
         configureDatePicker(date: dateString)
         
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showPicker))
+        tapGestureRecognizer.numberOfTouchesRequired = 1
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGestureRecognizer)
 //        ToDo.isDoneDisplay(isDone, isDoneSegment)
         
         //iOS13以前用の擬似ナビバーを生成
         makeNavbar()
         
     }
-    
     
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -106,32 +113,35 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
     
     //編集機能
     @IBAction func editAction(_ sender: Any) {
-        let dateString = dateField.text
-        let updateTime = Date().timeIntervalSince1970
         
-        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
-        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
-        let scheduleInt = Int(scheduleUnixString)
-        let editTitle:String = titleTextField.text!
-        guard let todoId = todo?.todoId else {return}
-        
+        // 画像を保存する場合
         if titleTextField.text != "" && titleTextField.text!.count < 16
-        && contentTextView.text!.count < 201 && priority != 0 {
+        && contentTextView.text!.count < 201 && priority != 0 && self.selectedTodoImage != nil{
 
-            let values = ["title": editTitle,
-                        "content": contentTextView.text,
-                        "schedule": scheduleInt,
-                        "priority": priority,
-                        "isDone": todo?.isDone,
-                        "imageURL": "",
-                        "userId": todo?.userId,
-                        "createdTime": todo?.createdTime,
-                        "updatedTime": updateTime] as [String: Any]
-            print(todo)
-            TODOS_REF.child(todoId).updateChildValues(values)
-            let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
-            delegate?.catchtable(editKeys: keys as! [String : String])
-            self.dismiss(animated: true, completion: nil)
+            // image uploadData
+            guard let todoImage = self.selectedTodoImage else {return}
+            guard let uploadData = todoImage.jpegData(compressionQuality: 0.5) else {return}
+            // update storage
+            let filename = NSUUID().uuidString
+            let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
+            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
+                
+                //エラーハンドル
+                if let error = error{
+                    print("画像のアップロードエラー", error.localizedDescription)
+                    return
+                }
+                
+                storageRef.downloadURL { (url, error) in
+                    guard let todoImageUrl = url?.absoluteString else {return}
+                    
+                    self.inputValues(withImage: todoImageUrl)
+                }
+            }
+        
+        // 画像を保存しない場合
+        } else if titleTextField.text != "" && titleTextField.text!.count < 16 && contentTextView.text!.count < 201 && priority != 0 && self.selectedTodoImage == nil{
+            self.inputValues(withImage: "")
         }
         
     }
@@ -171,8 +181,119 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
         }
     }
     
+    // MARK: UIImagePickerControllerDelegate
+    // アルバムの起動
+    func handleLibrary(){
+        let sourceType = UIImagePickerController.SourceType.photoLibrary
+        
+        //ライブラリが利用可能か
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
+            
+            //変数化
+            let cameraPicker = UIImagePickerController()
+            cameraPicker.sourceType = sourceType
+            cameraPicker.delegate = self
+            cameraPicker.allowsEditing = true
+            present(cameraPicker, animated: true, completion: nil)
+            
+        }else {
+            print("エラー")
+        }
+    }
+    // カメラの起動
+    func handleCamera(){
+        
+        let sourceType = UIImagePickerController.SourceType.camera
+        
+        //カメラが利用可能か
+        if UIImagePickerController.isSourceTypeAvailable(.camera){
+            
+            //変数化
+            let cameraPicker = UIImagePickerController()
+            cameraPicker.sourceType = sourceType
+            cameraPicker.delegate = self
+            cameraPicker.allowsEditing = true
+            self.present(cameraPicker, animated: true, completion: nil)
+            
+        }else {
+            print("エラー")
+        }
+    }
     
+    //撮影が完了した時に発火/アルバムから画像が選択された時に発火
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+         
+        if let pickedImage = info[.editedImage] as? UIImage{
+            let size = CGSize(width: 130, height: 130)
+            selectedTodoImage = pickedImage.resize(size: size)
+            self.imageView.image = selectedTodoImage
+            
+            if let imageUrl = info[UIImagePickerController.InfoKey.referenceURL] as? NSURL{
+
+                print("DEBUG imageUrl: \(imageUrl)")
+            }
+            picker.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @objc func showPicker(){
+        let alert: UIAlertController = UIAlertController(title: "画像を選択してください", message: nil, preferredStyle:  UIAlertController.Style.actionSheet)
+
+        let deleteAction: UIAlertAction = UIAlertAction(title: "取り消し", style: UIAlertAction.Style.destructive, handler:{
+               (action: UIAlertAction!) -> Void in
+            self.imageView.image = UIImage(named: "plus-icon")
+            self.selectedTodoImage = nil
+           })
+        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
+               (action: UIAlertAction!) -> Void in
+           })
+        
+        let cameraAction: UIAlertAction = UIAlertAction(title: "カメラで撮影する", style: UIAlertAction.Style.default, handler:{
+            (action: UIAlertAction!) -> Void in
+            self.handleCamera()
+        })
+        
+        let AlbumAction: UIAlertAction = UIAlertAction(title: "ライブラリから選択する", style: UIAlertAction.Style.default, handler:{
+            (action: UIAlertAction!) -> Void in
+            self.handleLibrary()
+        })
+
+           alert.addAction(cancelAction)
+           alert.addAction(cameraAction)
+           alert.addAction(AlbumAction)
+           alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
+    }
+
     // MARK: Handlers
+    func inputValues(withImage: String){
+        
+        let dateString = dateField.text
+        let updateTime = Date().timeIntervalSince1970
+        
+        let selectedDate = DateUtils.dateFromString(string: dateString!, format: "yyyy年MM月d日")
+        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
+        let scheduleInt = Int(scheduleUnixString)
+        let editTitle:String = titleTextField.text!
+        guard let todoId = todo?.todoId else {return}
+        
+        let values = ["title": editTitle,
+        "content": contentTextView.text,
+        "schedule": scheduleInt,
+        "priority": priority,
+        "isDone": todo?.isDone,
+        "imageURL": withImage,
+        "userId": todo?.userId,
+        "createdTime": todo?.createdTime,
+        "updatedTime": updateTime] as [String: Any]
+        
+        TODOS_REF.child(todoId).updateChildValues(values)
+        let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
+        delegate?.catchtable(editKeys: keys as! [String : String])
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func configureToDo(date dateString: String){
         dateField.text = dateString
         contentTextView.text = todo?.content
@@ -197,6 +318,13 @@ class ToDoDetailViewController: UIViewController, UITextFieldDelegate, UITextVie
             isDoneSegment.selectedSegmentIndex = 1
         } else {
             isDoneSegment.selectedSegmentIndex = 0
+        }
+        
+        if let imageUrl = todo?.imageURL{
+            print("DEBUG imageUrl: \(imageUrl)")
+            self.imageView.loadImage(with: imageUrl)
+        }else{
+            self.imageView.image = UIImage(named: "plus-icon")
         }
     }
     
