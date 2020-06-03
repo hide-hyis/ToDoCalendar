@@ -24,12 +24,14 @@
 		D261404D23D690C10036161E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404C23D690C10036161E /* ViewController.swift */; };
 		D261405223D690C70036161E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D261405123D690C70036161E /* Assets.xcassets */; };
 		D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D261405323D690C70036161E /* LaunchScreen.storyboard */; };
-		D27DC454246D387C00176201 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC453246D387C00176201 /* SettingView.swift */; };
-		D27DC456246D3B0700176201 /* SettingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D27DC455246D3B0700176201 /* SettingView.xib */; };
 		D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D27DC458246E540F00176201 /* GoogleService-Info.plist */; };
 		D27DC45B246E54C900176201 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45A246E54C900176201 /* Constants.swift */; };
 		D27DC45D246E744100176201 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45C246E744100176201 /* User.swift */; };
 		D27DC4912473D9A600176201 /* FToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC4902473D9A500176201 /* FToDo.swift */; };
+		D28DE19A248741DE006C9B49 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DE199248741DE006C9B49 /* Category.swift */; };
+		D28DE19C24876110006C9B49 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DE19B24876110006C9B49 /* TableViewCell.swift */; };
+		D28DE1A124876A75006C9B49 /* InputTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D28DE19F24876A75006C9B49 /* InputTextCell.swift */; };
+		D28DE1A224876A75006C9B49 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D28DE1A024876A75006C9B49 /* TableViewCell.xib */; };
 		D29ABF0123DFF23A008A522A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D29ABF0023DFF23A008A522A /* Main.storyboard */; };
 		D29ABF0323E00A43008A522A /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0223E00A43008A522A /* ToDo.swift */; };
 		D29ABF0723E13028008A522A /* AddToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29ABF0623E13028008A522A /* AddToDoViewController.swift */; };
@@ -81,6 +83,10 @@
 		D27DC45A246E54C900176201 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D27DC45C246E744100176201 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D27DC4902473D9A500176201 /* FToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FToDo.swift; sourceTree = "<group>"; };
+		D28DE199248741DE006C9B49 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		D28DE19B24876110006C9B49 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		D28DE19F24876A75006C9B49 /* InputTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextCell.swift; sourceTree = "<group>"; };
+		D28DE1A024876A75006C9B49 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
 		D29ABF0023DFF23A008A522A /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D29ABF0223E00A43008A522A /* ToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		D29ABF0623E13028008A522A /* AddToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoViewController.swift; sourceTree = "<group>"; };
@@ -180,6 +186,7 @@
 				89C49AB523ED835C00BABB0D /* Search.swift */,
 				89C49AB923EEC15500BABB0D /* Layout.swift */,
 				D27DC45C246E744100176201 /* User.swift */,
+				D28DE199248741DE006C9B49 /* Category.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -193,6 +200,9 @@
 				D29ABF0023DFF23A008A522A /* Main.storyboard */,
 				D27DC453246D387C00176201 /* SettingView.swift */,
 				D27DC455246D3B0700176201 /* SettingView.xib */,
+				D28DE19B24876110006C9B49 /* TableViewCell.swift */,
+				D28DE1A024876A75006C9B49 /* TableViewCell.xib */,
+				D28DE19F24876A75006C9B49 /* InputTextCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -297,10 +307,10 @@
 				899CE4EA23F57C62008C4D99 /* iPhone8.storyboard in Resources */,
 				D25BA6C8241B1BC300DEC361 /* iPhone11.storyboard in Resources */,
 				D29ABF0123DFF23A008A522A /* Main.storyboard in Resources */,
-				D27DC456246D3B0700176201 /* SettingView.xib in Resources */,
 				D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */,
 				D261405223D690C70036161E /* Assets.xcassets in Resources */,
 				D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */,
+				D28DE1A224876A75006C9B49 /* TableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +384,7 @@
 				89C49AB823EEBC8700BABB0D /* SearchViewController.swift in Sources */,
 				89C49AB623ED835C00BABB0D /* Search.swift in Sources */,
 				D2AC201E247FF94400E7DE92 /* RootViewController.swift in Sources */,
+				D28DE1A124876A75006C9B49 /* InputTextCell.swift in Sources */,
 				D2D7595F23EBEC8100DA8437 /* ToDoListViewController.swift in Sources */,
 				D261404D23D690C10036161E /* ViewController.swift in Sources */,
 				D27DC4912473D9A600176201 /* FToDo.swift in Sources */,
@@ -389,9 +400,10 @@
 				D2AC201C247FD47C00E7DE92 /* test.swift in Sources */,
 				D2AC20202480A1C800E7DE92 /* SettingViewController.swift in Sources */,
 				D2AC2018247E4D3200E7DE92 /* LoginViewController.swift in Sources */,
-				D27DC454246D387C00176201 /* SettingView.swift in Sources */,
 				D261404B23D690C10036161E /* SceneDelegate.swift in Sources */,
 				D29ABF0323E00A43008A522A /* ToDo.swift in Sources */,
+				D28DE19A248741DE006C9B49 /* Category.swift in Sources */,
+				D28DE19C24876110006C9B49 /* TableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

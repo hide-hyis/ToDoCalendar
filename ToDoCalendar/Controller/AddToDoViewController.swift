@@ -11,13 +11,13 @@ import RealmSwift
 import Firebase
 import Photos
 
-class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
+class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, UITextViewDelegate {
 
     
     @IBOutlet weak var selectedDateLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextField: UITextView!
-    @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var categoryButton: UIButton!
     
     @IBOutlet weak var star: UIButton!
     @IBOutlet weak var star2: UIButton!
@@ -25,9 +25,14 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     
+    let screenHeight = Int(UIScreen.main.bounds.size.height)
+    let screenWidth = Int(UIScreen.main.bounds.size.width)
     var selectedDateString = String()
     var selectedTodoImage: UIImage?
     var priority = 1
+    var categoryArray = [Category]()
+    var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
+    var toolbar = UIToolbar()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,21 +45,28 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         addButton.layer.cornerRadius = 5
         titleTextField.layer.cornerRadius = 5
         contentTextField.layer.cornerRadius = 5
-        categoryLabel.layer.cornerRadius = 15
+        categoryButton.layer.cornerRadius = 5
         contentTextField.text = "内容"
         contentTextField.textColor = .lightGray
         
+        // カテゴリーの取得
+        fetchCategories()
         imageView.layer.cornerRadius = 10
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         tapGestureRecognizer.numberOfTouchesRequired = 1
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGestureRecognizer)
-//        imageView.addtar
+        
         //iOS13以前用の擬似ナビバーを生成
         makeNavbar()
         
+        // カテゴリーピッカービューの生成
+        configurePickerView()
+        
     }
+    
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if contentTextField.textColor == UIColor.lightGray {
             contentTextField.text = nil
@@ -129,6 +141,19 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.navigationController?.popViewController(animated: true)
     }
     
+    @IBAction func showCategoryPicker(_ sender: Any) {
+        
+        if self.categoryPickerView.isHidden == false{
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }else{
+            print("Category: \(self.categoryArray.count)件")
+            self.categoryPickerView.isHidden = false
+            self.toolbar.isHidden = false
+        }
+    }
+    
+    
     // MARK: UIImagePickerControllerDelegate
     // アルバムの起動
     func handleLibrary(){
@@ -181,6 +206,28 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             picker.dismiss(animated: true, completion: nil)
         }
+    }
+    
+    // MARK: UIPickerViewDelegate for Category
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.categoryArray.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        let pickerLabel = UILabel()
+        pickerLabel.textAlignment = NSTextAlignment.center
+        pickerLabel.text = self.categoryArray[row].name
+        pickerLabel.font = UIFont.systemFont(ofSize: 22)
+        return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("ピッカー内タップされた時の処理")
     }
     
     // MARK: UITextFieldDelegate
@@ -275,6 +322,53 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             let searchBarButtonItem = UIBarButtonItem(image: UIImage(named: "calendar-1")!, style: .plain, target: self, action:     #selector(backAction))
             navigationItem.leftBarButtonItem = searchBarButtonItem
+        }
+    }
+    
+    @objc func cancellShowPostpone(){
+        if self.categoryPickerView.isHidden == false{
+            
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }
+    }
+    
+    @objc func handleCategory(){
+        
+        print("選択されたカテゴリーの登録")
+    }
+    
+    func configurePickerView(){
+        // ツールバーの生成
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellShowPostpone))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
+        toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
+        toolbar.isUserInteractionEnabled = true
+        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.backgroundColor = .white
+        view.addSubview(toolbar)
+        toolbar.isHidden = true
+        
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        let pickerWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
+        view.addSubview(categoryPickerView)
+        categoryPickerView.isHidden = true
+    }
+    // MARK: API
+    func fetchCategories(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+            let category = Category(dictionary: dictionary)
+            
+            self.categoryArray.append(category)
+            self.categoryPickerView.reloadAllComponents()
         }
     }
 }

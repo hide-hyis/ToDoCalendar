@@ -10,20 +10,115 @@ import UIKit
 import Firebase
 import JGProgressHUD
 
-class SettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+class SettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, TableViewCellDelegate {
     
 //    @IBOutlet weak var tableView: UITableView!
-    var customView: UIView?
-    var navHeight: CGFloat?
-    var hud = JGProgressHUD(style: .dark)
-    var calendarVC: ViewController?
-    var tapUIView: UIView?
+    var customView: UIView?                  // 白背景の表示用View
+    var navHeight: CGFloat?                 // navBarの高さ
+    var hud = JGProgressHUD(style: .dark)   // アラートメッセージ用
+    var calendarVC: ViewController?        // 遷移元のViewController
+    var tapUIView: UIView?                 // カレンダーエリア
     @IBOutlet weak var tableView: UITableView!
+    var categoryArray = [Category]()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureItems()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        fetchCategories()
+        //　背景タップで戻る
+        let screenTap = UITapGestureRecognizer(target: self, action: #selector(back))
+        screenTap.numberOfTouchesRequired = 1
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(screenTap)
+        screenTap.delegate = self
+        tapUIView = UIView(frame: CGRect(x: 250, y: 0, width: self.view.frame.width - 250, height: self.view.frame.height) )
+        self.view.addSubview(self.tapUIView!)
+        
+        //自作セルをテーブルビューに登録する。
+        let customXib = UINib(nibName:"TableViewCell", bundle:nil)
+        tableView.register(customXib, forCellReuseIdentifier: "inputCell")
+//        tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "inputCell")
+    }
+    
+    // MARK: UIGestureRecognizerDelegate
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        
+        if ((touch.view?.isDescendant(of: self.tapUIView!))! ) {
+            return true
+        }
+        return false
+    }
+    
+    // MARK: UITableView Delegate
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5 //categoryArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "inputCell", for: indexPath) as! TableViewCell
+        cell.delegate = self
+//        cell.textField.isEnabled = true
+        
+        if categoryArray.count > 0{
+//            cell.textLabel?.text = categoryArray[indexPath.row].name!
+        }
+        return cell
+    }
+    func textFieldDidEndEditing(cell: TableViewCell, value: String) -> () {
+        let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
+        categoryArray[indexPath!.row].name! = value
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+    }
+    
+    
+    // MARK: - Handler
+
+    @objc func back(){
+        
+        self.dismiss(animated: true)
+    }
+    
+    @objc func logout(){
+        
+        do{
+            guard let currentUid = Auth.auth().currentUser?.uid else {return}
+            try Auth.auth().signOut()
+            USER_REF.child(currentUid).child("isLogin").setValue(false)
+            jgprogressSuccess(str: "ログアウトしました")
+            self.dismiss(animated: true) {
+                print("ログアウトしました")
+                self.calendarVC?.renderLogin()
+            }
+        }catch let error as NSError{
+            print("エラー：", error)
+        }
+    }
+    @objc func categoryBtn(){
+        print("カテゴリーボタンタップ")
+    }
+    
+    // 成功用JGProgress
+    func jgprogressSuccess(str: String){
+        hud.textLabel.text = str
+        hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+        hud.show(in: self.view)
+        hud.dismiss(afterDelay: 2.0, animated: true)
+    }
+    
+    func configureItems(){
         let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
         self.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.4)
         
@@ -82,66 +177,35 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.customView!.addSubview(logoutButton)
         self.customView!.bringSubviewToFront(logoutButton)
         
+        //　カテゴリーラベル
+        let categoryLabel = UILabel()
+        categoryLabel.frame = CGRect(x: 50, y: 150, width: 120, height: 30)
+        categoryLabel.backgroundColor = .clear
+        categoryLabel.text = "カテゴリー"
+        categoryLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        self.customView?.addSubview(categoryLabel)
         
-        //　背景タップで戻る
-        let screenTap = UITapGestureRecognizer(target: self, action: #selector(back))
-        screenTap.numberOfTouchesRequired = 1
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(screenTap)
-        screenTap.delegate = self
-        tapUIView = UIView(frame: CGRect(x: 250, y: 0, width: self.view.frame.width - 250, height: self.view.frame.height) )
-        self.view.addSubview(self.tapUIView!)
+        // カテゴリーボタン
+        let categoryButton  = UIButton()
+        categoryButton.frame = CGRect(x: 170, y: 150, width: 25, height: 25)
+        let categoryButtonImage = UIImage(named: "edit-icon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+        categoryButton.setImage(categoryButtonImage, for: .normal)
+        categoryButton.tintColor = .black
+        categoryButton.addTarget(self, action: #selector(categoryBtn), for: UIControl.Event.touchUpInside)
+        self.customView!.addSubview(categoryButton)
+        self.customView!.bringSubviewToFront(categoryButton)
     }
     
-    // MARK: UIGestureRecognizerDelegate
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    // MARK: API
+    func fetchCategories(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
         
-        if ((touch.view?.isDescendant(of: self.tapUIView!))! ) {
-            return true
+        CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+            let category = Category(dictionary: dictionary)
+            
+            self.categoryArray.append(category)
+            self.tableView.reloadData()
         }
-        return false
-    }
-    
-    // MARK: UITableView Delegate
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell  = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = "カテゴリー"
-        return cell
-    }
-    
-    
-    // MARK: - Handler
-
-    @objc func back(){
-        
-        self.dismiss(animated: true)
-    }
-    
-    @objc func logout(){
-        
-        do{
-            guard let currentUid = Auth.auth().currentUser?.uid else {return}
-            try Auth.auth().signOut()
-            USER_REF.child(currentUid).child("isLogin").setValue(false)
-            jgprogressSuccess(str: "ログアウトしました")
-            self.dismiss(animated: true) {
-                print("ログアウトしました")
-                self.calendarVC?.renderLogin()
-            }
-        }catch let error as NSError{
-            print("エラー：", error)
-        }
-    }
-    
-    // 成功用JGProgress
-    func jgprogressSuccess(str: String){
-        hud.textLabel.text = str
-        hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-        hud.show(in: self.view)
-        hud.dismiss(afterDelay: 2.0, animated: true)
     }
 }

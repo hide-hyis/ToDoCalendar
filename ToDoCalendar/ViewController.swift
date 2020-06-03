@@ -47,7 +47,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     var customView: UIView?
     var postponePickerView = UIPickerView()                    // 先送り表示用のピッカー
     var toolbar = UIToolbar()
-    let postponeData = ["1日","2日","3日","4日","5日","6日","7日",]
+    let postponeData = ["1日","2日","3日","4日","5日","6日","7日"]
     var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
     var postponeTodoIndex: Int?
     
@@ -181,8 +181,6 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     
     @IBAction func openSettingView(_ sender: Any) {
-//        let settingView = UINib(nibName: "SettingView", bundle: Bundle.main).instantiate(withOwner: self, options: nil).first as? UIView
-//        view.addSubview(settingView!)
     }
     
     

@@ -14,13 +14,6 @@ class MainNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        if Auth.auth().currentUser != nil {
-//            let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
-//            self.navigationController?.pushViewController(calendarVC, animated: true)
-//        }else{
-//            let loginViewController = LoginViewController()
-//            self.navigationController?.pushViewController(loginViewController, animated: true)
-//        }
     }
     
 

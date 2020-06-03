@@ -23,6 +23,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var loginMode = 0    // ログインか新規登録かを判別するフラグ
     var hud = JGProgressHUD(style: .dark)
+    var categoryIdKey: String?
     
     enum Mode: Int{
         case Login = 0
@@ -360,6 +361,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 print("既にデータあり")
             }else{
                 self.convertRealmToFirebase(user: currentUid)
+                self.createCategory(user: currentUid)
             }
         }
     }
@@ -382,6 +384,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                           "priority": todo.priority,
                           "isDone": todo.isDone,
                           "imageURL": "",
+                          "categoryId": "カテゴリー不明",
                           "userId": user,
                           "createdTime": createdTimeUnix,
                           "updatedTime": createdTimeUnix] as [String: Any]
@@ -394,6 +397,22 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             CALENDAR_TODOS_REF.child(user).child(scheduleString).updateChildValues([todoIdKey: 1])
             
+        }
+    }
+    
+    func createCategory(user user: String){
+        
+        for i in 1...5 {
+            let createdTimeUnix = Date().timeIntervalSince1970
+            
+            let categoryId = CATEGORIES_REF.child(user).childByAutoId()
+            self.categoryIdKey = categoryId.key
+            
+            let categoryValues = ["name": "カテゴリー未定",
+                                  "createdTime": createdTimeUnix,
+                                  "updatedTime": createdTimeUnix] as [String: Any]
+            
+            categoryId.updateChildValues(categoryValues)
         }
     }
         
