@@ -601,14 +601,6 @@
                                     <action selector="star3Button:" destination="Ri3-Cj-weI" eventType="touchUpInside" id="sCb-82-9Hx"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="カテゴリー不明" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TOp-6I-8Om">
-                                <rect key="frame" x="242" y="136" width="115" height="26"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="画像" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y1l-bT-FAk">
                                 <rect key="frame" x="47" y="440" width="39" height="23"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -620,6 +612,19 @@
                                 <rect key="frame" x="122" y="438" width="130" height="130"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ep-TB-fMK">
+                                <rect key="frame" x="236" y="130" width="115" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="カテゴリー">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="showCategoryPicker:" destination="Ri3-Cj-weI" eventType="touchUpInside" id="s2Z-dw-NcI"/>
+                                    <action selector="toggleCategoryPicker:" destination="H9t-5V-eGe" eventType="touchUpInside" id="cqE-EM-Kaz"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <gestureRecognizers/>
@@ -629,7 +634,7 @@
                         </connections>
                     </view>
                     <connections>
-                        <outlet property="categoryLabel" destination="TOp-6I-8Om" id="JSs-rC-9uf"/>
+                        <outlet property="categoryButton" destination="7ep-TB-fMK" id="UKB-wi-Ues"/>
                         <outlet property="contentTextView" destination="qCU-W5-DIX" id="pNF-6J-Jhd"/>
                         <outlet property="dateField" destination="ewN-iE-Ayb" id="nDG-If-zUn"/>
                         <outlet property="editButton" destination="IXl-ip-ir4" id="w5e-HY-QQA"/>

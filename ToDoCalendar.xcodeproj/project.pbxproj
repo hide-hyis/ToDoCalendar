@@ -12,6 +12,7 @@
 		89C49AB823EEBC8700BABB0D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB723EEBC8700BABB0D /* SearchViewController.swift */; };
 		89C49ABA23EEC15500BABB0D /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C49AB923EEC15500BABB0D /* Layout.swift */; };
 		BD2C2B81D855D59E16EA73A6 /* Pods_ToDoCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05834EA865D4AD08FB2EA189 /* Pods_ToDoCalendar.framework */; };
+		D22866032488DE2900CCA1C2 /* ShowImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22866022488DE2900CCA1C2 /* ShowImageViewController.swift */; };
 		D22E41EE23FBD8420025869D /* CalculateCalendarLogic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D7598823F653B300DA8437 /* CalculateCalendarLogic.framework */; };
 		D22E41F023FBD8450025869D /* FSCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D7598A23F653B300DA8437 /* FSCalendar.framework */; };
 		D22E41F223FBD8470025869D /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D22E41EC23FBC60A0025869D /* Realm.framework */; };
@@ -67,6 +68,7 @@
 		89C49AB523ED835C00BABB0D /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		89C49AB723EEBC8700BABB0D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		89C49AB923EEC15500BABB0D /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		D22866022488DE2900CCA1C2 /* ShowImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowImageViewController.swift; sourceTree = "<group>"; };
 		D22E41EC23FBC60A0025869D /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoDetailViewController.swift; sourceTree = "<group>"; };
 		D25BA6C7241B1BC300DEC361 /* iPhone11.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone11.storyboard; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				D29ABF0623E13028008A522A /* AddToDoViewController.swift */,
 				D251894223E9492D00DD8125 /* ToDoDetailViewController.swift */,
 				89C49AB723EEBC8700BABB0D /* SearchViewController.swift */,
+				D22866022488DE2900CCA1C2 /* ShowImageViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -400,6 +403,7 @@
 				D2AC201C247FD47C00E7DE92 /* test.swift in Sources */,
 				D2AC20202480A1C800E7DE92 /* SettingViewController.swift in Sources */,
 				D2AC2018247E4D3200E7DE92 /* LoginViewController.swift in Sources */,
+				D22866032488DE2900CCA1C2 /* ShowImageViewController.swift in Sources */,
 				D261404B23D690C10036161E /* SceneDelegate.swift in Sources */,
 				D29ABF0323E00A43008A522A /* ToDo.swift in Sources */,
 				D28DE19A248741DE006C9B49 /* Category.swift in Sources */,

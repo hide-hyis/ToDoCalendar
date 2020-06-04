@@ -12,6 +12,7 @@ import JGProgressHUD
 
 class SettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, TableViewCellDelegate {
     
+    
     var navHeight: CGFloat?                 // navBarの高さ
     var hud = JGProgressHUD(style: .dark)   // アラートメッセージ用
     var calendarVC: ViewController?        // 遷移元のViewController
@@ -75,12 +76,35 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: UITextFieldDelegate
     // textfield 入力直後に呼ばれる
     func textFieldDidEndEditing(cell: TableViewCell, value: String) -> () {
-        let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
-        categoryArray[indexPath!.row].name! = value
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath as IndexPath, animated: true)
+    }
+    // textfieldタップされた直後
+    func textFieldDidBeginEditing(cell: TableViewCell, value: String) {
+        doneBtn.isEnabled = false
+        self.doneBtn.setTitleColor(.lightGray, for: .normal)
+    }
+    // キーボードが閉じる直前
+    func textFieldShouldEndEditing(cell: TableViewCell, value: String) {
+        doneBtn.isEnabled = true
+        self.doneBtn.setTitleColor(.black, for: .normal)
+    }
+    
+    func textfieldsSouldChangeCharactersIn(cell: TableViewCell, value: String) {
+        cell.textField.placeholder = "7文字以内で入力してください"
+        let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
+        if value.count < 8{
+            categoryArray[indexPath!.row].name! = value
+            self.doneBtn.setTitleColor(.black, for: .normal)
+            cell.textField.textColor = .black
+        }else{
+            self.doneBtn.isEnabled = false
+            self.doneBtn.setTitleColor(.lightGray, for: .normal)
+            cell.textField.textColor = .lightGray
+        }
     }
     
     // MARK: EVENT ACTION
@@ -90,7 +114,34 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     @objc func logout(){
+        let alert: UIAlertController = UIAlertController(title: "ログアウトしますか?", message: nil, preferredStyle:  UIAlertController.Style.alert)
+
+        let deleteAction: UIAlertAction = UIAlertAction(title: "ログアウト", style: UIAlertAction.Style.destructive, handler:{
+               (action: UIAlertAction!) -> Void in
+            self.handleLogout()
+           })
+        let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
+               (action: UIAlertAction!) -> Void in
+           })
+
+           alert.addAction(cancelAction)
+           alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
         
+    }
+    @objc func categoryBtn(){
+        if self.tableView.isHidden{
+           self.tableView.isHidden = false
+            self.headerView.isHidden = false
+            doneBtn.isHidden = false
+        }else{
+            self.tableView.isHidden = true
+            self.headerView.isHidden = true
+            doneBtn.isHidden = true
+        }
+    }
+    func handleLogout(){
         do{
             guard let currentUid = Auth.auth().currentUser?.uid else {return}
             try Auth.auth().signOut()
@@ -104,18 +155,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
             print("エラー：", error)
         }
     }
-    @objc func categoryBtn(){
-        if self.tableView.isHidden{
-           self.tableView.isHidden = false
-            self.headerView.isHidden = false
-            doneBtn.isHidden = false
-        }else{
-            self.tableView.isHidden = true
-            self.headerView.isHidden = true
-            doneBtn.isHidden = true
-        }
-    }
-    
+    // ピッカーの完了タップ時
     @objc func editCategory(){
         guard let currentUid = Auth.auth().currentUser?.uid else {return}
         let updateTime = Date().timeIntervalSince1970

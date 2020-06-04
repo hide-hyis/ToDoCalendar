@@ -16,25 +16,25 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBOutlet weak var selectedDateLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var contentTextField: UITextView!
-    @IBOutlet weak var categoryButton: UIButton!
+    @IBOutlet weak var contentTextField: UITextView!    // todoコンテンツ
+    @IBOutlet weak var categoryButton: UIButton!        // カテゴリーピッカー用ボタン
     
     @IBOutlet weak var star: UIButton!
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
-    @IBOutlet weak var addButton: UIButton!
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var addButton: UIButton!             // 追加決定ボタン
+    @IBOutlet weak var imageView: UIImageView!          // todo内画像
     
     let screenHeight = Int(UIScreen.main.bounds.size.height)
     let screenWidth = Int(UIScreen.main.bounds.size.width)
     var selectedDateString = String()
-    var selectedTodoImage: UIImage?
+    var selectedTodoImage: UIImage?                      // 表示中の画像
     var priority = 1
-    var categoryArray = [Category]()
+    var categoryArray = [Category]()                     // ピッカー内に表示するカテゴリー配列
     var categoryIdArray = [String]()
     var categoryId: String?                              // 選択中のカテゴリーID
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
-    var toolbar = UIToolbar()
+    var toolbar = UIToolbar()                           // カテゴリーピッカーのツールバー
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -149,7 +149,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.categoryPickerView.isHidden = true
             self.toolbar.isHidden = true
         }else{
-            print("Category: \(self.categoryArray.count)件")
             self.categoryPickerView.isHidden = false
             self.toolbar.isHidden = false
         }
@@ -165,7 +164,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func handleCategory(){
         
-        print("選択されたカテゴリーの登録")
         self.categoryPickerView.isHidden = true
         self.toolbar.isHidden = true
     }
@@ -247,7 +245,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         let selectedCategory = self.categoryArray[row].name
         categoryButton.setTitle(selectedCategory, for: .normal)
         categoryId = self.categoryIdArray[row]
-        print("カテゴリーId: \(categoryId)")
     }
     
     // MARK: UITextFieldDelegate
@@ -294,15 +291,25 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
             (action: UIAlertAction!) -> Void in
             self.handleLibrary()
         })
+        let showImageAction: UIAlertAction = UIAlertAction(title: "選択画像の表示", style: UIAlertAction.Style.default, handler:{
+            (action: UIAlertAction!) -> Void in
+            self.showImage()
+        })
 
            alert.addAction(cancelAction)
            alert.addAction(cameraAction)
            alert.addAction(AlbumAction)
            alert.addAction(deleteAction)
+        if selectedTodoImage != nil{ alert.addAction(showImageAction) }
 
         present(alert, animated: true, completion: nil)
     }
     
+    func showImage(){
+        let showImageViewVC = ShowImageViewController()
+        showImageViewVC.selectedImage = selectedTodoImage!
+        present(showImageViewVC, animated: true, completion: nil)
+    }
     func inputValues(uid currentId: String, withImage: String){
         let selectedDate = DateUtils.dateFromString(string: selectedDateString, format: "yyyy年MM月dd日")
                    

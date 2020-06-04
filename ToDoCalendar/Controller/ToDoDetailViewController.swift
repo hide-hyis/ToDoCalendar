@@ -16,8 +16,12 @@ protocol DetailProtocol {
     func catchtable(editKeys: [String: String])
 }
 
-class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
-
+class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UITextViewDelegate {
+    
+    
+    
+    let screenHeight = Int(UIScreen.main.bounds.size.height)
+    let screenWidth = Int(UIScreen.main.bounds.size.width)
     var priority = Int()
     var isDone = Bool()
     var datePicker: UIDatePicker = UIDatePicker()
@@ -25,6 +29,12 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
     var allY:CGFloat = 0.0
     var todo: FToDo?
     var selectedTodoImage: UIImage?
+    var categoryArray = [Category]()
+    var categoryIdArray = [String]()
+    var categoryId: String?                              // 選択中のカテゴリーID
+    var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
+    var toolbar = UIToolbar()
+
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -37,7 +47,7 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var testConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var categoryButton: UIButton!
     
     // MARK: View Life cycle
     override func viewDidLoad() {
@@ -67,9 +77,13 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         imageView.addGestureRecognizer(tapGestureRecognizer)
 //        ToDo.isDoneDisplay(isDone, isDoneSegment)
         
+        // カテゴリーの取得
+        fetchCategories()
         //iOS13以前用の擬似ナビバーを生成
         makeNavbar()
         
+        // カテゴリーピッカービューの生成
+        configurePickerView()
     }
     
     
@@ -181,6 +195,57 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         }
     }
     
+    @IBAction func toggleCategoryPicker(_ sender: Any) {
+        if self.categoryPickerView.isHidden == false{
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }else{
+            print("Category: \(self.categoryArray.count)件")
+            self.categoryPickerView.isHidden = false
+            self.toolbar.isHidden = false
+             titleTextField.resignFirstResponder()
+        }
+    }
+    
+    // ピッカーのキャンセルボタンタップ
+    @objc func cancellCategoryPicker(){
+        if self.categoryPickerView.isHidden == false{
+            
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }
+    }
+    
+    // ピッカーの完了ボタンタップ
+    @objc func handleCategory(){
+        
+        self.categoryPickerView.isHidden = true
+        self.toolbar.isHidden = true
+    }
+    
+    // MARK: UIPickerViewDelegate for Category
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.categoryArray.count
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        let pickerLabel = UILabel()
+        pickerLabel.textAlignment = NSTextAlignment.center
+        pickerLabel.text = self.categoryArray[row].name
+        pickerLabel.font = UIFont.systemFont(ofSize: 22)
+        return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let selectedCategory = self.categoryArray[row].name
+        categoryButton.setTitle(selectedCategory, for: .normal)
+        categoryId = self.categoryIdArray[row]
+    }
     // MARK: UIImagePickerControllerDelegate
     // アルバムの起動
     func handleLibrary(){
@@ -257,15 +322,25 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
             (action: UIAlertAction!) -> Void in
             self.handleLibrary()
         })
+        let showImageAction: UIAlertAction = UIAlertAction(title: "選択画像の表示", style: UIAlertAction.Style.default, handler:{
+            (action: UIAlertAction!) -> Void in
+            self.showImage()
+        })
 
            alert.addAction(cancelAction)
            alert.addAction(cameraAction)
            alert.addAction(AlbumAction)
            alert.addAction(deleteAction)
+           if selectedTodoImage != nil{ alert.addAction(showImageAction) }
 
         present(alert, animated: true, completion: nil)
     }
-
+    
+    func showImage(){
+        let showImageViewVC = ShowImageViewController()
+        showImageViewVC.selectedImage = selectedTodoImage!
+        present(showImageViewVC, animated: true, completion: nil)
+    }
     // MARK: Handlers
     func inputValues(withImage: String){
         
@@ -279,14 +354,15 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         guard let todoId = todo?.todoId else {return}
         
         let values = ["title": editTitle,
-        "content": contentTextView.text,
-        "schedule": scheduleInt,
-        "priority": priority,
-        "isDone": todo?.isDone,
-        "imageURL": withImage,
-        "userId": todo?.userId,
-        "createdTime": todo?.createdTime,
-        "updatedTime": updateTime] as [String: Any]
+                    "content": contentTextView.text,
+                    "schedule": scheduleInt,
+                    "priority": priority,
+                    "isDone": todo?.isDone,
+                    "imageURL": withImage,
+                    "userId": todo?.userId,
+                    "categoryId": categoryId,
+                    "createdTime": todo?.createdTime,
+                    "updatedTime": updateTime] as [String: Any]
         
         TODOS_REF.child(todoId).updateChildValues(values)
         let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
@@ -299,6 +375,7 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         contentTextView.text = todo?.content
         titleTextField.text = todo?.title
         
+        // 優先度表示
         switch priority {
         case 1:
             Layout.star1Button(star1, star2, star3)
@@ -313,6 +390,7 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
             return
         }
         
+        // 完了/未完了表示
         guard let isDone = todo?.isDone else {return}
         if isDone {
             isDoneSegment.selectedSegmentIndex = 1
@@ -320,11 +398,22 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
             isDoneSegment.selectedSegmentIndex = 0
         }
         
-        if let imageUrl = todo?.imageURL{
-            print("DEBUG imageUrl: \(imageUrl)")
-            self.imageView.loadImage(with: imageUrl)
-        }else{
+        // 画像表示
+        if todo?.imageURL == ""{
             self.imageView.image = UIImage(named: "plus-icon")
+        }else if let imageUrl = todo?.imageURL{
+            self.imageView.loadImage(with: imageUrl)
+//            selectedTodoImage = self.imageView.image
+        }
+        
+        // カテゴリー表示
+        if todo?.categoryId == "カテゴリー不明"{
+            self.categoryButton.setTitle("カテゴリー不明", for: .normal)
+        }else if todo?.categoryId == ""{
+            self.categoryButton.setTitle("カテゴリー不明", for: .normal)
+        }else{
+            categoryId = todo?.categoryId
+            fetchCategoryName(withCategoryId: categoryId!)
         }
     }
     
@@ -415,6 +504,27 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         dateField.inputAccessoryView = toolbar
     }
     
+    func configurePickerView(){
+        // ツールバーの生成
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellCategoryPicker))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
+        toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
+        toolbar.isUserInteractionEnabled = true
+        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.backgroundColor = .white
+        view.addSubview(toolbar)
+        toolbar.isHidden = true
+        
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        let pickerWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
+        view.addSubview(categoryPickerView)
+        categoryPickerView.isHidden = true
+    }
     // MARK:　API
     // FirebaseにToDo削除を送信
     func deleteTodoFromServer(){
@@ -423,6 +533,33 @@ class ToDoDetailViewController: UIViewController, UIImagePickerControllerDelegat
         guard let todoId = self.todo?.todoId else {return}
         USER_TODOS_REF.child(currentUid).child(todoId).removeValue { (err, ref) in
             TODOS_REF.child(todoId).removeValue()
+        }
+    }
+    
+    func fetchCategories(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+            let categoryId = snapshot.key
+            
+            let category = Category(dictionary: dictionary)
+            self.categoryIdArray.append(categoryId)
+            self.categoryArray.append(category)
+            self.categoryPickerView.reloadAllComponents()
+        }
+    }
+    
+    
+    func fetchCategoryName(withCategoryId categoryId: String){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        CATEGORIES_REF.child(currentUid).child(categoryId).observe(.value) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+            
+            let category = Category(dictionary: dictionary)
+            self.categoryButton.setTitle(category.name, for: .normal)
+            self.categoryPickerView.reloadAllComponents()
         }
     }
 }

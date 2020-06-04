@@ -48,6 +48,10 @@ import Foundation
             self.priority = priority
         }
         
+        if let categoryId = dictionary["categoryId"] as? String{
+            self.categoryId = categoryId
+        }
+        
         if let imageURL = dictionary["imageURL"] as? String{
             self.imageURL = imageURL
         }
