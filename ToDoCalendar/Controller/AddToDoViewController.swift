@@ -31,6 +31,8 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectedTodoImage: UIImage?
     var priority = 1
     var categoryArray = [Category]()
+    var categoryIdArray = [String]()
+    var categoryId: String?                              // 選択中のカテゴリーID
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
     var toolbar = UIToolbar()
     
@@ -153,6 +155,21 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    @objc func cancellCategoryPicker(){
+        if self.categoryPickerView.isHidden == false{
+            
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }
+    }
+    
+    @objc func handleCategory(){
+        
+        print("選択されたカテゴリーの登録")
+        self.categoryPickerView.isHidden = true
+        self.toolbar.isHidden = true
+    }
+    
     
     // MARK: UIImagePickerControllerDelegate
     // アルバムの起動
@@ -227,7 +244,10 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print("ピッカー内タップされた時の処理")
+        let selectedCategory = self.categoryArray[row].name
+        categoryButton.setTitle(selectedCategory, for: .normal)
+        categoryId = self.categoryIdArray[row]
+        print("カテゴリーId: \(categoryId)")
     }
     
     // MARK: UITextFieldDelegate
@@ -290,14 +310,22 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
                        let scheduleUnixString = String(selectedDate.timeIntervalSince1970).prefix(10)
                        let scheduleString = String(scheduleUnixString)
                        let createdTimeUnix = Date().timeIntervalSince1970
-                       
+                       var content: String!
+                       if contentTextField.text != "内容"{
+                            content = contentTextField.text
+                       }else{
+                            content = ""
+                       }
+        
+                        if categoryId == nil{ categoryId = categoryIdArray[0]}
                        let values = ["title": titleTextField.text!,
-                                   "content": contentTextField.text!,
+                                   "content": content,
                                    "schedule": scheduleUnix,
                                    "priority": priority,
                                    "isDone": false,
                                    "imageURL": withImage,
                                    "userId": currentId,
+                                   "categoryId": categoryId,
                                    "createdTime": createdTimeUnix,
                                    "updatedTime": createdTimeUnix] as [String: Any]
                    
@@ -325,22 +353,9 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func cancellShowPostpone(){
-        if self.categoryPickerView.isHidden == false{
-            
-            self.categoryPickerView.isHidden = true
-            self.toolbar.isHidden = true
-        }
-    }
-    
-    @objc func handleCategory(){
-        
-        print("選択されたカテゴリーの登録")
-    }
-    
     func configurePickerView(){
         // ツールバーの生成
-        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellShowPostpone))
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellCategoryPicker))
         let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
         toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
@@ -365,9 +380,12 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
-            let category = Category(dictionary: dictionary)
+            let categoryId = snapshot.key
             
+            let category = Category(dictionary: dictionary)
+            self.categoryIdArray.append(categoryId)
             self.categoryArray.append(category)
+            self.categoryButton.setTitle(self.categoryArray[0].name, for: .normal)
             self.categoryPickerView.reloadAllComponents()
         }
     }
