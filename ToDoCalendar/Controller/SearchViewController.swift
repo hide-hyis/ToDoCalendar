@@ -13,7 +13,7 @@ protocol CatchProtocol {
     func catchData(key:[String: String])
 }
 
-class SearchViewController: UIViewController, UITextFieldDelegate {
+class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextView: UITextView!
@@ -23,6 +23,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var searchButton: UIBarButtonItem!
+    @IBOutlet weak var categoryButton: UIButton!
     
     var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
@@ -37,10 +38,14 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     // MARK: View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        contentTextView.delegate = self
         titleTextField.delegate = self
         Layout.textViewOutLine(contentTextView)
         
+        
+        contentTextView.text = "内容"
+        contentTextView.textColor = .lightGray
         
         configureDatePicker()
         
@@ -49,7 +54,21 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+    // MARK: UITextViewDelegate
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if contentTextView.textColor == UIColor.lightGray {
+            contentTextView.text = nil
+            contentTextView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if contentTextView.text.isEmpty {
+            contentTextView.text = "内容"
+            contentTextView.textColor = UIColor.lightGray
+        }
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -102,13 +121,20 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     @IBAction func searchAction(_ sender: Any) {
         
         let titleString = titleTextField.text!
-        let contentString = contentTextView.text!
+        var contentString = contentTextView.text!
         let priorityString = String(priority)
         let dateFromString = dateFromTextField.text!
         let dateToString = dateToTextField.text!
+        var content: String!
+        if contentString == "内容"{
+             content = ""
+        }
+        
         let inputDictionary:[String: String] = ["title": titleString,
-              "content": contentString,"dateFrom": dateFromString,
-              "dateTo": dateToString, "priority": priorityString]
+                                              "content": contentString,
+                                              "dateFrom": dateFromString,
+                                              "dateTo": dateToString,
+                                              "priority": priorityString]
         var searchKeys = [String: String]()
         
         //空欄項目以外を配列searchKeysに投入

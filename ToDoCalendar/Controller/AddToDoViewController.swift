@@ -69,20 +69,6 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if contentTextField.textColor == UIColor.lightGray {
-            contentTextField.text = nil
-            contentTextField.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if contentTextField.text.isEmpty {
-            contentTextField.text = "内容"
-            contentTextField.textColor = UIColor.lightGray
-        }
-    }
-    
     // MARK: EVENT ACTION
     @IBAction func starButton(_ sender: Any) {
         Layout.star1Button(star, star2, star3)
@@ -213,12 +199,9 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
          
         if let pickedImage = info[.editedImage] as? UIImage{
             let size = CGSize(width: 130, height: 130)
-            selectedTodoImage = pickedImage.resize(size: size)
-            self.imageView.image = selectedTodoImage
+            selectedTodoImage = pickedImage//.resize(size: size)
+            self.imageView.image = selectedTodoImage!.resize(size: size)
             
-            if let imageUrl = info[UIImagePickerController.InfoKey.referenceURL] as? NSURL{
-
-            }
             picker.dismiss(animated: true, completion: nil)
         }
     }
@@ -267,7 +250,19 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         ToDo.textViewdAlert(contentTextField, addButton, 200)
     }
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if contentTextField.textColor == UIColor.lightGray {
+            contentTextField.text = nil
+            contentTextField.textColor = UIColor.black
+        }
+    }
     
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if contentTextField.text.isEmpty {
+            contentTextField.text = "内容"
+            contentTextField.textColor = UIColor.lightGray
+        }
+    }
     // MARK: Handlers
     // 写真選択ピッカーの表示
     func showPicker(){

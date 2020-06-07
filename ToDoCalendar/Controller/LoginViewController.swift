@@ -21,9 +21,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailVerificationButton: UIButton!
     @IBOutlet weak var passResetButton: UIButton!
     
-    var loginMode = 0    // ログインか新規登録かを判別するフラグ
+    var loginMode = 0                                             // ログインか新規登録かを判別するフラグ
     var hud = JGProgressHUD(style: .dark)
     var categoryIdKey: String?
+    var fromCalendar = false                                    //遷移元を判別するフラグ
     
     enum Mode: Int{
         case Login = 0
@@ -36,6 +37,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         // ログイン中であればカレンダー画面に遷移
 //        checkLogin()
 
+        self.navigationItem.hidesBackButton = true
         
         emailTextField.keyboardType = .emailAddress
         
@@ -91,8 +93,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 print("認証用メールを送信しました")
                 self.jgprogressSuccess(str: "認証用メールを送信しました")
             }else{
-                print("認証用メール再送信エラー ：", error!.localizedDescription)
-                self.jgprogressError(str: error!.localizedDescription)
+                self.handleSendEmailVwrification(error: error as! NSError)
             }
         }
     }
@@ -107,12 +108,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if error == nil{
                     self.jgprogressSuccess(str: "パスワード再設定メールを送信しました")
                 }else{
-                    print("メール再送信エラー ：", error!.localizedDescription)
-                    self.jgprogressError(str: error!.localizedDescription)
+                    // エラーハンドル
+                    self.handlePasswordResetError(error: error as! NSError)
                 }
             }
         }
     }
+
     
     @IBAction func logout(_ sender: Any) {
         if Auth.auth().currentUser != nil {
@@ -230,11 +232,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         Auth.auth().signIn(withEmail: email, password: password) { (authResult, err) in
 
             if let err = err {
-                print("エラーが起きました:", err.localizedDescription)
-                let errCode = AuthErrorCode(rawValue: err._code)
-                print("エラーコード：\(errCode.debugDescription)")
-                self.jgprogressError(str: err.localizedDescription)
-                return
+                // エラーハンドル
+                self.handleLoginError(err: err as NSError)
             }else if authResult?.user.isEmailVerified == false{
                 // メール認証無効
                 self.jgprogressError(str: "送信されたメールを確認してください")
@@ -242,12 +241,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }else{
                 guard let currentUid = authResult?.user.uid else {return}
                 // ログイン成功画面遷移
-                let updatedTimeUnix = Date().timeIntervalSince1970
-                
-                USER_REF.child(currentUid).child("isLogin").setValue(true)
-                USER_REF.child(currentUid).child("updatedTime").setValue(updatedTimeUnix)
-                let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
-                self.navigationController?.pushViewController(calendarVC, animated: true)
+                self.isUserLoggedin(withUserId: currentUid)
             }
         }
         
@@ -263,14 +257,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //　新規登録処理
         Auth.auth().createUser(withEmail: email, password: password) { (authResult, err) in
             if let err = err {
-                print("エラーが起きました", err.localizedDescription)
-//                let errCode = AuthErrorCode(rawValue: err._code)
-//                print(errCode)
-                self.jgprogressError(str: err.localizedDescription)
-                self.dismiss(animated: true, completion: nil)
-                return
-            }else{
                 
+                self.handleRegisterError(err: err as NSError)
+            }else{
+                // サーバーへ新規登録処理
                 guard let uid = authResult?.user.uid else {return}
                 
                 let dictionaryValue = ["isLogin": false,
@@ -289,7 +279,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                     
                     self.jgprogressSuccess(str: "確認用メールを送信しました")
-
+                    
                     self.checkTodoInFirebase()
                     
                     // UIをログインに変更する
@@ -299,7 +289,147 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
         }
     }
+    
+    func handleSendEmailVwrification(error :NSError){
+        if let errCode = AuthErrorCode(rawValue: error._code) {
+            switch errCode {
+            case .userNotFound:
+                self.jgprogressError(str: "アカウントが見つかりません")
+                print("アカウントが見つかりません")
+            case .networkError:
+                    self.jgprogressError(str: "通信状態が良くありません")
+                    print("通信状態が良くありません")
+            case .tooManyRequests:
+                self.jgprogressError(str: "複数回呼び出されたため、時間を置いて再度お試しください")
+                print("複数回呼び出されたため、時間を置いて再度お試しください")
+            default:
+                self.jgprogressError(str: "情報が取得できませんでした")
+                print("情報が取得できませんでした")
+            }
+        }
+    }
+    
+    func handlePasswordResetError(error: NSError){
 
+        if let errCode = AuthErrorCode(rawValue: error._code) {
+            switch errCode {
+            case .invalidRecipientEmail:
+                self.jgprogressError(str: "アドレスが正しくありません、確認して下さい")
+                print("アドレスが正しくありません、確認して下さい")
+            case .invalidSender:
+                self.jgprogressError(str: "このメールアドレスは無効です")
+                print("このメールアドレスは無効です")
+            case .invalidMessagePayload:
+                self.jgprogressError(str: "情報が取得できませんでした")
+                print("情報が取得できませんでした")
+            case .networkError:
+                    self.jgprogressError(str: "通信状態が良くありません")
+                    print("通信状態が良くありません")
+            case .userNotFound:
+                self.jgprogressError(str: "このユーザーは存在しません")
+                print("このユーザーは存在しません")
+            case .tooManyRequests:
+                self.jgprogressError(str: "複数回呼び出されたため、時間を置いて再度お試しください")
+                print("複数回呼び出されたため、時間を置いて再度お試しください")
+            default:
+                self.jgprogressError(str: "情報が取得できませんでした")
+                print("情報が取得できませんでした")
+            }
+        }
+    }
+    
+    func handleRegisterError(err: NSError){
+        if let errCode = AuthErrorCode(rawValue: err._code) {
+            switch errCode {
+            case .invalidEmail:
+                self.jgprogressError(str: "メールアドレスの形式が違います")
+                print("メールアドレスの形式が違います")
+                return
+            case .emailAlreadyInUse:
+                self.jgprogressError(str: "このメールアドレスはすでに使われています")
+                print("このメールアドレスはすでに使われています")
+                return
+            case .networkError:
+                    self.jgprogressError(str: "通信状態が良くありません")
+                    print("通信状態が良くありません")
+                    return
+            case .userNotFound:
+                self.jgprogressError(str: "このユーザーは存在しません")
+                print("このユーザーは存在しません")
+                return
+            case .tooManyRequests:
+                self.jgprogressError(str: "複数回呼び出されたため、時間を置いて再度お試しください")
+                print("複数回呼び出されたため、時間を置いて再度お試しください")
+                return
+            default:
+                self.jgprogressError(str: "情報が取得できませんでした")
+                print("情報が取得できませんでした")
+                return
+            }
+        }
+        self.dismiss(animated: true, completion: nil)
+        return
+    }
+    
+    func handleLoginError(err: NSError){
+
+        if let errCode = AuthErrorCode(rawValue: err._code) {
+            switch errCode {
+            case .invalidEmail:
+                self.jgprogressError(str: "メールアドレスの形式が違います")
+                print("メールアドレスの形式が違います")
+                return
+            case .userDisabled:
+                self.jgprogressError(str: "このユーザーは使用できません")
+                print("このユーザーは使用できません")
+                return
+            case .wrongPassword:
+                self.jgprogressError(str: "パスワードが正しくありません")
+                print("パスワードが正しくありません")
+                return
+            case .networkError:
+                    self.jgprogressError(str: "通信状態が良くありません")
+                    print("通信状態が良くありません")
+                    return
+            case .userNotFound:
+                self.jgprogressError(str: "このユーザーは存在しません")
+                print("このユーザーは存在しません")
+                return
+            case .tooManyRequests:
+                self.jgprogressError(str: "複数回呼び出されたため、時間を置いて再度お試しください")
+                print("複数回呼び出されたため、時間を置いて再度お試しください")
+                return
+            default:
+                self.jgprogressError(str: "情報が取得できませんでした")
+                print("情報が取得できませんでした")
+                return
+            }
+        }
+    }
+
+    func isUserLoggedin(withUserId uid: String){
+        
+        let updatedTimeUnix = Date().timeIntervalSince1970
+        // 既にログイン済かを調べる
+        USER_REF.child(uid).child("isLogin").observeSingleEvent(of: .value) { (snapshot) in
+            let isLogin = snapshot.value as? Int
+            if isLogin == 0{
+                // ログイン処理
+                USER_REF.child(uid).child("isLogin").setValue(true)
+                USER_REF.child(uid).child("updatedTime").setValue(updatedTimeUnix)
+                let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+                calendarVC.fromLogin = true
+                if self.fromCalendar {
+                    self.dismiss(animated: true, completion: nil)
+                }else{
+                    self.navigationController?.pushViewController(calendarVC, animated: true)
+                }
+            }else{
+                self.jgprogressError(str: "ログイン済みのユーザーです")
+                return
+            }
+        }
+    }
     
     func loginValidation() -> Bool{
         let email = self.emailTextField.text

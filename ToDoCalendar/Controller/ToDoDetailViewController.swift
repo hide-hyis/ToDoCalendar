@@ -34,6 +34,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var categoryId: String?                              // 選択中のカテゴリーID
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
     var toolbar = UIToolbar()
+    var initialImage: Bool?
 
         
     @IBOutlet weak var dateField: UITextField!
@@ -138,6 +139,10 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             // update storage
             let filename = NSUUID().uuidString
             let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
+            
+            //古い画像をサーバーから削除
+            Storage.storage().reference(forURL: todo!.imageURL).delete(completion: nil)
+            
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 
                 //エラーハンドル
@@ -290,17 +295,13 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
          
         if let pickedImage = info[.editedImage] as? UIImage{
             let size = CGSize(width: 130, height: 130)
-            selectedTodoImage = pickedImage.resize(size: size)
-            self.imageView.image = selectedTodoImage
-            
-            if let imageUrl = info[UIImagePickerController.InfoKey.referenceURL] as? NSURL{
-
-                print("DEBUG imageUrl: \(imageUrl)")
-            }
+            selectedTodoImage = pickedImage
+            self.imageView.image = selectedTodoImage!.resize(size: size)
+            initialImage = false
             picker.dismiss(animated: true, completion: nil)
         }
     }
-    
+    // 画像選択ピッカーの表示
     @objc func showPicker(){
         let alert: UIAlertController = UIAlertController(title: "画像を選択してください", message: nil, preferredStyle:  UIAlertController.Style.actionSheet)
 
@@ -326,7 +327,10 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             (action: UIAlertAction!) -> Void in
             self.showImage()
         })
-
+        // 変更前の画像かどうか
+        if initialImage! {
+            selectedTodoImage = self.imageView.image
+        }
            alert.addAction(cancelAction)
            alert.addAction(cameraAction)
            alert.addAction(AlbumAction)
@@ -353,6 +357,11 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         let editTitle:String = titleTextField.text!
         guard let todoId = todo?.todoId else {return}
         
+        // 変更前の画像かどうか
+        if initialImage! {
+            selectedTodoImage = self.imageView.image
+        }
+        
         let values = ["title": editTitle,
                     "content": contentTextView.text,
                     "schedule": scheduleInt,
@@ -365,6 +374,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     "updatedTime": updateTime] as [String: Any]
         
         TODOS_REF.child(todoId).updateChildValues(values)
+        editButton.isEnabled = false
         let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
         delegate?.catchtable(editKeys: keys as! [String : String])
         self.dismiss(animated: true, completion: nil)
@@ -401,8 +411,14 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // 画像表示
         if todo?.imageURL == ""{
             self.imageView.image = UIImage(named: "plus-icon")
+            initialImage = false
         }else if let imageUrl = todo?.imageURL{
             self.imageView.loadImage(with: imageUrl)
+            initialImage = true
+//            let data: Data = (todo?.imageURL.data(using: String.Encoding.utf8))!
+//            print(data)
+//            let image: UIImage? = UIImage(data: data)
+//            selectedTodoImage = image
 //            selectedTodoImage = self.imageView.image
         }
         

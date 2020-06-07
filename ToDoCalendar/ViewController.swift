@@ -50,6 +50,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     let postponeData = ["1日","2日","3日","4日","5日","6日","7日"]
     var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
     var postponeTodoIndex: Int?
+    var fromLogin: Bool?                                      //遷移元を判別するフラグ
     
     // MARK:  View Life cycle
     override func viewDidLoad() {
@@ -180,8 +181,8 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         performSegue(withIdentifier: "goListPage", sender: nil)
     }
     
-    @IBAction func openSettingView(_ sender: Any) {
-    }
+//    @IBAction func openSettingView(_ sender: Any) {
+//    }
     
     
     // MARK:  - CaluculateCalendarLogic
@@ -546,26 +547,20 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         
     }
     
-    // ログアウト処理
-    @objc func logout(){
-        
-        do{
-            let updatedTimeUnix = Date().timeIntervalSince1970
-            guard let currentUid = Auth.auth().currentUser?.uid else {return}
-            try Auth.auth().signOut()
-            USER_REF.child(currentUid).child("isLogin").setValue(false)
-            USER_REF.child(currentUid).child("updatedTime").setValue(updatedTimeUnix)
-            jgprogressError(str: "ユーザーログアウト")
-            let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-            self.navigationController?.popViewController(animated: true)
-        }catch let error as NSError{
-            print("エラー：", error)
-        }
-    }
     
     func renderLogin(){
-        let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        self.navigationController?.popViewController(animated: true)
+        
+        if fromLogin!{
+            let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            self.navigationController?.popViewController(animated: true)
+        }else{
+//            let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+//            let navigationcontroller = UINavigationController(rootViewController: loginVC)
+            let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.fromCalendar = true
+            self.present(loginVC, animated: true, completion: nil)
+        }
     }
     
     // 先延ばしピッカーの表示切替
