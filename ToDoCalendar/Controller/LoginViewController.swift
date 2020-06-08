@@ -116,20 +116,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
 
     
-    @IBAction func logout(_ sender: Any) {
-        if Auth.auth().currentUser != nil {
-            do{
-                guard let currentUid = Auth.auth().currentUser?.uid else {return}
-                try Auth.auth().signOut()
-                USER_REF.child(currentUid).child("isLogin").setValue(false)
-                jgprogressError(str: "ログアウトしました")
-            }catch let error as NSError{
-                print("エラー：", error)
-            }
-        }else{
-            jgprogressSuccess(str: "ログインユーザーなし")
-        }
-    }
+//    @IBAction func logout(_ sender: Any) {
+//        if Auth.auth().currentUser != nil {
+//            do{
+//                guard let currentUid = Auth.auth().currentUser?.uid else {return}
+//                try Auth.auth().signOut()
+//                USER_REF.child(currentUid).child("isLogin").setValue(false)
+//                jgprogressError(str: "ログアウトしました")
+//            }catch let error as NSError{
+//                print("エラー：", error)
+//            }
+//        }else{
+//            jgprogressSuccess(str: "ログインユーザーなし")
+//        }
+//    }
     
     //MARK: UITextField Delegate
     // キーボードを閉じる

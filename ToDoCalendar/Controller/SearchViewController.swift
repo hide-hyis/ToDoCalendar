@@ -13,7 +13,8 @@ protocol CatchProtocol {
     func catchData(key:[String: String])
 }
 
-class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
+class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate,  UIPickerViewDelegate, UIPickerViewDataSource {
+    
 
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextView: UITextView!
@@ -25,6 +26,8 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
     @IBOutlet weak var searchButton: UIBarButtonItem!
     @IBOutlet weak var categoryButton: UIButton!
     
+    let screenHeight = Int(UIScreen.main.bounds.size.height)
+    let screenWidth = Int(UIScreen.main.bounds.size.width)
     var resultHandler: (([String:String]) -> Void)?
     var priority = Int()
     var datePicker: UIDatePicker = UIDatePicker()
@@ -32,7 +35,12 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
     var delegate:CatchProtocol?
     var dateFromKey:Date?
     var dateToKey:Date?
-    var isSearchResult = true //日付不整合バリデーションフラグ
+    var isSearchResult = true                            //日付不整合バリデーションフラグ
+    var categoryArray = [Category]()                     // ピッカー内に表示するカテゴリー配列
+    var categoryIdArray = [String]()
+    var categoryId: String = ""                              // 選択中のカテゴリーID
+    var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
+    var toolbar = UIToolbar()                           // カテゴリーピッカーのツールバー
     
     
     // MARK: View Life Cycle
@@ -42,16 +50,22 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         contentTextView.delegate = self
         titleTextField.delegate = self
         Layout.textViewOutLine(contentTextView)
-        
+        categoryButton.layer.borderWidth = 1
+        categoryButton.layer.cornerRadius = 5
+        contentTextView.layer.cornerRadius = 5
         
         contentTextView.text = "内容"
         contentTextView.textColor = .lightGray
         
         configureDatePicker()
         
+        //iOS13以前用の擬似ナビバーを生成
         makeNavbar()
         
-        
+        // カテゴリーの取得
+        fetchCategories()
+        // カテゴリーピッカービューの生成
+        configurePickerView()
     }
     
     // MARK: UITextViewDelegate
@@ -125,15 +139,16 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         let priorityString = String(priority)
         let dateFromString = dateFromTextField.text!
         let dateToString = dateToTextField.text!
-        var content: String!
+        let categoryId = self.categoryId
         if contentString == "内容"{
-             content = ""
+             contentString = ""
         }
         
         let inputDictionary:[String: String] = ["title": titleString,
                                               "content": contentString,
                                               "dateFrom": dateFromString,
                                               "dateTo": dateToString,
+                                              "categoryId": categoryId,
                                               "priority": priorityString]
         var searchKeys = [String: String]()
         
@@ -158,6 +173,60 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         
         delegate?.catchData(key: searchKeys)
         self.dismiss(animated: true)
+    }
+    
+    @IBAction func showCategoryPicker(_ sender: Any) {
+        print(categoryArray.count)
+        for i in categoryArray {
+            print("カテゴリ名: \(String(describing: i.name))")
+        }
+        if self.categoryPickerView.isHidden == false{
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }else{
+            self.categoryPickerView.isHidden = false
+            self.toolbar.isHidden = false
+        }
+    }
+    
+    
+    
+    @objc func cancellCategoryPicker(){
+        if self.categoryPickerView.isHidden == false{
+            
+            self.categoryPickerView.isHidden = true
+            self.toolbar.isHidden = true
+        }
+    }
+    
+    @objc func handleCategory(){
+        
+        self.categoryPickerView.isHidden = true
+        self.toolbar.isHidden = true
+    }
+    
+    // MARK: UIPickerViewDelegate for Category
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        self.categoryArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        let pickerLabel = UILabel()
+        pickerLabel.textAlignment = NSTextAlignment.center
+        pickerLabel.text = self.categoryArray[row].name
+        pickerLabel.font = UIFont.systemFont(ofSize: 22)
+        return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let selectedCategory = self.categoryArray[row].name
+        categoryButton.setTitle(selectedCategory, for: .normal)
+        categoryId = self.categoryIdArray[row]
     }
     
     // MARK: Handlers
@@ -275,6 +344,43 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         if ( dateFromTextField.text != "選択" && dateToTextField.text != "選択"){
             print("Date To -> dateFromTextField: \(dateFromTextField.text!),  dateToTextField: \(dateToTextField.text!)")
             self.dateCheck()
+        }
+    }
+    
+    func configurePickerView(){
+        // ツールバーの生成
+        let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellCategoryPicker))
+        let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
+        toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
+        toolbar.isUserInteractionEnabled = true
+        toolbar.frame = CGRect(x: 0, y: screenHeight-200-35, width: screenWidth, height: 35)
+        toolbar.backgroundColor = .white
+        view.addSubview(toolbar)
+        toolbar.isHidden = true
+        
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        let pickerWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 200, width: pickerWidth, height: 200)
+        categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
+        view.addSubview(categoryPickerView)
+        categoryPickerView.isHidden = true
+    }
+    // MARK: API
+    func fetchCategories(){
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+        
+        CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
+            let fetchCategoryId = snapshot.key
+            
+            let category = Category(dictionary: dictionary)
+            self.categoryIdArray.append(fetchCategoryId)
+            self.categoryArray.append(category)
+            self.categoryButton.setTitle("カテゴリー", for: .normal)
+            self.categoryPickerView.reloadAllComponents()
         }
     }
 }

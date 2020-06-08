@@ -300,7 +300,8 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     func catchData(key: [String : String]) {
         searchKeyWord.removeAll()
         if key["title"] != nil { searchKeyWord["title"] = key["title"] }
-        if key["content"] != nil { searchKeyWord["content"] = key["content"] }
+        if key["content"] != nil && key["content"] != "内容" { searchKeyWord["content"] = key["content"] }
+        if key["categoryId"] != nil { searchKeyWord["categoryId"] = key["categoryId"] }
         if key["priority"] != nil { searchKeyWord["priority"] = key["priority"] }
         if key["dateFrom"] != nil { searchKeyWord["dateFrom"] = key["dateFrom"] }
         if key["dateTo"] != nil { searchKeyWord["dateTo"] = key["dateTo"] }
@@ -309,6 +310,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
         contentLabel.text = "内容"
         dateLabel.text = "予定日"
         priorityLabel.text = "★"
+        print("searchKey: \(searchKeyWord)")
     }
     
     // MARK: - Handler
@@ -481,6 +483,9 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             }
             if (searchKeyWord["content"] != nil){
                 resultArray = resultArray.filter({ $0.content.contains(searchKeyWord["content"] as! String) })
+            }
+            if (searchKeyWord["categoryId"] != nil){
+                resultArray = resultArray.filter({ $0.categoryId == (searchKeyWord["categoryId"] as! String) })
             }
             if (searchKeyWord["priority"] != nil){
                 let priorityKey = searchKeyWord["priority"] as! String

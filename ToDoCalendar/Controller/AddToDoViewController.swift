@@ -198,8 +198,13 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
          
         if let pickedImage = info[.editedImage] as? UIImage{
-            let size = CGSize(width: 130, height: 130)
-            selectedTodoImage = pickedImage//.resize(size: size)
+            var size: CGSize!
+            if screenHeight <= 736 {
+                size = CGSize(width: 150, height: 150)
+            }else{
+                size = CGSize(width: 180, height: 180)
+            }
+            selectedTodoImage = pickedImage
             self.imageView.image = selectedTodoImage!.resize(size: size)
             
             picker.dismiss(animated: true, completion: nil)
@@ -319,7 +324,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
                             content = ""
                        }
         
-                        if categoryId == nil{ categoryId = categoryIdArray[0]}
+                        if categoryId == nil{ categoryId = ""}
                        let values = ["title": titleTextField.text!,
                                    "content": content,
                                    "schedule": scheduleUnix,
@@ -371,7 +376,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         categoryPickerView.dataSource = self
         let pickerWidth = UIScreen.main.bounds.size.width
         let screenHeight = UIScreen.main.bounds.size.height
-        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 250)
         categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
         view.addSubview(categoryPickerView)
         categoryPickerView.isHidden = true
@@ -382,12 +387,12 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         CATEGORIES_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
-            let categoryId = snapshot.key
+            let fetchCategoryId = snapshot.key
             
             let category = Category(dictionary: dictionary)
-            self.categoryIdArray.append(categoryId)
+            self.categoryIdArray.append(fetchCategoryId)
             self.categoryArray.append(category)
-            self.categoryButton.setTitle(self.categoryArray[0].name, for: .normal)
+            self.categoryButton.setTitle("カテゴリー選択", for: .normal)
             self.categoryPickerView.reloadAllComponents()
         }
     }

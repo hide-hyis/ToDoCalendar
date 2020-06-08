@@ -162,7 +162,6 @@
 				D29ABEFF23DFF16B008A522A /* Controller */,
 				D29ABEFE23DFF158008A522A /* View */,
 				D29ABEFD23DFF14E008A522A /* Model */,
-				D261404A23D690C10036161E /* SceneDelegate.swift */,
 				D261405323D690C70036161E /* LaunchScreen.storyboard */,
 				D261405623D690C70036161E /* Info.plist */,
 				D2AC201B247FD47C00E7DE92 /* test.swift */,
@@ -185,9 +184,9 @@
 				D29ABF0223E00A43008A522A /* ToDo.swift */,
 				D27DC4902473D9A500176201 /* FToDo.swift */,
 				D29ABF0823E18B5E008A522A /* DateUtils.swift */,
-				89C49AB523ED835C00BABB0D /* Search.swift */,
 				89C49AB923EEC15500BABB0D /* Layout.swift */,
 				D27DC45C246E744100176201 /* User.swift */,
+				89C49AB523ED835C00BABB0D /* Search.swift */,
 				D28DE199248741DE006C9B49 /* Category.swift */,
 			);
 			path = Model;
@@ -213,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				D261404823D690C10036161E /* AppDelegate.swift */,
+				D261404A23D690C10036161E /* SceneDelegate.swift */,
 				D2AC2019247FBF4C00E7DE92 /* MainNavigationController.swift */,
 				D2AC201D247FF94400E7DE92 /* RootViewController.swift */,
 				D2AC2017247E4D3100E7DE92 /* LoginViewController.swift */,

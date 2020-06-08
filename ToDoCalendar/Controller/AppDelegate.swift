@@ -23,16 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let storyboard:UIStoryboard = self.grabStoryboard()
 //        var rootVC: UIViewController
         if let window = window{
-//            if Auth.auth().currentUser != nil {
-//                rootVC = storyboard.instantiateViewController(withIdentifier:     "ViewController")
-//            }else{
-//                rootVC = storyboard.instantiateViewController(withIdentifier:     "LoginViewController")
-//            }
                   window.rootViewController = storyboard.instantiateInitialViewController() as UIViewController?
                }
 //        self.window?.rootViewController = ViewController()
         self.window?.makeKeyAndVisible()
-        
+        if Auth.auth().currentUser == nil{
+            print("ユーザーなし")
+        }
         // Override point for customization after application launch.
         
         return true
@@ -54,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 //iPhone8Plus
             }else if height == 812{
-                storyboard = UIStoryboard(name: "Main", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone11", bundle: nil)
                 //iPhoneX,XS,11Pro
             }else if height == 896{
                 storyboard = UIStoryboard(name: "iPhone11", bundle: nil)

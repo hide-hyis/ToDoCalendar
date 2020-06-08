@@ -24,10 +24,7 @@ extension FSCalendar {
 }
 
 class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,FSCalendarDelegateAppearance, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource {
-    
-    
-    
-
+  
     @IBOutlet weak var myCalendar: FSCalendar!
     @IBOutlet weak var selectedDateLabel: UILabel!
     @IBOutlet weak var addButton: UIButton!

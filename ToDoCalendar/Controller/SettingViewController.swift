@@ -19,10 +19,16 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     var tapUIView: UIView?                 // カレンダーエリア
     let headerView = UIView()                 // tableView header
     let doneBtn = UIButton()              // tableView header 完了ボタン
-    @IBOutlet weak var tableView: UITableView!
+    let addBtn = UIButton()               // tableView header 追加ボタン
     var categoryArray = [Category]()      // 表示するカテゴリー名の配列
     var categoryIdArray = [String]()        // tableViewに表示しているカテゴリーID
+    var settngHeight: Int?               // 設定ラベルのy位置
+    var logoutHeight: Int?               // ログアウトラベルのy位置
+    var categoryHeight: Int?             // カテゴリーラベルのy位置
+    var tableHeaderHeight: Int?             // テーブルヘッダーのy位置
+    let screenHeight = UIScreen.main.bounds.size.height
     
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var customView: UIView!
     
     override func viewDidLoad() {
@@ -86,11 +92,17 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     func textFieldDidBeginEditing(cell: TableViewCell, value: String) {
         doneBtn.isEnabled = false
         self.doneBtn.setTitleColor(.lightGray, for: .normal)
+        addBtn.isEnabled = false
+        self.addBtn.setTitleColor(.lightGray, for: .normal)
     }
     // キーボードが閉じる直前
     func textFieldShouldEndEditing(cell: TableViewCell, value: String) {
+        let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
         doneBtn.isEnabled = true
         self.doneBtn.setTitleColor(.black, for: .normal)
+        addBtn.isEnabled = true
+        self.addBtn.setTitleColor(.black, for: .normal)
+        categoryArray[indexPath!.row].name = value
     }
     
     func textfieldsSouldChangeCharactersIn(cell: TableViewCell, value: String) {
@@ -103,6 +115,8 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         }else{
             self.doneBtn.isEnabled = false
             self.doneBtn.setTitleColor(.lightGray, for: .normal)
+//            self.addBtn.isEnabled = false
+//            self.addBtn.setTitleColor(.lightGray, for: .normal)
             cell.textField.textColor = .lightGray
         }
     }
@@ -135,10 +149,12 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
            self.tableView.isHidden = false
             self.headerView.isHidden = false
             doneBtn.isHidden = false
+            addBtn.isHidden = false
         }else{
             self.tableView.isHidden = true
             self.headerView.isHidden = true
             doneBtn.isHidden = true
+            addBtn.isHidden = true
         }
     }
     func handleLogout(){
@@ -171,8 +187,20 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
             CATEGORIES_REF.child(currentUid).child(categoryId).updateChildValues(values)
             i += 1
         }
-        print("カテゴリーの編集完了処理")
         self.dismiss(animated: true)
+    }
+    
+    @objc func addCategory(){
+        guard let currentUser = Auth.auth().currentUser?.uid else {return}
+        let createdTimeUnix = Date().timeIntervalSince1970
+        
+        let categoryId = CATEGORIES_REF.child(currentUser).childByAutoId()
+
+        let values = ["name": "カテゴリー未定",
+                      "createdTime": createdTimeUnix,
+                      "updatedTime": createdTimeUnix] as [String: Any]
+        categoryId.updateChildValues(values)
+        jgprogressSuccess(str: "カテゴリー追加")
     }
     // MARK: - Handler
     // 成功用JGProgress
@@ -186,12 +214,21 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     func configureItems(){
         let statusBarHeight: CGFloat = UIApplication.shared.statusBarFrame.height
         self.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.4)
+        if screenHeight >= 812 {
+            // iPhone 10以降
+            settngHeight = 50
+            logoutHeight = 110
+            categoryHeight  = 150
+            tableHeaderHeight  = 190
+        }else{
+            // iPhone 10以前
+            settngHeight = 30
+            logoutHeight = 80
+            categoryHeight  = 120
+            tableHeaderHeight  = 160
+        }
         
-        // 土台となるUIView
-//        self.customView = UIView(frame: CGRect(x: 0, y: 0, width: 220, height: self.view.frame.height ) )
-//        self.customView!.backgroundColor = .white
-//        
-//        view.addSubview(customView!)
+        let customWidth = customView.frame.width
         
         // 右側の線
         let sideLine = UIView(frame: CGRect(x: 220, y: 0, width: 2, height: self.view.frame.height) )
@@ -210,7 +247,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         
         //　設定ラベル
         let settingLabel = UILabel()
-        settingLabel.frame = CGRect(x: 70, y: 30, width: 60, height: 30)
+        settingLabel.frame = CGRect(x: 70, y: settngHeight!, width: 60, height: 30)
         settingLabel.backgroundColor = .clear
         settingLabel.text = "設定"
         settingLabel.font = UIFont.boldSystemFont(ofSize: 18)
@@ -218,7 +255,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         
         // 設定ボタン
         let backButton  = UIButton()
-        backButton.frame = CGRect(x: 170, y: 30, width: 25, height: 25)
+        backButton.frame = CGRect(x: 170, y: settngHeight!, width: 25, height: 25)
         let settingButtonImage = UIImage(named: "gear")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
         backButton.setImage(settingButtonImage, for: .normal)
         backButton.addTarget(self, action: #selector(back), for: UIControl.Event.touchUpInside)
@@ -226,16 +263,19 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.customView!.bringSubviewToFront(backButton)
         
         //　ログアウトラベル
-        let logoutLabel = UILabel()
-        logoutLabel.frame = CGRect(x: 50, y: 80, width: 120, height: 30)
+        let logoutLabel = UIButton()
+        logoutLabel.frame = CGRect(x: 40, y: logoutHeight!, width: 120, height: 30)
         logoutLabel.backgroundColor = .clear
-        logoutLabel.text = "ログアウト"
-        logoutLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        logoutLabel.setTitleColor(.black, for: .normal)
+        logoutLabel.setTitle("ログアウト", for: .normal)
+        logoutLabel.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        logoutLabel.titleLabel?.textAlignment = NSTextAlignment.center
+        logoutLabel.addTarget(self, action: #selector(logout), for: UIControl.Event.touchUpInside)
         self.customView?.addSubview(logoutLabel)
         
         // ログアウトボタン
         let logoutButton  = UIButton()
-        logoutButton.frame = CGRect(x: 170, y: 80, width: 25, height: 25)
+        logoutButton.frame = CGRect(x: 170, y: logoutHeight!, width: 25, height: 25)
         let logoutButtonImage = UIImage(named: "logout")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
         logoutButton.setImage(logoutButtonImage, for: .normal)
         logoutButton.tintColor = .black
@@ -244,16 +284,19 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.customView!.bringSubviewToFront(logoutButton)
         
         //　カテゴリーラベル
-        let categoryLabel = UILabel()
-        categoryLabel.frame = CGRect(x: 50, y: 120, width: 120, height: 30)
+        let categoryLabel = UIButton()
+        categoryLabel.frame = CGRect(x: 40, y: categoryHeight!, width: 120, height: 30)
         categoryLabel.backgroundColor = .clear
-        categoryLabel.text = "カテゴリー"
-        categoryLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        categoryLabel.setTitleColor(.black, for: .normal)
+        categoryLabel.setTitle("カテゴリー", for: .normal)
+        categoryLabel.titleLabel?.textAlignment = NSTextAlignment.center
+        categoryLabel.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        categoryLabel.addTarget(self, action: #selector(categoryBtn), for: UIControl.Event.touchUpInside)
         self.customView?.addSubview(categoryLabel)
         
         // カテゴリーボタン
         let categoryButton  = UIButton()
-        categoryButton.frame = CGRect(x: 170, y: 120, width: 25, height: 25)
+        categoryButton.frame = CGRect(x: 170, y: categoryHeight!, width: 25, height: 25)
         let categoryButtonImage = UIImage(named: "edit-icon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
         categoryButton.setImage(categoryButtonImage, for: .normal)
         categoryButton.tintColor = .black
@@ -262,20 +305,31 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.customView!.bringSubviewToFront(categoryButton)
         
         // tableView header
-        headerView.frame = CGRect(x: 0, y: 160, width: self.tableView.bounds.width, height: 60)
+        headerView.frame = CGRect(x: 0, y: tableHeaderHeight!, width: Int(self.tableView.frame.width), height: 60)
         headerView.backgroundColor = UIColor.rgb(red: 225, green: 225, blue: 225, alpha: 0.9)
         self.customView?.addSubview(headerView)
         self.customView!.bringSubviewToFront(headerView)
         
-        self.doneBtn.frame = CGRect(x:160 , y: 160, width: 50, height: 30)
+        // 完了ボタン
+        self.doneBtn.frame = CGRect(x:Int(customWidth - 50 - 5), y: tableHeaderHeight!, width: 50, height: 30)
         self.doneBtn.setTitle("完了", for: .normal)
         self.doneBtn.setTitleColor(.black, for: .normal)
         self.doneBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         self.doneBtn.addTarget(self, action: #selector(editCategory), for: UIControl.Event.touchUpInside)
         self.customView?.addSubview(self.doneBtn)
         self.customView!.bringSubviewToFront(doneBtn)
+        // 追加ボタン
+        self.addBtn.frame = CGRect(x:5 , y: tableHeaderHeight!, width: 50, height: 30)
+        self.addBtn.setTitle("＋", for: .normal)
+        self.addBtn.setTitleColor(.black, for: .normal)
+        self.addBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        self.addBtn.addTarget(self, action: #selector(addCategory), for: UIControl.Event.touchUpInside)
+        self.customView?.addSubview(self.addBtn)
+        self.customView!.bringSubviewToFront(addBtn)
+        
         headerView.isHidden = true
         doneBtn.isHidden = true
+        addBtn.isHidden = true
         
     }
     

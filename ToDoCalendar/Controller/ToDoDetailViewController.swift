@@ -40,7 +40,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
     @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var contentLabel: UILabel!
     @IBOutlet weak var contentTextView: UITextView!
     @IBOutlet weak var star1: UIButton!
     @IBOutlet weak var star2: UIButton!
@@ -58,6 +57,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         titleTextField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.delegate = self
         contentTextView.delegate = self
+        categoryButton.layer.cornerRadius = 5
         
         let dateFromUnix = Date(timeIntervalSince1970: Double(todo!.scheduled))
         let dateString = DateUtils.stringFromDate(date: dateFromUnix, format: "yyyy年MM月dd日")
@@ -294,7 +294,12 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
          
         if let pickedImage = info[.editedImage] as? UIImage{
-            let size = CGSize(width: 130, height: 130)
+            var size: CGSize!
+            if screenHeight <= 736 {
+                size = CGSize(width: 130, height: 130)
+            }else{
+                size = CGSize(width: 180, height: 180)
+            }
             selectedTodoImage = pickedImage
             self.imageView.image = selectedTodoImage!.resize(size: size)
             initialImage = false
@@ -415,18 +420,14 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }else if let imageUrl = todo?.imageURL{
             self.imageView.loadImage(with: imageUrl)
             initialImage = true
-//            let data: Data = (todo?.imageURL.data(using: String.Encoding.utf8))!
-//            print(data)
-//            let image: UIImage? = UIImage(data: data)
-//            selectedTodoImage = image
-//            selectedTodoImage = self.imageView.image
         }
         
         // カテゴリー表示
-        if todo?.categoryId == "カテゴリー不明"{
-            self.categoryButton.setTitle("カテゴリー不明", for: .normal)
+        if todo?.categoryId == "カテゴリー未定"{
+            self.categoryId = "カテゴリー未定"
+            self.categoryButton.setTitle("カテゴリー選択", for: .normal)
         }else if todo?.categoryId == ""{
-            self.categoryButton.setTitle("カテゴリー不明", for: .normal)
+            self.categoryButton.setTitle("カテゴリー選択", for: .normal)
         }else{
             categoryId = todo?.categoryId
             fetchCategoryName(withCategoryId: categoryId!)
@@ -527,7 +528,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
         toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
         toolbar.isUserInteractionEnabled = true
-        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.frame = CGRect(x: 0, y: screenHeight-200-35, width: screenWidth, height: 35)
         toolbar.backgroundColor = .white
         view.addSubview(toolbar)
         toolbar.isHidden = true
@@ -536,7 +537,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         categoryPickerView.dataSource = self
         let pickerWidth = UIScreen.main.bounds.size.width
         let screenHeight = UIScreen.main.bounds.size.height
-        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 150)
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 200, width: pickerWidth, height: 200)
         categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
         view.addSubview(categoryPickerView)
         categoryPickerView.isHidden = true
