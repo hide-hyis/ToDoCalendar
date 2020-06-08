@@ -538,11 +538,23 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             let categoryId = CATEGORIES_REF.child(user).childByAutoId()
             self.categoryIdKey = categoryId.key
             
-            let categoryValues = ["name": "カテゴリー未定",
-                                  "createdTime": createdTimeUnix,
-                                  "updatedTime": createdTimeUnix] as [String: Any]
+            if i == 1{
+                let categoryValues = ["name": "HOME",
+                                      "createdTime": createdTimeUnix,
+                                      "updatedTime": createdTimeUnix] as [String: Any]
+                categoryId.updateChildValues(categoryValues)
+            }else if i == 2{
+                let categoryValues = ["name": "WORK",
+                                      "createdTime": createdTimeUnix,
+                                      "updatedTime": createdTimeUnix] as [String: Any]
+                categoryId.updateChildValues(categoryValues)
+            }else{
+                let categoryValues = ["name": "カテゴリー未定",
+                                      "createdTime": createdTimeUnix,
+                                      "updatedTime": createdTimeUnix] as [String: Any]
+                categoryId.updateChildValues(categoryValues)
+            }
             
-            categoryId.updateChildValues(categoryValues)
         }
     }
         

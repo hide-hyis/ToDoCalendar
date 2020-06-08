@@ -31,8 +31,9 @@
                                     <userDefinedRuntimeAttribute type="string" keyPath="headerDateFormat" value="YYYY年MM月"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sdq-Eh-HNe">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Sdq-Eh-HNe">
                                 <rect key="frame" x="0.0" y="581" width="414" height="316"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="Ku1-6c-Txv" detailTextLabel="E4a-9z-Afy" style="IBUITableViewCellStyleValue1" id="sjI-BU-6VQ">
@@ -88,9 +89,6 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="Sdq-Eh-HNe" firstAttribute="trailing" secondItem="Xlz-ke-H6F" secondAttribute="trailing" id="Hca-28-lMk"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="Xlz-ke-H6F"/>
                     </view>
                     <navigationItem key="navigationItem" title="カレンダー" id="nEX-As-TNv">
@@ -531,6 +529,9 @@
                                 <state key="normal" title="カテゴリー">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="toggleCategoryPicker:" destination="Ofu-yq-Jb2" eventType="touchUpInside" id="URl-a5-5yN"/>
+                                </connections>
                             </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="usy-ya-BQe">
                                 <rect key="frame" x="257" y="114" width="123" height="32"/>
@@ -551,6 +552,9 @@
                                 <state key="normal" title="決定">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="editAction:" destination="Ofu-yq-Jb2" eventType="touchUpInside" id="tTJ-SO-Wjq"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="画像" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ACx-bf-uab">
                                 <rect key="frame" x="52" y="528" width="39" height="23"/>
@@ -751,7 +755,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W2p-ow-4GR">
-                                <rect key="frame" x="0.0" y="0.0" width="220" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="220" height="896"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
@@ -799,7 +803,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="47Q-eI-9h2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="339" y="859"/>
+            <point key="canvasLocation" x="337.68115942028987" y="858.48214285714278"/>
         </scene>
         <!--ログイン-->
         <scene sceneID="fF4-lT-hRg">

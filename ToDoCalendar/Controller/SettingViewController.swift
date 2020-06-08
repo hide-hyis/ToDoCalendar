@@ -76,6 +76,9 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         if categoryArray.count > 0{
             cell.textField.text = categoryArray[indexPath.row].name!
         }
+        if cell.textField.text == "カテゴリー未定" {
+            cell.textField.textColor = .lightGray
+        }
         return cell
     }
     

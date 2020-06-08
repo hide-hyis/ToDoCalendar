@@ -45,7 +45,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var star2: UIButton!
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var editButton: UIButton!
-    @IBOutlet weak var testConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var categoryButton: UIButton!
     
@@ -128,26 +127,30 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     //編集機能
     @IBAction func editAction(_ sender: Any) {
+        editButton.isEnabled = false
         
         // 画像を保存する場合
         if titleTextField.text != "" && titleTextField.text!.count < 16
         && contentTextView.text!.count < 201 && priority != 0 && self.selectedTodoImage != nil{
-
+            
             // image uploadData
             guard let todoImage = self.selectedTodoImage else {return}
             guard let uploadData = todoImage.jpegData(compressionQuality: 0.5) else {return}
             // update storage
             let filename = NSUUID().uuidString
             let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
-            
-            //古い画像をサーバーから削除
-            Storage.storage().reference(forURL: todo!.imageURL).delete(completion: nil)
+            let imageurl = todo?.imageURL
+            if imageurl != ""{
+                //古い画像をサーバーから削除
+                Storage.storage().reference(forURL: todo!.imageURL).delete(completion: nil)
+            }
             
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 
                 //エラーハンドル
                 if let error = error{
                     print("画像のアップロードエラー", error.localizedDescription)
+                    self.editButton.isEnabled = true
                     return
                 }
                 
@@ -161,6 +164,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // 画像を保存しない場合
         } else if titleTextField.text != "" && titleTextField.text!.count < 16 && contentTextView.text!.count < 201 && priority != 0 && self.selectedTodoImage == nil{
             self.inputValues(withImage: "")
+            editButton.isEnabled = true
         }
         
     }
@@ -366,6 +370,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         if initialImage! {
             selectedTodoImage = self.imageView.image
         }
+        if categoryId == nil {categoryId = ""}
         
         let values = ["title": editTitle,
                     "content": contentTextView.text,
@@ -379,7 +384,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     "updatedTime": updateTime] as [String: Any]
         
         TODOS_REF.child(todoId).updateChildValues(values)
-        editButton.isEnabled = false
+        editButton.isEnabled = true
         let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
         delegate?.catchtable(editKeys: keys as! [String : String])
         self.dismiss(animated: true, completion: nil)
