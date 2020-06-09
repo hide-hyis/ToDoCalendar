@@ -848,14 +848,6 @@
                                     <action selector="changeMode:" destination="OSp-o6-UdX" eventType="touchUpInside" id="4qm-zc-Ezq"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I4z-Cv-8hh">
-                                <rect key="frame" x="175" y="604" width="77" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="ログアウト"/>
-                                <connections>
-                                    <action selector="logout:" destination="OSp-o6-UdX" eventType="touchUpInside" id="yPI-v7-5CF"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3SA-Sm-Kdh">
                                 <rect key="frame" x="120" y="502" width="135" height="27"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>

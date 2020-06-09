@@ -35,6 +35,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
     var toolbar = UIToolbar()
     var initialImage: Bool?
+    var deleteImage: Bool?
 
         
     @IBOutlet weak var dateField: UITextField!
@@ -318,6 +319,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                (action: UIAlertAction!) -> Void in
             self.imageView.image = UIImage(named: "plus-icon")
             self.selectedTodoImage = nil
+            self.deleteImage = true
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in
@@ -384,6 +386,11 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                     "updatedTime": updateTime] as [String: Any]
         
         TODOS_REF.child(todoId).updateChildValues(values)
+        
+        if initialImage == true && deleteImage! == true{
+            //古い画像をサーバーから削除
+            Storage.storage().reference(forURL: self.todo!.imageURL).delete(completion: nil)
+        }
         editButton.isEnabled = true
         let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
         delegate?.catchtable(editKeys: keys as! [String : String])
@@ -553,7 +560,13 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         guard let currentUid = Auth.auth().currentUser?.uid else {return}
         
         guard let todoId = self.todo?.todoId else {return}
+        
         USER_TODOS_REF.child(currentUid).child(todoId).removeValue { (err, ref) in
+            
+            if self.todo!.imageURL != ""{
+                //古い画像をサーバーから削除
+                Storage.storage().reference(forURL: self.todo!.imageURL).delete(completion: nil)
+            }
             TODOS_REF.child(todoId).removeValue()
         }
     }

@@ -354,7 +354,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
         toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
         toolbar.isUserInteractionEnabled = true
-        toolbar.frame = CGRect(x: 0, y: screenHeight-200-35, width: screenWidth, height: 35)
+        toolbar.frame = CGRect(x: 0, y: screenHeight-220-35, width: screenWidth, height: 35)
         toolbar.backgroundColor = .white
         view.addSubview(toolbar)
         toolbar.isHidden = true
@@ -363,7 +363,7 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         categoryPickerView.dataSource = self
         let pickerWidth = UIScreen.main.bounds.size.width
         let screenHeight = UIScreen.main.bounds.size.height
-        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 200, width: pickerWidth, height: 200)
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 220, width: pickerWidth, height: 220)
         categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
         view.addSubview(categoryPickerView)
         categoryPickerView.isHidden = true
