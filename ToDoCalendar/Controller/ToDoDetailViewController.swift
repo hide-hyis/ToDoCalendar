@@ -36,7 +36,8 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var toolbar = UIToolbar()
     var initialImage: Bool?
     var deleteImage: Bool?
-
+    var array:[Int] = []
+    
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -437,7 +438,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // カテゴリー表示
         if todo?.categoryId == "カテゴリー未定"{
             self.categoryId = "カテゴリー未定"
-            self.categoryButton.setTitle("カテゴリー選択", for: .normal)
+            self.categoryButton.setTitle("カテゴリー未定", for: .normal)
         }else if todo?.categoryId == ""{
             self.categoryButton.setTitle("カテゴリー選択", for: .normal)
         }else{

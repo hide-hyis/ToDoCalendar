@@ -34,8 +34,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // ログイン中であればカレンダー画面に遷移
-//        checkLogin()
+//        logout()
 
         self.navigationItem.hidesBackButton = true
         
@@ -62,6 +61,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         emailTextField.delegate = self
         passwordTextField.delegate = self
         checkPasswordTextField.delegate = self
+        
+        emailVerificationButton.isHidden = true
     }
     
     
@@ -85,7 +86,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    // アドレス認証
+    // アドレス認証再送信
     @IBAction func sendEmailVerification(_ sender: Any) {
         resendVerification(email: emailTextField.text!) { (error) in
             
@@ -93,7 +94,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 print("認証用メールを送信しました")
                 self.jgprogressSuccess(str: "認証用メールを送信しました")
             }else{
-                self.handleSendEmailVwrification(error: error as! NSError)
+                self.handleSendEmailVerification(error: error as! NSError)
             }
         }
     }
@@ -115,21 +116,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
-    
-//    @IBAction func logout(_ sender: Any) {
-//        if Auth.auth().currentUser != nil {
-//            do{
-//                guard let currentUid = Auth.auth().currentUser?.uid else {return}
-//                try Auth.auth().signOut()
-//                USER_REF.child(currentUid).child("isLogin").setValue(false)
-//                jgprogressError(str: "ログアウトしました")
-//            }catch let error as NSError{
-//                print("エラー：", error)
-//            }
-//        }else{
-//            jgprogressSuccess(str: "ログインユーザーなし")
-//        }
-//    }
+    func logout(){
+        if Auth.auth().currentUser != nil {
+            do{
+                guard let currentUid = Auth.auth().currentUser?.uid else {return}
+                try Auth.auth().signOut()
+                USER_REF.child(currentUid).child("isLogin").setValue(false)
+                jgprogressSuccess(str: "ログアウトしました")
+            }catch let error as NSError{
+                print("エラー：", error)
+            }
+        }else{
+            jgprogressSuccess(str: "ログインユーザーなし")
+        }
+    }
     
     //MARK: UITextField Delegate
     // キーボードを閉じる
@@ -275,6 +275,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         if let err = err{
                             print("エラーが起きました", err.localizedDescription)
                             self.jgprogressError(str: err.localizedDescription)
+                            self.handleSendEmailVerification(error: err as! NSError)
+                        }else{
                         }
                     }
                     
@@ -284,13 +286,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     
                     // UIをログインに変更する
                     self.changeLoginMode()
+                    // アドレス認証再送信ボタンを表示
+                    self.emailVerificationButton.isHidden = false
                 }
             }
             
         }
     }
     
-    func handleSendEmailVwrification(error :NSError){
+    func handleSendEmailVerification(error :NSError){
         if let errCode = AuthErrorCode(rawValue: error._code) {
             switch errCode {
             case .userNotFound:
@@ -313,6 +317,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
         if let errCode = AuthErrorCode(rawValue: error._code) {
             switch errCode {
+            case .invalidEmail:
+                self.jgprogressError(str: "メールアドレスの形式が違います")
+                print("メールアドレスの形式が違います")
             case .invalidRecipientEmail:
                 self.jgprogressError(str: "アドレスが正しくありません、確認して下さい")
                 print("アドレスが正しくありません、確認して下さい")
@@ -348,6 +355,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             case .emailAlreadyInUse:
                 self.jgprogressError(str: "このメールアドレスはすでに使われています")
                 print("このメールアドレスはすでに使われています")
+                return
+            case .weakPassword:
+                self.jgprogressError(str: "パスワードが弱すぎます")
+                print("パスワードが弱すぎます")
                 return
             case .networkError:
                     self.jgprogressError(str: "通信状態が良くありません")
@@ -406,14 +417,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-
+    
     func isUserLoggedin(withUserId uid: String){
         
         let updatedTimeUnix = Date().timeIntervalSince1970
-        // 既にログイン済かを調べる
+        // 重複ログインのチェック
         USER_REF.child(uid).child("isLogin").observeSingleEvent(of: .value) { (snapshot) in
             let isLogin = snapshot.value as? Int
             if isLogin == 0{
+                // アドレス認証再送信ボタンを表示
+                self.emailVerificationButton.isHidden = false
                 // ログイン処理
                 USER_REF.child(uid).child("isLogin").setValue(true)
                 USER_REF.child(uid).child("updatedTime").setValue(updatedTimeUnix)
@@ -501,9 +514,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let todos = realm.objects(ToDo.self)
         
         for todo in todos {
-//            let createdTimeString = DateUtils.stringFromDate(date: todo.dateAt, format: "yyyyMMddHHmmss")
             let createdTimeUnix = todo.dateAt.timeIntervalSince1970
-//            let scheduleString = DateUtils.stringFromDate(date: todo.scheduledAt, format: "yyyyMMdd")
             let scheduleUnix = todo.scheduledAt.timeIntervalSince1970
             let scheduleUnixString = String(todo.scheduledAt.timeIntervalSince1970).prefix(10)
             let scheduleString = String(scheduleUnixString)
@@ -514,7 +525,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                           "priority": todo.priority,
                           "isDone": todo.isDone,
                           "imageURL": "",
-                          "categoryId": "カテゴリー不明",
+                          "categoryId": "カテゴリー未定",
                           "userId": user,
                           "createdTime": createdTimeUnix,
                           "updatedTime": createdTimeUnix] as [String: Any]

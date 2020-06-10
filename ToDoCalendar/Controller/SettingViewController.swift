@@ -118,8 +118,6 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         }else{
             self.doneBtn.isEnabled = false
             self.doneBtn.setTitleColor(.lightGray, for: .normal)
-//            self.addBtn.isEnabled = false
-//            self.addBtn.setTitleColor(.lightGray, for: .normal)
             cell.textField.textColor = .lightGray
         }
     }

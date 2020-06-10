@@ -16,7 +16,6 @@ class RootViewController: UIViewController {
 
         self.view.backgroundColor = .white
         
-        
         if Auth.auth().currentUser != nil {
             let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
             calendarVC.fromLogin = false
