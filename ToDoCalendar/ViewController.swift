@@ -525,6 +525,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
         let navBarHeight =  self.navigationController?.navigationBar.frame.size.height
         let settingVC = self.storyboard?.instantiateViewController(withIdentifier: "SettingViewController") as! SettingViewController
         settingVC.modalPresentationStyle = .fullScreen
+        
         settingVC.calendarImage = capturedScreenImage()
         settingVC.navHeight = navBarHeight
         settingVC.calendarVC = self

@@ -372,6 +372,48 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         showImageViewVC.selectedImage = selectedTodoImage!
         present(showImageViewVC, animated: true, completion: nil)
     }
+    
+    // MARK: UITextFieldDelegate
+    // タイトル欄入力後バリデーションチェック
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        titleTextField.resignFirstResponder()
+        return true
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !categoryPickerView.isHidden{
+            toolbar.isHidden = true
+            categoryPickerView.isHidden = true
+        }
+        self.view.endEditing(true)
+        titleTextField.resignFirstResponder()
+        contentTextView.resignFirstResponder()
+    }
+    
+    //決定ボタンの無効/有効化
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        ToDo.textFieldAlert(titleTextField, editButton, 15)
+        if titleTextField.text == "" || titleTextField.text!.count > 15{
+            titleTextField.placeholder = "タイトルを入力してください"
+            ToDo.invalidButton(editButton)
+        }else {
+            ToDo.validButton(editButton)
+        }
+    }
+    
+    // MARK: UITextViewDelegate
+    //内容欄入力後バリデーションチェック
+    func textViewDidChange(_ textView: UITextView) {
+        
+        ToDo.textViewdAlert(contentTextView, editButton, 200)
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if !categoryPickerView.isHidden{
+            toolbar.isHidden = true
+            categoryPickerView.isHidden = true
+        }
+    }
     // MARK: Handlers
     func inputValues(withImage: String){
         
@@ -472,35 +514,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-    }
-    
-    // タイトル欄入力後バリデーションチェック
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        titleTextField.resignFirstResponder()
-        return true
-    }
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-        titleTextField.resignFirstResponder()
-        contentTextView.resignFirstResponder()
-    }
-    
-    //決定ボタンの無効/有効化
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        
-        ToDo.textFieldAlert(titleTextField, editButton, 15)
-        if titleTextField.text == "" || titleTextField.text!.count > 15{
-            titleTextField.placeholder = "タイトルを入力してください"
-            ToDo.invalidButton(editButton)
-        }else {
-            ToDo.validButton(editButton)
-        }
-    }
-    
-    //内容欄入力後バリデーションチェック
-    func textViewDidChange(_ textView: UITextView) {
-        
-        ToDo.textViewdAlert(contentTextView, editButton, 200)
     }
     
 

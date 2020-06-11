@@ -101,7 +101,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
 
             DispatchQueue.global(qos: .default).async {
                 // 非同期処理などを実行（今回は５秒間待つだけ）
-                Thread.sleep(forTimeInterval: 4)
+                Thread.sleep(forTimeInterval: 5)
 
                 // image uploadData
                 guard let todoImage = self.selectedTodoImage else {return}
@@ -151,6 +151,9 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.categoryPickerView.isHidden = true
             self.toolbar.isHidden = true
         }else{
+            if titleTextField.isEditing{
+                titleTextField.endEditing(true)
+            }
             self.categoryPickerView.isHidden = false
             self.toolbar.isHidden = false
         }
@@ -263,6 +266,10 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         return true
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !categoryPickerView.isHidden{
+            toolbar.isHidden = true
+            categoryPickerView.isHidden = true
+        }
         self.view.endEditing(true)
     }
     
@@ -272,6 +279,10 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
+        if !categoryPickerView.isHidden{
+            toolbar.isHidden = true
+            categoryPickerView.isHidden = true
+        }
         if contentTextField.textColor == UIColor.lightGray {
             contentTextField.text = nil
             contentTextField.textColor = UIColor.black

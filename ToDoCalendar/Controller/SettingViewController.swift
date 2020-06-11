@@ -177,9 +177,11 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
             try Auth.auth().signOut()
             USER_REF.child(currentUid).child("isLogin").setValue(false)
             jgprogressSuccess(str: "ログアウトしました")
-            self.dismiss(animated: true) {
-                print("ログアウトしました")
-                self.calendarVC?.renderLogin()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.dismiss(animated: true) {
+                    print("ログアウトしました")
+                    self.calendarVC?.renderLogin()
+                }
             }
         }catch let error as NSError{
             print("エラー：", error)
@@ -222,7 +224,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         hud.textLabel.text = str
         hud.indicatorView = JGProgressHUDSuccessIndicatorView()
         hud.show(in: self.view)
-        hud.dismiss(afterDelay: 2.0, animated: true)
+        hud.dismiss(afterDelay: 4.0, animated: true)
     }
     
     func configureItems(){

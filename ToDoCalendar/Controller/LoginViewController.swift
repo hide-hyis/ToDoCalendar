@@ -232,27 +232,36 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     func loginUser(){
+        activityIndicatorView.startAnimating()
         guard let email = self.emailTextField.text else {return}
         guard let password = self.passwordTextField.text else {return}
         
         guard loginValidation() else {return}
-        activityIndicatorView.startAnimating()
-        Auth.auth().signIn(withEmail: email, password: password) { (authResult, err) in
+        DispatchQueue.global(qos: .default).async {
+            // 非同期処理などを実行
+            Thread.sleep(forTimeInterval: 3)
+            
+            Auth.auth().signIn(withEmail: email, password: password) { (authResult, err) in
 
-            if let err = err {
-                // エラーハンドル
-                self.handleLoginError(err: err as NSError)
-            }else if authResult?.user.isEmailVerified == false{
-                // メール認証無効
-                self.jgprogressError(str: "送信されたメールを確認してください")
-                return
-            }else{
-                guard let currentUid = authResult?.user.uid else {return}
-                // ログイン成功画面遷移
-                self.isUserLoggedin(withUserId: currentUid)
+                if let err = err {
+                    // エラーハンドル
+                    self.handleLoginError(err: err as NSError)
+                }else if authResult?.user.isEmailVerified == false{
+                    // メール認証無効
+                    self.jgprogressError(str: "送信されたメールを確認してください")
+                    return
+                }else{
+                    guard let currentUid = authResult?.user.uid else {return}
+                    // ログイン成功画面遷移
+                    self.isUserLoggedin(withUserId: currentUid)
+                }
+            }
+            // 非同期処理などが終了したらメインスレッドでアニメーション終了
+            DispatchQueue.main.async {
+                // アニメーション終了
+                self.activityIndicatorView.stopAnimating()
             }
         }
-        activityIndicatorView.stopAnimating()
     }
     
     func registerUser(){

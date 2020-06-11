@@ -26,5 +26,15 @@ class RootViewController: UIViewController {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        if Auth.auth().currentUser != nil {
+            let calendarVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+            calendarVC.fromLogin = false
+            self.navigationController?.pushViewController(calendarVC, animated: true)
+        }else{
+            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            self.navigationController?.pushViewController(loginViewController, animated: true)
+        }
+    }
     
 }
