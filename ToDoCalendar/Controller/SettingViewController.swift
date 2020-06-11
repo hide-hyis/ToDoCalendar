@@ -17,30 +17,32 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     var hud = JGProgressHUD(style: .dark)   // アラートメッセージ用
     var calendarVC: ViewController?        // 遷移元のViewController
     var tapUIView: UIView?                 // カレンダーエリア
-    let headerView = UIView()                 // tableView header
+    let headerView = UIView()             // tableView header
     let doneBtn = UIButton()              // tableView header 完了ボタン
     let addBtn = UIButton()               // tableView header 追加ボタン
     var categoryArray = [Category]()      // 表示するカテゴリー名の配列
-    var categoryIdArray = [String]()        // tableViewに表示しているカテゴリーID
+    var categoryIdArray = [String]()      // tableViewに表示しているカテゴリーID
     var settngHeight: Int?               // 設定ラベルのy位置
     var logoutHeight: Int?               // ログアウトラベルのy位置
     var categoryHeight: Int?             // カテゴリーラベルのy位置
-    var tableHeaderHeight: Int?             // テーブルヘッダーのy位置
+    var tableHeaderHeight: Int?          // テーブルヘッダーのy位置
     let screenHeight = UIScreen.main.bounds.size.height
-    let kAnimator = Animator()
+    var calendarImage = UIImage()        // カレンダー背景
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var customView: UIView!
+    @IBOutlet weak var backGroundImage: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureItems()
         
+        congigureBackgound()
+        
         tableView.delegate = self
         tableView.dataSource = self
         self.transitioningDelegate = self
-        
         fetchCategories()
         //　背景タップで戻る
         let screenTap = UITapGestureRecognizer(target: self, action: #selector(back))
@@ -126,16 +128,12 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // MARK: - TransitioningDelegate
 
-    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        // この画面に遷移してくるときに呼ばれるメソッド
-        kAnimator.presenting = true
-        return kAnimator
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return HorizontalAnimator(scrollDirection: .right)
     }
 
-    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        // この画面から遷移元に戻るときに呼ばれるメソッド
-        kAnimator.presenting = false
-        return kAnimator
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return HorizontalAnimator(scrollDirection: .left)
     }
     
     // MARK: EVENT ACTION
@@ -347,6 +345,13 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         doneBtn.isHidden = true
         addBtn.isHidden = true
         
+    }
+    // 背景に使用するカレンダー
+    func congigureBackgound(){
+        backGroundImage.image = calendarImage
+        backGroundImage.layer.shadowColor = UIColor.black.cgColor
+        backGroundImage.layer.shadowOpacity = 0.3
+        backGroundImage.layer.shadowRadius = 4
     }
     
     // MARK: API

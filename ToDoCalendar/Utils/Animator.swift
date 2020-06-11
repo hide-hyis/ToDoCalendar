@@ -1,69 +1,92 @@
 //
-//  Animator.swift
-//  ToDoCalendar
+//  CustomAnimator.swift
+//  AnimationTransition
 //
-//  Created by Ishii Hideyasu on 2020/06/10.
+//  Created by Ishii Hideyasu on 2020/06/11.
 //  Copyright © 2020 Ishii Hideyasu. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-class Animator: NSObject, UIViewControllerAnimatedTransitioning {
-    let kMovedDistance: CGFloat = 70.0 // 遷移元のviewのずれる分の距離
-    let kDuration = 0.3
-    var presenting = false // 遷移するときtrue（戻るときfalse）
+fileprivate struct Const {
+    static let duration: Double = 0.5
+    static let offset: CGFloat = 50
+}
 
+class VerticalAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    private let isPresenting: Bool
+
+    init(isPresenting: Bool) {
+        self.isPresenting = isPresenting
+    }
+    
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return kDuration
+        return Const.duration
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)
-        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
+        guard let fromView = transitionContext.view(forKey: .from),
+            let toView = transitionContext.view(forKey: .to) else { return }
 
-        // 遷移するときと戻るときとで処理を変える
-        if presenting {
-            presentTransition(transitionContext: transitionContext, toView: toVC!.view, fromView: fromVC!.view)
-        } else {
-            dismissTransition(transitionContext: transitionContext, toView: toVC!.view, fromView: fromVC!.view)
+        transitionContext.containerView.backgroundColor = .white
+        transitionContext.containerView.insertSubview(toView, belowSubview: fromView)
+
+        let offset: CGFloat = isPresenting ? Const.offset : -Const.offset
+
+        toView.alpha = 0
+        toView.transform = CGAffineTransform(translationX: 0, y: offset)
+
+        UIView.animate(withDuration: transitionDuration(using: transitionContext),
+                       animations: {
+                        fromView.alpha = 0
+                        fromView.transform = CGAffineTransform(translationX: 0, y: -offset)
+                        toView.alpha = 1
+                        toView.transform = .identity
+        }) { didComplete in
+            fromView.alpha = 1
+            fromView.transform = .identity
+            transitionContext.completeTransition(didComplete)
         }
     }
+}
 
-    // 遷移するときのアニメーション
-    func presentTransition(transitionContext: UIViewControllerContextTransitioning, toView: UIView, fromView: UIView) {
-        let containerView = transitionContext.containerView
-        containerView.insertSubview(toView, aboveSubview: fromView) // toViewの下にfromView
-
-        // 遷移先のviewを画面の右側に移動させておく。
-        toView.frame = toView.frame.offsetBy(dx: containerView.frame.size.width, dy: 0)
-
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0.05, options: .curveEaseInOut, animations: { () -> Void in
-            // 遷移元のviewを少し左へずらし、alpha値を下げて少し暗くする。
-            fromView.frame = fromView.frame.offsetBy(dx: -self.kMovedDistance, dy: 0)
-            fromView.alpha = 0.7
-
-            // 遷移先のviewを画面全体にはまるように移動させる。
-            toView.frame = containerView.frame
-        }) { (finished) -> Void in
-            fromView.frame = fromView.frame.offsetBy(dx: self.kMovedDistance, dy: 0) // 元の位置に戻す
-            transitionContext.completeTransition(true)
-        }
+class HorizontalAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    enum Direction {
+        case right
+        case left
     }
 
-    // 戻るときのアニメーション
-    func dismissTransition(transitionContext: UIViewControllerContextTransitioning, toView: UIView, fromView: UIView) {
-        let containerView = transitionContext.containerView
-        containerView.insertSubview(toView, belowSubview: fromView) // fromViewの下にtoView
+    private let scrollDirection: Direction
 
-        // 上と逆のことをする。
-        toView.frame = toView.frame.offsetBy(dx: -kMovedDistance, dy: 0)
+    init(scrollDirection: Direction) {
+        self.scrollDirection = scrollDirection
+    }
 
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveEaseInOut, animations: { () -> Void in
-            fromView.frame = fromView.frame.offsetBy(dx: containerView.frame.size.width, dy: 0)
-            toView.frame = toView.frame.offsetBy(dx: self.kMovedDistance, dy: 0)
-            toView.alpha = 1.0
-        }) { (finished) -> Void in
-            transitionContext.completeTransition(true)
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return Const.duration
+    }
+
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let fromView = transitionContext.view(forKey: .from),
+            let toView = transitionContext.view(forKey: .to) else { return }
+
+        transitionContext.containerView.insertSubview(toView, belowSubview: fromView)
+
+        let offset: CGFloat = scrollDirection == .right ? -Const.offset : Const.offset
+
+        toView.alpha = 0
+        toView.transform = CGAffineTransform(translationX: offset, y: 0)
+        UIView.animate(withDuration: transitionDuration(using: transitionContext),
+                       animations: {
+                        fromView.alpha = 0
+                        fromView.transform = CGAffineTransform(translationX: -offset, y: 0)
+                        toView.alpha = 1
+                        toView.transform = .identity
+        }) { didComplete in
+            fromView.alpha = 1
+            fromView.transform = .identity
+            transitionContext.completeTransition(didComplete)
         }
     }
 }

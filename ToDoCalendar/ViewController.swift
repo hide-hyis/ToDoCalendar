@@ -520,16 +520,27 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     }
     
     @objc func showSetting(){
+        
+        
         let navBarHeight =  self.navigationController?.navigationBar.frame.size.height
         let settingVC = self.storyboard?.instantiateViewController(withIdentifier: "SettingViewController") as! SettingViewController
-        settingVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical
-        settingVC.modalPresentationStyle = .overCurrentContext
+        settingVC.modalPresentationStyle = .fullScreen
+        settingVC.calendarImage = capturedScreenImage()
         settingVC.navHeight = navBarHeight
         settingVC.calendarVC = self
-//        settingVC.view.backgroundColor = UIColor.clear
         self.present(settingVC, animated: true, completion: nil)
     }
     
+    // 画面のキャプチャ
+    func capturedScreenImage() -> UIImage {
+        let capturedImage: UIImage?
+        let frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+        UIGraphicsBeginImageContextWithOptions(frame.size, false, 1)
+        UIApplication.shared.keyWindow!.layer.render(in: UIGraphicsGetCurrentContext()!)
+        capturedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return capturedImage!
+    }
     // 設定UIViewの表示切替 
     @objc func showUiview(){
         if self.toggle{
