@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import JGProgressHUD
 
-class SettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, TableViewCellDelegate {
+class SettingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, UIViewControllerTransitioningDelegate, TableViewCellDelegate {
     
     
     var navHeight: CGFloat?                 // navBarの高さ
@@ -27,6 +27,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     var categoryHeight: Int?             // カテゴリーラベルのy位置
     var tableHeaderHeight: Int?             // テーブルヘッダーのy位置
     let screenHeight = UIScreen.main.bounds.size.height
+    let kAnimator = Animator()
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var customView: UIView!
@@ -38,6 +39,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         
         tableView.delegate = self
         tableView.dataSource = self
+        self.transitioningDelegate = self
         
         fetchCategories()
         //　背景タップで戻る
@@ -122,10 +124,23 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
+    // MARK: - TransitioningDelegate
+
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        // この画面に遷移してくるときに呼ばれるメソッド
+        kAnimator.presenting = true
+        return kAnimator
+    }
+
+    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        // この画面から遷移元に戻るときに呼ばれるメソッド
+        kAnimator.presenting = false
+        return kAnimator
+    }
+    
     // MARK: EVENT ACTION
     @objc func back(){
-        
-        self.dismiss(animated: true)
+        dismiss(animated: true)
     }
     
     @objc func logout(){

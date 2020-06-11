@@ -24,6 +24,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var star3: UIButton!
     @IBOutlet weak var addButton: UIButton!             // 追加決定ボタン
     @IBOutlet weak var imageView: UIImageView!          // todo内画像
+    var activityIndicatorView = UIActivityIndicatorView()
     
     let screenHeight = Int(UIScreen.main.bounds.size.height)
     let screenWidth = Int(UIScreen.main.bounds.size.width)
@@ -60,6 +61,11 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGestureRecognizer)
         
+        activityIndicatorView.center = CGPoint(x: UIScreen.main.bounds.width/2, y: (UIScreen.main.bounds.height/2)+50 )
+        activityIndicatorView.style = .whiteLarge
+        activityIndicatorView.color = .black
+        view.addSubview(activityIndicatorView)
+        
         //iOS13以前用の擬似ナビバーを生成
         makeNavbar()
         
@@ -87,31 +93,41 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func saveAction(_ sender: Any) {
         guard let currentId = Auth.auth().currentUser?.uid else {return}
-        
+        activityIndicatorView.startAnimating()
         
         // 記入内容のバリデーション
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 && self.selectedTodoImage != nil{
-            
-            // image uploadData
-            guard let todoImage = self.selectedTodoImage else {return}
-            guard let uploadData = todoImage.jpegData(compressionQuality: 0.5) else {return}
-            // update storage
-            let filename = NSUUID().uuidString
-            let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
-            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
-            
-                //エラーハンドル
-                if let error = error{
-                    print("画像のアップロードエラー", error.localizedDescription)
-                    return
+
+            DispatchQueue.global(qos: .default).async {
+                // 非同期処理などを実行（今回は５秒間待つだけ）
+                Thread.sleep(forTimeInterval: 4)
+
+                // image uploadData
+                guard let todoImage = self.selectedTodoImage else {return}
+                guard let uploadData = todoImage.jpegData(compressionQuality: 0.5) else {return}
+                // update storage
+                let filename = NSUUID().uuidString
+                let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
+                storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
+                
+                    //エラーハンドル
+                    if let error = error{
+                        print("画像のアップロードエラー", error.localizedDescription)
+                        return
+                    }
+                        
+                    storageRef.downloadURL { (url, error) in
+                        guard let todoImageUrl = url?.absoluteString else {return}
+                        
+                        // DBへ情報の送信(画像を保存する場合)
+                        self.inputValues(uid: currentId, withImage: todoImageUrl)
+                    }
                 }
-                    
-                storageRef.downloadURL { (url, error) in
-                    guard let todoImageUrl = url?.absoluteString else {return}
-                    
-                    // DBへ情報の送信(画像を保存する場合)
-                    self.inputValues(uid: currentId, withImage: todoImageUrl)
+                // 非同期処理などが終了したらメインスレッドでアニメーション終了
+                DispatchQueue.main.async {
+                    // アニメーション終了
+                    self.activityIndicatorView.stopAnimating()
                 }
             }
         }else if titleTextField.text! != "" && titleTextField.text!.count < 16

@@ -20,6 +20,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var modeButton: UIButton!
     @IBOutlet weak var emailVerificationButton: UIButton!
     @IBOutlet weak var passResetButton: UIButton!
+    var activityIndicatorView = UIActivityIndicatorView()
     
     var loginMode = 0                                             // ログインか新規登録かを判別するフラグ
     var hud = JGProgressHUD(style: .dark)
@@ -63,6 +64,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         checkPasswordTextField.delegate = self
         
         emailVerificationButton.isHidden = true
+        
+        activityIndicatorView.center = CGPoint(x: UIScreen.main.bounds.width/2, y: (UIScreen.main.bounds.height/2)+50 )
+        activityIndicatorView.style = .whiteLarge
+        activityIndicatorView.color = .black
+        view.addSubview(activityIndicatorView)
     }
     
     
@@ -104,6 +110,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             self.jgprogressError(str: "アドレスを入力して下さい")
             return
         }else{
+            activityIndicatorView.startAnimating()
             resetPassword(email: emailTextField.text!) { (error) in
                 
                 if error == nil{
@@ -113,6 +120,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     self.handlePasswordResetError(error: error as! NSError)
                 }
             }
+            activityIndicatorView.stopAnimating()
         }
     }
 
@@ -228,7 +236,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         guard let password = self.passwordTextField.text else {return}
         
         guard loginValidation() else {return}
-        
+        activityIndicatorView.startAnimating()
         Auth.auth().signIn(withEmail: email, password: password) { (authResult, err) in
 
             if let err = err {
@@ -244,7 +252,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 self.isUserLoggedin(withUserId: currentUid)
             }
         }
-        
+        activityIndicatorView.stopAnimating()
     }
     
     func registerUser(){
@@ -254,6 +262,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let createdTimeUnix = Date().timeIntervalSince1970
         
         guard registerValidation() else {return}
+        button.isEnabled = false
+        activityIndicatorView.startAnimating()
         //　新規登録処理
         Auth.auth().createUser(withEmail: email, password: password) { (authResult, err) in
             if let err = err {
@@ -290,7 +300,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     self.emailVerificationButton.isHidden = false
                 }
             }
-            
+            self.activityIndicatorView.stopAnimating()
+            self.button.isEnabled = true
         }
     }
     

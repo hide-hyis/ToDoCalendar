@@ -28,15 +28,13 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var delegate:DetailProtocol?
     var allY:CGFloat = 0.0
     var todo: FToDo?
-    var selectedTodoImage: UIImage?
+    var selectedTodoImage: UIImage?                       // 選択中の画像
     var categoryArray = [Category]()
     var categoryIdArray = [String]()
     var categoryId: String?                              // 選択中のカテゴリーID
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
     var toolbar = UIToolbar()
-    var initialImage: Bool?
-    var deleteImage: Bool?
-    var array:[Int] = []
+    var initialImage: Bool?                             // 初期画像の有無フラグ
     
         
     @IBOutlet weak var dateField: UITextField!
@@ -49,11 +47,12 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var categoryButton: UIButton!
-    
+    var activityIndicatorView = UIActivityIndicatorView()
+
     // MARK: View Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         titleTextField.layer.borderWidth = 0.5
         titleTextField.layer.borderColor = UIColor.gray.cgColor
         titleTextField.delegate = self
@@ -78,6 +77,11 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGestureRecognizer)
 //        ToDo.isDoneDisplay(isDone, isDoneSegment)
+        
+        activityIndicatorView.center = CGPoint(x: UIScreen.main.bounds.width/2, y: (UIScreen.main.bounds.height/2)+50 )
+        activityIndicatorView.style = .whiteLarge
+        activityIndicatorView.color = .black
+        view.addSubview(activityIndicatorView)
         
         // カテゴリーの取得
         fetchCategories()
@@ -130,6 +134,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     //編集機能
     @IBAction func editAction(_ sender: Any) {
         editButton.isEnabled = false
+        activityIndicatorView.startAnimating()
         
         // 画像を保存する場合
         if titleTextField.text != "" && titleTextField.text!.count < 16
@@ -142,24 +147,34 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             let filename = NSUUID().uuidString
             let storageRef = STORAGE_TODO_IMAGES_REF.child(filename)
             let imageurl = todo?.imageURL
-            if imageurl != ""{
-                //古い画像をサーバーから削除
-                Storage.storage().reference(forURL: todo!.imageURL).delete(completion: nil)
-            }
             
-            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
-                
-                //エラーハンドル
-                if let error = error{
-                    print("画像のアップロードエラー", error.localizedDescription)
-                    self.editButton.isEnabled = true
-                    return
+            DispatchQueue.global(qos: .default).async {
+                // 非同期処理などを実行
+                Thread.sleep(forTimeInterval: 5)
+
+                if imageurl != ""{
+                    //古い画像をサーバーから削除
+                    Storage.storage().reference(forURL: self.todo!.imageURL).delete(completion: nil)
                 }
-                
-                storageRef.downloadURL { (url, error) in
-                    guard let todoImageUrl = url?.absoluteString else {return}
+                storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                     
-                    self.inputValues(withImage: todoImageUrl)
+                    //エラーハンドル
+                    if let error = error{
+                        print("画像のアップロードエラー", error.localizedDescription)
+                        self.editButton.isEnabled = true
+                        return
+                    }
+                    
+                    storageRef.downloadURL { (url, error) in
+                        guard let todoImageUrl = url?.absoluteString else {return}
+                        
+                        self.inputValues(withImage: todoImageUrl)
+                    }
+                }
+                // 非同期処理などが終了したらメインスレッドでアニメーション終了
+                DispatchQueue.main.async {
+                    // アニメーション終了
+                    self.activityIndicatorView.stopAnimating()
                 }
             }
         
@@ -168,6 +183,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.inputValues(withImage: "")
             editButton.isEnabled = true
         }
+//        activityIndicatorView.stopAnimating()
         
     }
     
@@ -320,7 +336,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                (action: UIAlertAction!) -> Void in
             self.imageView.image = UIImage(named: "plus-icon")
             self.selectedTodoImage = nil
-            self.deleteImage = true
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in
@@ -388,7 +403,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         TODOS_REF.child(todoId).updateChildValues(values)
         
-        if initialImage == true && deleteImage! == true{
+        if initialImage == true{
             //古い画像をサーバーから削除
             Storage.storage().reference(forURL: self.todo!.imageURL).delete(completion: nil)
         }
