@@ -78,13 +78,20 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         
         cell.delegate = self
-        if categoryArray.count > 0{
-            cell.textField.text = categoryArray[indexPath.row].name!
-        }
-        if cell.textField.text == "カテゴリー未定" {
+        cell.textField.text = categoryArray[indexPath.row].name!
+        if categoryArray[indexPath.row].name! == "カテゴリー未定" {
             cell.textField.textColor = .lightGray
         }
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
+//        let cell: TableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+//        if categoryArray[indexPath.row].name! == "カテゴリー未定" {
+//            cell.textField.text = ""
+//        }
     }
     
     // MARK: UITextFieldDelegate
@@ -92,16 +99,15 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     func textFieldDidEndEditing(cell: TableViewCell, value: String) -> () {
         
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
-    }
     // textfieldタップされた直後
     func textFieldDidBeginEditing(cell: TableViewCell, value: String) {
         doneBtn.isEnabled = false
         self.doneBtn.setTitleColor(.lightGray, for: .normal)
         addBtn.isEnabled = false
         self.addBtn.setTitleColor(.lightGray, for: .normal)
+        if cell.textField.text == "カテゴリー未定" {
+            cell.textField.text = ""
+        }
     }
     // キーボードが閉じる直前
     func textFieldShouldEndEditing(cell: TableViewCell, value: String) {
@@ -111,12 +117,18 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         addBtn.isEnabled = true
         self.addBtn.setTitleColor(.black, for: .normal)
         categoryArray[indexPath!.row].name = value
+        if value.count == 0 {
+            
+            self.doneBtn.isEnabled = false
+            self.doneBtn.setTitleColor(.lightGray, for: .normal)
+            cell.textField.textColor = .lightGray
+        }
     }
     
     func textfieldsSouldChangeCharactersIn(cell: TableViewCell, value: String) {
         cell.textField.placeholder = "7文字以内で入力してください"
         let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
-        if value.count < 8{
+        if value.count < 8 {
             categoryArray[indexPath!.row].name! = value
             self.doneBtn.setTitleColor(.black, for: .normal)
             cell.textField.textColor = .black
