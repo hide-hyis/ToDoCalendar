@@ -534,7 +534,7 @@ class ViewController: UIViewController,FSCalendarDataSource,FSCalendarDelegate,F
     
     // 画面のキャプチャ
     func capturedScreenImage() -> UIImage {
-        let capturedImage: UIImage?
+        var capturedImage: UIImage?
         let frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         UIGraphicsBeginImageContextWithOptions(frame.size, false, 1)
         UIApplication.shared.keyWindow!.layer.render(in: UIGraphicsGetCurrentContext()!)

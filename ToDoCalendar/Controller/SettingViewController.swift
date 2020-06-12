@@ -27,6 +27,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     var categoryHeight: Int?             // カテゴリーラベルのy位置
     var tableHeaderHeight: Int?          // テーブルヘッダーのy位置
     let screenHeight = UIScreen.main.bounds.size.height
+    let screenWidth = UIScreen.main.bounds.size.width
     var calendarImage = UIImage()        // カレンダー背景
     
     @IBOutlet weak var tableView: UITableView!
@@ -39,7 +40,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         configureItems()
         
         congigureBackgound()
-        
+       
         tableView.delegate = self
         tableView.dataSource = self
         self.transitioningDelegate = self
@@ -350,10 +351,13 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     // 背景に使用するカレンダー
     func congigureBackgound(){
-        backGroundImage.image = calendarImage
+        let backgroundImageWidth = backGroundImage.frame.width
+        let customWidth = customView.frame.width
+        let frame = CGRect(x: (screenWidth - backgroundImageWidth), y: 0, width: backgroundImageWidth, height: screenHeight)
+        let imgRef = calendarImage.cgImage?.cropping(to: frame)
+        let trimImage = UIImage(cgImage: imgRef!, scale: calendarImage.scale, orientation: calendarImage.imageOrientation)
+        backGroundImage.image = trimImage
         backGroundImage.layer.shadowColor = UIColor.black.cgColor
-        backGroundImage.layer.shadowOpacity = 0.3
-        backGroundImage.layer.shadowRadius = 4
     }
     
     // MARK: API
