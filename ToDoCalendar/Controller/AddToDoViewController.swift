@@ -51,6 +51,8 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
         categoryButton.layer.cornerRadius = 5
         contentTextField.text = "内容"
         contentTextField.textColor = .lightGray
+        addButton.isEnabled = false
+        addButton.setTitleColor(.lightGray, for: .normal)
         
         // カテゴリーの取得
         fetchCategories()
@@ -93,11 +95,11 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func saveAction(_ sender: Any) {
         guard let currentId = Auth.auth().currentUser?.uid else {return}
-        activityIndicatorView.startAnimating()
         
         // 記入内容のバリデーション
         if titleTextField.text! != "" && titleTextField.text!.count < 16
         && contentTextField.text!.count < 201 && priority != 0 && self.selectedTodoImage != nil{
+            activityIndicatorView.startAnimating()
 
             DispatchQueue.global(qos: .default).async {
                 // 非同期処理などを実行（今回は５秒間待つだけ）
@@ -258,6 +260,13 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
 //入力値制限アラート
     func textFieldDidEndEditing(_ textField: UITextField) {
         ToDo.textFieldAlert(titleTextField, addButton, 15)
+        if textField.text == ""{
+            addButton.isEnabled = false
+            addButton.setTitleColor(.lightGray, for: .normal)
+        }else{
+            addButton.isEnabled = true
+            addButton.setTitleColor(.white, for: .normal)
+        }
     }
     
     // キーボードを閉じる
