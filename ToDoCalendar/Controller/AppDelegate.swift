@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        sleep(1)
+//        sleep(1)
         
         
         let storyboard:UIStoryboard = self.grabStoryboard()
@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
                 //iPhone8
             }else if height == 736 {
-                storyboard = UIStoryboard(name: "iPhone8", bundle: nil)
+                storyboard = UIStoryboard(name: "iPhone6sPlus", bundle: nil)
                 //iPhone8Plus
             }else if height == 812{
                 storyboard = UIStoryboard(name: "Main", bundle: nil)

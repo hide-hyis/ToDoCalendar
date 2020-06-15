@@ -248,7 +248,13 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
             logoutHeight = 110
             categoryHeight  = 150
             tableHeaderHeight  = 190
-        }else{
+        } else if screenHeight == 736{
+            // iPhone 6splus
+            settngHeight = 30
+            logoutHeight = 80
+            categoryHeight  = 120
+            tableHeaderHeight  = 195
+        }else {
             // iPhone 10以前
             settngHeight = 30
             logoutHeight = 80

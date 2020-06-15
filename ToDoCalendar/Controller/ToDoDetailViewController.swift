@@ -68,7 +68,9 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         contentTextView.layer.borderWidth = 1.0
         contentTextView.layer.borderColor = UIColor.gray.cgColor
-        contentTextView.layer.cornerRadius = 1.0
+        contentTextView.layer.cornerRadius = 5.0
+        titleTextField.layer.cornerRadius = 5.0
+        editButton.layer.cornerRadius = 5
         
         configureDatePicker(date: dateString)
         

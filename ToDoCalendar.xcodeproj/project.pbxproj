@@ -25,6 +25,7 @@
 		D261404D23D690C10036161E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D261404C23D690C10036161E /* ViewController.swift */; };
 		D261405223D690C70036161E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D261405123D690C70036161E /* Assets.xcassets */; };
 		D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D261405323D690C70036161E /* LaunchScreen.storyboard */; };
+		D27BCBE32497173D005E91B4 /* iPhone6sPlus.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D27BCBE22497173C005E91B4 /* iPhone6sPlus.storyboard */; };
 		D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D27DC458246E540F00176201 /* GoogleService-Info.plist */; };
 		D27DC45B246E54C900176201 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45A246E54C900176201 /* Constants.swift */; };
 		D27DC45D246E744100176201 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27DC45C246E744100176201 /* User.swift */; };
@@ -80,6 +81,7 @@
 		D261405123D690C70036161E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D261405423D690C70036161E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D261405623D690C70036161E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D27BCBE22497173C005E91B4 /* iPhone6sPlus.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = iPhone6sPlus.storyboard; sourceTree = "<group>"; };
 		D27DC453246D387C00176201 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		D27DC455246D3B0700176201 /* SettingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingView.xib; sourceTree = "<group>"; };
 		D27DC458246E540F00176201 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				D25BA6C7241B1BC300DEC361 /* iPhone11.storyboard */,
 				899CE4E923F57C62008C4D99 /* iPhone8.storyboard */,
 				D29ABF0023DFF23A008A522A /* Main.storyboard */,
+				D27BCBE22497173C005E91B4 /* iPhone6sPlus.storyboard */,
 				D27DC453246D387C00176201 /* SettingView.swift */,
 				D27DC455246D3B0700176201 /* SettingView.xib */,
 				D28DE19B24876110006C9B49 /* TableViewCell.swift */,
@@ -316,6 +319,7 @@
 				D261405523D690C70036161E /* LaunchScreen.storyboard in Resources */,
 				D261405223D690C70036161E /* Assets.xcassets in Resources */,
 				D27DC459246E540F00176201 /* GoogleService-Info.plist in Resources */,
+				D27BCBE32497173D005E91B4 /* iPhone6sPlus.storyboard in Resources */,
 				D28DE1A224876A75006C9B49 /* TableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
