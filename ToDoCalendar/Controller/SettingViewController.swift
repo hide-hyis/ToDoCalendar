@@ -107,6 +107,7 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.addBtn.setTitleColor(.lightGray, for: .normal)
         if cell.textField.text == "カテゴリー未定" {
             cell.textField.text = ""
+            cell.textField.placeholder = "7文字以内で入力してください"
         }
     }
     // キーボードが閉じる直前
@@ -118,15 +119,13 @@ class SettingViewController: UIViewController, UITableViewDataSource, UITableVie
         self.addBtn.setTitleColor(.black, for: .normal)
         categoryArray[indexPath!.row].name = value
         if value.count == 0 {
-            
             self.doneBtn.isEnabled = false
             self.doneBtn.setTitleColor(.lightGray, for: .normal)
             cell.textField.textColor = .lightGray
         }
     }
-    
+    // 編集中に毎回呼び出される
     func textfieldsSouldChangeCharactersIn(cell: TableViewCell, value: String) {
-        cell.textField.placeholder = "7文字以内で入力してください"
         let indexPath = tableView.indexPathForRow(at: cell.convert(cell.bounds.origin, to: tableView))
         if value.count < 8 {
             categoryArray[indexPath!.row].name! = value
