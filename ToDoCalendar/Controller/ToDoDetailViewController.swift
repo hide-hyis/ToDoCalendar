@@ -29,6 +29,8 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var allY:CGFloat = 0.0
     var todo: FToDo?
     var selectedTodoImage: UIImage?                       // 選択中の画像
+    var changeImage = false                               // 画像の変更フラグ
+    var deleteImage = false                               // 取り消しフラグ
     var categoryArray = [Category]()
     var categoryIdArray = [String]()
     var categoryId: String?                              // 選択中のカテゴリーID
@@ -185,8 +187,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.inputValues(withImage: "")
             editButton.isEnabled = true
         }
-//        activityIndicatorView.stopAnimating()
-        
     }
     
     //削除機能
@@ -229,7 +229,6 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.categoryPickerView.isHidden = true
             self.toolbar.isHidden = true
         }else{
-            print("Category: \(self.categoryArray.count)件")
             self.categoryPickerView.isHidden = false
             self.toolbar.isHidden = false
              titleTextField.resignFirstResponder()
@@ -325,6 +324,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 size = CGSize(width: 180, height: 180)
             }
             selectedTodoImage = pickedImage
+            if initialImage!{ changeImage = true }
             self.imageView.image = selectedTodoImage!.resize(size: size)
             initialImage = false
             picker.dismiss(animated: true, completion: nil)
@@ -338,6 +338,9 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                (action: UIAlertAction!) -> Void in
             self.imageView.image = UIImage(named: "plus-icon")
             self.selectedTodoImage = nil
+            if self.initialImage!{
+                self.deleteImage = true
+            }
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in
@@ -346,11 +349,13 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         let cameraAction: UIAlertAction = UIAlertAction(title: "カメラで撮影する", style: UIAlertAction.Style.default, handler:{
             (action: UIAlertAction!) -> Void in
             self.handleCamera()
+            self.deleteImage = false
         })
         
         let AlbumAction: UIAlertAction = UIAlertAction(title: "ライブラリから選択する", style: UIAlertAction.Style.default, handler:{
             (action: UIAlertAction!) -> Void in
             self.handleLibrary()
+            self.deleteImage = false
         })
         let showImageAction: UIAlertAction = UIAlertAction(title: "選択画像の表示", style: UIAlertAction.Style.default, handler:{
             (action: UIAlertAction!) -> Void in
@@ -363,8 +368,10 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
            alert.addAction(cancelAction)
            alert.addAction(cameraAction)
            alert.addAction(AlbumAction)
-           alert.addAction(deleteAction)
-           if selectedTodoImage != nil{ alert.addAction(showImageAction) }
+           if selectedTodoImage != nil{
+             alert.addAction(showImageAction)
+             alert.addAction(deleteAction)
+            }
 
         present(alert, animated: true, completion: nil)
     }
@@ -428,18 +435,26 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         let editTitle:String = titleTextField.text!
         guard let todoId = todo?.todoId else {return}
         
-        // 変更前の画像かどうか
-        if initialImage! {
+        // 既に画像があり引き続き使用する場合 取り消しでない場合
+        if initialImage! && withImage == "" && selectedTodoImage != nil{
             selectedTodoImage = self.imageView.image
         }
-        if categoryId == nil {categoryId = ""}
         
+        if categoryId == nil {categoryId = ""}
+        var image: String?
+        if selectedTodoImage == nil && deleteImage {   // 画像を取り消す場合
+            image = ""
+        }else if initialImage! && withImage == "" {    //　前の画像があり引き続き使う場合
+            image = todo?.imageURL
+        }else{                                         //　画像を新しく登録する場合
+            image = withImage
+        }
         let values = ["title": editTitle,
                     "content": contentTextView.text,
                     "schedule": scheduleInt,
                     "priority": priority,
                     "isDone": todo?.isDone,
-                    "imageURL": withImage,
+                    "imageURL": image,
                     "userId": todo?.userId,
                     "categoryId": categoryId,
                     "createdTime": todo?.createdTime,
@@ -447,7 +462,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         TODOS_REF.child(todoId).updateChildValues(values)
         
-        if initialImage == true{
+        if  changeImage || deleteImage{
             //古い画像をサーバーから削除
             Storage.storage().reference(forURL: self.todo!.imageURL).delete(completion: nil)
         }
