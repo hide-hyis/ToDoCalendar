@@ -398,21 +398,21 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func configurePickerView(){
         // ツールバーの生成
+        let pickerWidth = Int(UIScreen.main.bounds.size.width)
+        let pickerHeight: Int = 200
         let cancell = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: #selector(cancellCategoryPicker))
         let spacelItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         let doneItem = UIBarButtonItem(title: "完了", style: .plain, target: self, action: #selector(handleCategory))
         toolbar.setItems([cancell, spacelItem, doneItem], animated: true)
         toolbar.isUserInteractionEnabled = true
-        toolbar.frame = CGRect(x: 0, y: screenHeight-150-35, width: screenWidth, height: 35)
+        toolbar.frame = CGRect(x: 0, y: screenHeight-pickerHeight-35, width: screenWidth, height: 35)
         toolbar.backgroundColor = .white
         view.addSubview(toolbar)
         toolbar.isHidden = true
         
         categoryPickerView.delegate = self
         categoryPickerView.dataSource = self
-        let pickerWidth = UIScreen.main.bounds.size.width
-        let screenHeight = UIScreen.main.bounds.size.height
-        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - 150, width: pickerWidth, height: 250)
+        categoryPickerView.frame = CGRect(x: 0, y: screenHeight - pickerHeight, width: pickerWidth, height: pickerHeight)
         categoryPickerView.backgroundColor  = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 1)
         view.addSubview(categoryPickerView)
         categoryPickerView.isHidden = true
