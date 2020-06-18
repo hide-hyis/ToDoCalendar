@@ -186,6 +186,8 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         } else if titleTextField.text != "" && titleTextField.text!.count < 16 && contentTextView.text!.count < 201 && priority != 0 && self.selectedTodoImage == nil{
             self.inputValues(withImage: "")
             editButton.isEnabled = true
+        }else{
+            activityIndicatorView.stopAnimating()
         }
     }
     
@@ -414,7 +416,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     //内容欄入力後バリデーションチェック
     func textViewDidChange(_ textView: UITextView) {
         
-        ToDo.textViewdAlert(contentTextView, editButton, 200)
+        ToDo.textViewdAlert(titleTextField, contentTextView, editButton, 200)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

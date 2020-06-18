@@ -284,7 +284,7 @@ class AddToDoViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     // MARK: UITextViewDelegate
     func textViewDidChange(_ textView: UITextView) {
-        ToDo.textViewdAlert(contentTextField, addButton, 200)
+        ToDo.textViewdAlert(titleTextField, contentTextField, addButton, 200)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

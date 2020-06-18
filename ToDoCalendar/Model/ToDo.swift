@@ -115,7 +115,7 @@ class ToDo: Object {
     }
     
     //textView入力値制限アラート
-    class func textViewdAlert(_ textView: UITextView, _ button: UIButton, _ num: Int) {
+    class func textViewdAlert(_ textField: UITextField, _ textView: UITextView, _ button: UIButton, _ num: Int) {
         let limitedNum = num
         if textView.text!.count > num {
             let str = textView.text!
@@ -127,7 +127,9 @@ class ToDo: Object {
             )
             textView.attributedText = attrText
             invalidButton(button)
-        }else {
+        }else if textField.text == "" && textView.text!.count < num {
+            invalidButton(button)
+        }else{
             validButton(button)
         }
     }
