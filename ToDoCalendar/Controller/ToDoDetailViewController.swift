@@ -202,7 +202,9 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 
             let keys = ["title": "タイトル", "content": "内容", "priority": "1", "scheduledAt": "予定日"] as [String : Any]
             self.delegate?.catchtable(editKeys: keys as! [String : String])
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true) {
+                self.listVC?.modifiedTableView()
+            }
            })
         let cancelAction: UIAlertAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler:{
                (action: UIAlertAction!) -> Void in

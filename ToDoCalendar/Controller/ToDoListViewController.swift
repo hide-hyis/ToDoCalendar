@@ -77,7 +77,6 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     // 編集画面からの情報を反映する
     func modifiedTableView(){
-//        if todoArray.count != 0 {dabCount = todoArray.count}
         todoArray.removeAll()
         fetchFToDo()
         tableView.reloadData()
@@ -559,10 +558,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
                 
                 let todo = FToDo(todoId: todoId, dictionary: dictionary)
                 print("todoArray: \(self.todoArray.count)件")
-                // 編集ページからの遷移でなく、todoの数が元のtodoを上回らない
-//                if self.dabCount == nil || self.todoArray.count < self.dabCount!{
-                    self.todoArray.append(todo)
-//                }
+                self.todoArray.append(todo)
                 self.tableView.reloadData()
             }
         }
