@@ -286,16 +286,21 @@ class SearchViewController: UIViewController, UITextFieldDelegate, UITextViewDel
         } else {
             Layout.blankView(self) //navに白紙
             Layout.navBarTitle(self, "検索") //navBarTitle
+            //  NavBar下部の線
+            let upperLine = UIView(frame: CGRect(x: 0, y: 75, width: screenWidth, height: 1) )
+            upperLine.backgroundColor = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 0.9)
+            self.view.addSubview(upperLine)
+            
     //       戻るボタン
             let backButton  = UIButton()
-            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+            backButton.frame = CGRect(x: 20, y: 45, width: 20, height: 20)
             let backButtonImage = UIImage(named: "list")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
             backButton.setImage(backButtonImage, for: .normal)
             backButton.addTarget(self, action: #selector(backAction), for: UIControl.Event.touchUpInside)
             self.view.addSubview(backButton)
             self.view.bringSubviewToFront(backButton)
     //        検索ボタン
-            searchButton2.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            searchButton2.frame = CGRect(x: 330, y: 45, width: 20, height: 20)
             let searchButtonImage = UIImage(named: "search")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
             searchButton2.setImage(searchButtonImage, for: .normal)
             searchButton2.addTarget(self, action: #selector(searchAction), for: UIControl.Event.touchUpInside)

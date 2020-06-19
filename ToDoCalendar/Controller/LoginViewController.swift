@@ -232,15 +232,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     func loginUser(){
-        activityIndicatorView.startAnimating()
         guard let email = self.emailTextField.text else {return}
         guard let password = self.passwordTextField.text else {return}
         
         guard loginValidation() else {return}
+        self.activityIndicatorView.startAnimating()
         DispatchQueue.global(qos: .default).async {
             // 非同期処理などを実行
             Thread.sleep(forTimeInterval: 3)
-            
+
             Auth.auth().signIn(withEmail: email, password: password) { (authResult, err) in
 
                 if let err = err {

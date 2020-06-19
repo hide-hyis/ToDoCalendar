@@ -525,7 +525,7 @@
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="タイトル" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zmw-K8-uhd">
                                 <rect key="frame" x="27" y="175" width="360" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="yyyy年MM月dd日" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TBh-ug-lun">
@@ -946,8 +946,8 @@
     <resources>
         <image name="addButton" width="640" height="333"/>
         <image name="calendar" catalog="system" width="64" height="52"/>
-        <image name="list.dash" catalog="system" width="64" height="42"/>
         <image name="list.dash" width="16" height="16"/>
+        <image name="list.dash" catalog="system" width="64" height="42"/>
         <image name="logo" width="1280" height="640"/>
         <image name="magnifyingglass" catalog="system" width="64" height="56"/>
         <image name="plus-icon" width="225" height="225"/>

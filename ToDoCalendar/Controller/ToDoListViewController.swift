@@ -44,6 +44,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     let postponeData = ["1日","2日","3日","4日","5日","6日","7日",]
     var selectedPostponeDay: Int = 1                          //  先延ばしピッカーで選択された日数
     var postponeTodoIndex: Int?
+    var dabCount: Int?
     
     
     // MARK: View Lifecycle
@@ -73,15 +74,14 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let presented = self.presentedViewController {
-            if type(of: presented) == ToDoDetailViewController.self {
-                todoArray.removeAll()
-                fetchFToDo()
-            }
-        }
+    }
+    // 編集画面からの情報を反映する
+    func modifiedTableView(){
+//        if todoArray.count != 0 {dabCount = todoArray.count}
+        todoArray.removeAll()
+        fetchFToDo()
         tableView.reloadData()
     }
-    
     func catchtable(editKeys: [String: String]) {
         titleLabel.text = editKeys["title"]
         contentLabel.text = editKeys["content"]
@@ -166,6 +166,7 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
             let dateComponentsArray = dateLabel!.text!.components(separatedBy: "/")
             let datestr = "\(dateComponentsArray[0])年\(dateComponentsArray[1])月\(dateComponentsArray[2])日"
             nextVC.todo = self.todo
+            nextVC.listVC = self
             nextVC.delegate = self
         }else if segue.identifier == "goSearchPage" {
             let nextVC = segue.destination as! SearchViewController
@@ -557,9 +558,14 @@ class ToDoListViewController: UIViewController,UITableViewDataSource, UITableVie
                 guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else {return}
                 
                 let todo = FToDo(todoId: todoId, dictionary: dictionary)
-                self.todoArray.append(todo)
+                print("todoArray: \(self.todoArray.count)件")
+                // 編集ページからの遷移でなく、todoの数が元のtodoを上回らない
+//                if self.dabCount == nil || self.todoArray.count < self.dabCount!{
+                    self.todoArray.append(todo)
+//                }
                 self.tableView.reloadData()
             }
         }
     }
+
 }

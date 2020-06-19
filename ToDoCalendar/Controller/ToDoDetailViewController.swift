@@ -37,7 +37,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var categoryPickerView = UIPickerView()             // カテゴリー表示用のピッカー
     var toolbar = UIToolbar()
     var initialImage: Bool?                             // 初期画像の有無フラグ
-    
+    var listVC: ToDoListViewController?
         
     @IBOutlet weak var dateField: UITextField!
     @IBOutlet weak var isDoneSegment: UISegmentedControl!
@@ -471,7 +471,9 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         editButton.isEnabled = true
         let keys = ["title": editTitle, "content": contentTextView.text, "priority": String(priority), "scheduledAt": dateString] as [String : Any]
         delegate?.catchtable(editKeys: keys as! [String : String])
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            self.listVC?.modifiedTableView()
+        }
     }
     
     func configureToDo(date dateString: String){
@@ -542,9 +544,14 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
         } else {
             Layout.blankView(self) //navに白紙
             Layout.navBarTitle(self, "ToDo") //navBarTitle
+            //  NavBar下部の線
+            let upperLine = UIView(frame: CGRect(x: 0, y: 75, width: screenWidth, height: 1) )
+            upperLine.backgroundColor = UIColor.rgb(red: 230, green: 230, blue: 230, alpha: 0.9)
+            self.view.addSubview(upperLine)
+            
 //            戻るボタン
             let backButton  = UIButton()
-            backButton.frame = CGRect(x: 20, y: 60, width: 20, height: 20)
+            backButton.frame = CGRect(x: 20, y: 45, width: 20, height: 20)
             let backButtonImage = UIImage(named: "calendar-1")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
             backButton.setImage(backButtonImage, for: .normal)
             backButton.setTitleColor(UIColor.blue, for: .normal)
@@ -553,7 +560,7 @@ class ToDoDetailViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.view.bringSubviewToFront(backButton)
 //            削除ボタン
             let deleteButton  = UIButton()
-            deleteButton.frame = CGRect(x: 330, y: 60, width: 20, height: 20)
+            deleteButton.frame = CGRect(x: 330, y: 45, width: 20, height: 20)
             let deleteButtonImage = UIImage(named: "delete")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
             deleteButton.setImage(deleteButtonImage, for: .normal)
             deleteButton.addTarget(self, action: #selector(deleteAction), for: UIControl.Event.touchUpInside)

@@ -71,7 +71,7 @@ class Layout: Object {
     class func blankView(_ uiViewController: UIViewController){
         let blankView = UIView()
         let screenSize: CGSize = UIScreen.main.bounds.size
-        blankView.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: 90)
+        blankView.frame = CGRect(x: 0, y: 0, width: screenSize.width, height: 75)
         blankView.backgroundColor = UIColor(red: 247/255, green: 246/255, blue: 246/255, alpha: 1)
         uiViewController.view.addSubview(blankView)
     }
@@ -97,7 +97,7 @@ class Layout: Object {
     //ナビバータイトル表示
     class func navBarTitle(_ uiViewController: UIViewController, _ title:String){
         let toDoLabel  = UILabel()
-        toDoLabel.frame = CGRect(x:50,y:30,width: 70,height:70)
+        toDoLabel.frame = CGRect(x:50,y:25,width: 70,height:70)
         toDoLabel.textAlignment = .center
         toDoLabel.center.x = uiViewController.view.center.x
         toDoLabel.textAlignment = NSTextAlignment.center
